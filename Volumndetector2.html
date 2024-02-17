@@ -40,23 +40,8 @@
 window.onload = function () {
   const volumeElem = document.getElementById('volume');
   const dbElem = document.getElementById('db');
-  let baseline = 1; // Set a default minimum baseline value
-  let alarmAudio = new Audio('alarm.mp3'); // Create an Audio object for the alarm sound
-
-  const audioElement = document.getElementById('audioClip');
-  audioElement.onloadedmetadata = function() {
-    const audioCtx = new AudioContext();
-    const source = audioCtx.createMediaElementSource(audioElement);
-    const analyser = audioCtx.createAnalyser();
-    source.connect(analyser);
-
-    const bufferLength = analyser.frequencyBinCount;
-    const dataArray = new Uint8Array(bufferLength);
-
-    analyser.getByteFrequencyData(dataArray);
-    const maxVolume = Math.max(...dataArray); // Find the maximum volume in the audio clip
-    baseline = maxVolume || 1; // Set the baseline to the maximum volume or default to 1
-  };
+  let baseline = 100; // Manually set the baseline to 100 (or any other value you prefer)
+  let alarmAudio = new Audio('alarm.mp3');
 
   navigator.mediaDevices.getUserMedia({ audio: true })
     .then(function (stream) {
@@ -75,20 +60,20 @@ window.onload = function () {
         let dB = 0;
 
         if (volume !== 0 && baseline !== 0) {
-          // Convert the volume to a dB level
           dB = 20 * Math.log10(volume / baseline);
         }
 
-        // Adjust thresholds based on dB levels
-        if (dB > 75) {
+        const scaledVolume = Math.min((volume / 255) * 2000, 200);
+
+        volumeElem.style.height = `${scaledVolume}px`;
+
+        if (dB > 30) {
           volumeElem.style.backgroundColor = "#FF0000"; // Red
-          // Play the alarm sound
           alarmAudio.play();
-        } else if (dB > 50) {
+        } else if (dB > 20) {
           volumeElem.style.backgroundColor = "#FFA500"; // Orange
         } else {
           volumeElem.style.backgroundColor = "#4CAF50"; // Green
-          // Pause the alarm sound if it's playing
           alarmAudio.pause();
         }
 
@@ -107,7 +92,6 @@ window.onload = function () {
       console.error('Error accessing the microphone:', err);
     });
 };
-
   </script>
 </body>
 </html>
