@@ -37,80 +37,83 @@
   <div class="db" id="db">Current dB: -</div>
 
   <script>
-window.onload = function () {
-  const volumeElem = document.getElementById('volume');
-  const dbElem = document.getElementById('db');
-  let baseline = 1; // Set a default minimum baseline value
-  let alarmAudio = new Audio('alarm.mp3'); // Create an Audio object for the alarm sound
-
-  const audioElement = document.getElementById('audioClip');
-  audioElement.onloadedmetadata = function() {
-    const audioCtx = new AudioContext();
-    const source = audioCtx.createMediaElementSource(audioElement);
-    const analyser = audioCtx.createAnalyser();
-    source.connect(analyser);
-
-    const bufferLength = analyser.frequencyBinCount;
-    const dataArray = new Uint8Array(bufferLength);
-
-    analyser.getByteFrequencyData(dataArray);
-    const maxVolume = Math.max(...dataArray); // Find the maximum volume in the audio clip
-    baseline = maxVolume || 1; // Set the baseline to the maximum volume or default to 1
-  };
-
-  navigator.mediaDevices.getUserMedia({ audio: true })
-    .then(function (stream) {
+    window.onload = function () {
+      const volumeElem = document.getElementById('volume');
+      const dbElem = document.getElementById('db');
+      let baseline = 1; // Set a default minimum baseline value
+      let alarmAudio = new Audio('alarm.mp3'); // Create an Audio object for the alarm sound
       const audioCtx = new AudioContext();
-      const source = audioCtx.createMediaStreamSource(stream);
-      const analyser = audioCtx.createAnalyser();
-      source.connect(analyser);
 
-      const bufferLength = analyser.frequencyBinCount;
-      const dataArray = new Uint8Array(bufferLength);
+      const audioElement = document.getElementById('audioClip');
+      audioElement.onloadedmetadata = function() {
+        const source = audioCtx.createMediaElementSource(audioElement);
+        const analyser = audioCtx.createAnalyser();
+        source.connect(analyser);
 
-      function updateVolume() {
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+
         analyser.getByteFrequencyData(dataArray);
-        const volume = dataArray.reduce((acc, val) => acc + val, 0) / bufferLength;
+        const maxVolume = Math.max(...dataArray); // Find the maximum volume in the audio clip
+        baseline = maxVolume || 1; // Set the baseline to the maximum volume or default to 1
+      };
 
-        const scaledVolume = Math.min((volume / 255) * 600, 100);
-        volumeElem.style.height = `${scaledVolume}px`;
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(function (stream) {
+          const source = audioCtx.createMediaStreamSource(stream);
+          const analyser = audioCtx.createAnalyser();
+          source.connect(analyser);
 
-        const percentageFilled = (scaledVolume / 100) * 100;
+          const bufferLength = analyser.frequencyBinCount;
+          const dataArray = new Uint8Array(bufferLength);
 
-        if (percentageFilled > 75) {
-          volumeElem.style.backgroundColor = "#FF0000"; // Red
-          // Play the alarm sound
-          alarmAudio.play();
-        } else if (percentageFilled > 50) {
-          volumeElem.style.backgroundColor = "#FFA500"; // Orange
-        } else {
-          volumeElem.style.backgroundColor = "#4CAF50"; // Green
-          // Pause the alarm sound if it's playing
-          alarmAudio.pause();
-        }
+          function updateVolume() {
+            analyser.getByteFrequencyData(dataArray);
 
-        let dB = 0;
+            // Apply low-pass filter to remove frequencies below 500Hz
+            const cutoffFrequency = 500; // Adjust the cutoff frequency as needed
+            const filteredDataArray = Array.from(dataArray).filter((val, index) => index * audioCtx.sampleRate / bufferLength < cutoffFrequency);
 
-        if (volume !== 0 && baseline !== 0) {
-          dB = 20 * Math.log10(volume / baseline);
-        }
+            const volume = filteredDataArray.reduce((acc, val) => acc + val, 0) / filteredDataArray.length;
 
-        if (!isNaN(dB) && isFinite(dB)) {
-          dbElem.textContent = `Current dB: ${dB.toFixed(2)} dB`;
-        } else {
-          dbElem.textContent = "Current dB: Too low to calculate";
-        }
+            const scaledVolume = Math.min((volume / 255) * 600, 100);
+            volumeElem.style.height = `${scaledVolume}px`;
 
-        requestAnimationFrame(updateVolume);
-      }
+            const percentageFilled = (scaledVolume / 100) * 100;
 
-      updateVolume();
-    })
-    .catch(function (err) {
-      console.error('Error accessing the microphone:', err);
-    });
-};
+            if (percentageFilled > 75) {
+              volumeElem.style.backgroundColor = "#FF0000"; // Red
+              // Play the alarm sound
+              alarmAudio.play();
+            } else if (percentageFilled > 50) {
+              volumeElem.style.backgroundColor = "#FFA500"; // Orange
+            } else {
+              volumeElem.style.backgroundColor = "#4CAF50"; // Green
+              // Pause the alarm sound if it's playing
+              alarmAudio.pause();
+            }
 
+            let dB = 0;
+
+            if (volume !== 0 && baseline !== 0) {
+              dB = 20 * Math.log10(volume / baseline);
+            }
+
+            if (!isNaN(dB) && isFinite(dB)) {
+              dbElem.textContent = `Current dB: ${dB.toFixed(2)} dB`;
+            } else {
+              dbElem.textContent = "Current dB: Too low to calculate";
+            }
+
+            requestAnimationFrame(updateVolume);
+          }
+
+          updateVolume();
+        })
+        .catch(function (err) {
+          console.error('Error accessing the microphone:', err);
+        });
+    };
   </script>
 </body>
 </html>
