@@ -40,7 +40,7 @@
 window.onload = function () {
   const volumeElem = document.getElementById('volume');
   const dbElem = document.getElementById('db');
-  let baseline = 100; // Manually set the baseline to 100 (or any other value you prefer)
+  let baseline = 1; // Manually set the baseline to 100 (or any other value you prefer)
   let alarmAudio = new Audio('alarm.mp3');
 
   navigator.mediaDevices.getUserMedia({ audio: true })
