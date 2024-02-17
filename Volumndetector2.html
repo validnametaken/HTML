@@ -72,27 +72,24 @@ window.onload = function () {
         analyser.getByteFrequencyData(dataArray);
         const volume = dataArray.reduce((acc, val) => acc + val, 0) / bufferLength;
 
-        const scaledVolume = Math.min((volume / 255) * 600, 100);
-        volumeElem.style.height = `${scaledVolume}px`;
+        let dB = 0;
 
-        const percentageFilled = (scaledVolume / 100) * 100;
+        if (volume !== 0 && baseline !== 0) {
+          // Convert the volume to a dB level
+          dB = 20 * Math.log10(volume / baseline);
+        }
 
-        if (percentageFilled > 75) {
+        // Adjust thresholds based on dB levels
+        if (dB > 75) {
           volumeElem.style.backgroundColor = "#FF0000"; // Red
           // Play the alarm sound
           alarmAudio.play();
-        } else if (percentageFilled > 50) {
+        } else if (dB > 50) {
           volumeElem.style.backgroundColor = "#FFA500"; // Orange
         } else {
           volumeElem.style.backgroundColor = "#4CAF50"; // Green
           // Pause the alarm sound if it's playing
           alarmAudio.pause();
-        }
-
-        let dB = 0;
-
-        if (volume !== 0 && baseline !== 0) {
-          dB = 20 * Math.log10(volume / baseline);
         }
 
         if (!isNaN(dB) && isFinite(dB)) {
