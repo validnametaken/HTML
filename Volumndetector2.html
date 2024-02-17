@@ -72,10 +72,10 @@ window.onload = function () {
         analyser.getByteFrequencyData(dataArray);
         const volume = dataArray.reduce((acc, val) => acc + val, 0) / bufferLength;
 
-        const scaledVolume = Math.min((volume / 255) * 600, 200);
+        const scaledVolume = Math.min((volume / 255) * 600, 100);
         volumeElem.style.height = `${scaledVolume}px`;
 
-        const percentageFilled = (scaledVolume / 200) * 100;
+        const percentageFilled = (scaledVolume / 100) * 100;
 
         if (percentageFilled > 75) {
           volumeElem.style.backgroundColor = "#FF0000"; // Red
