@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Volume Meter</title>
+  <style>
+    .meter {
+      width: 200px;
+      height: 200px;
+      border: 10px solid #ddd;
+      border-radius: 50%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .volume {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      transition: height 0.1s ease-in-out;
+    }
+
+    .db {
+      text-align: center;
+      margin-top: 20px;
+      font-family: Arial, sans-serif;
+      font-size: 19px;
+    }
+  </style>
+</head>
+<body>
+  <audio id="audioClip" src="alarm.mp3"></audio>
+  <div class="meter">
+    <div class="volume" id="volume"></div>
+  </div>
+  <div class="db" id="db">Current dB: -</div>
+
+  <script>
+window.onload = function () {
+  const volumeElem = document.getElementById('volume');
+  const dbElem = document.getElementById('db');
+  let baseline = 1; // Manually set the baseline to 100 (or any other value you prefer)
+  let alarmAudio = new Audio('alarm.mp3');
+
+  navigator.mediaDevices.getUserMedia({ audio: true })
+    .then(function (stream) {
+      const audioCtx = new AudioContext();
+      const source = audioCtx.createMediaStreamSource(stream);
+      const analyser = audioCtx.createAnalyser();
+      source.connect(analyser);
+
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+
+      function updateVolume() {
+        analyser.getByteFrequencyData(dataArray);
+        const volume = dataArray.reduce((acc, val) => acc + val, 0) / bufferLength;
+
+        let dB = 0;
+
+        if (volume !== 0 && baseline !== 0) {
+          dB = 20 * Math.log10(volume / baseline);
+        }
+
+        const scaledVolume = Math.min((volume / 255) * 2000, 200);
+
+        volumeElem.style.height = `${scaledVolume}px`;
+
+        if (dB > 30) {
+          volumeElem.style.backgroundColor = "#FF0000"; // Red
+          alarmAudio.play();
+        } else if (dB > 20) {
+          volumeElem.style.backgroundColor = "#FFA500"; // Orange
+        } else {
+          volumeElem.style.backgroundColor = "#4CAF50"; // Green
+          alarmAudio.pause();
+        }
+
+        if (!isNaN(dB) && isFinite(dB)) {
+          dbElem.textContent = `Current dB: ${dB.toFixed(2)} dB`;
+        } else {
+          dbElem.textContent = "Current dB: Too low to calculate";
+        }
+
+        requestAnimationFrame(updateVolume);
+      }
+
+      updateVolume();
+    })
+    .catch(function (err) {
+      console.error('Error accessing the microphone:', err);
+    });
+};
+  </script>
+</body>
+</html>
