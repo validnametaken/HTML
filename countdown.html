@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courgette&display=swap">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Andy's Countdown Timer</title>
+<style>
+  /* CSS Styles */
+
+
+  .base-timer {
+    position: relative;
+    width: 500px; /* Adjust as needed */
+    height: 500px; /* Adjust as needed */
+  }
+
+  .base-timer__svg {
+    transform: scaleX(-1);
+  }
+
+  .base-timer__circle {
+    fill: none;
+    stroke: none;
+  }
+
+  .base-timer__path-elapsed {
+    stroke-width: 7px;
+    stroke: grey;
+  }
+
+  .base-timer__path-remaining {
+    stroke-width: 7px;
+    stroke-linecap: round;
+    transform: rotate(90deg);
+    transform-origin: center;
+    transition: 1s linear all;
+    fill-rule: nonzero;
+    stroke: currentColor;
+  }
+
+  .base-timer__path-remaining.green {
+    color: rgb(65, 184, 131);
+  }
+
+  .base-timer__path-remaining.orange {
+    color: orange;
+  }
+
+  .base-timer__path-remaining.red {
+    color: red;
+  }
+
+  .base-timer__label {
+    position: absolute;
+    width: 100%; /* Set width to 100% */
+    height: 100%; /* Set height to 100% */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Center the content */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 75px; /* Adjust as needed */
+  }
+
+  #title {
+    font-family: 'Courgette', cursive; /* Fancy font */
+    font-size: max(5vw, 40px); /* Adjust font size using vw units with a minimum of 30px */
+    text-align: center;
+    margin-bottom: 20px; /* Add some margin for spacing */
+  }
+
+  @media screen and (max-width: 600px) {
+    #title {
+      font-size: 40px; /* Set font size to 30px for smaller screens */
+    }
+  }
+
+  /* Increase font size for the "Set Timer Duration" section */
+  #app label[for="duration"], #app input#duration {
+    text-align: center;
+    font-size: 30px; 
+  }
+
+  #app button {
+    font-family: 'Courgette', cursive; /* Use Courgette font for buttons */
+    font-size: 25px;
+  }
+
+  body {
+    font-family: 'Courgette', cursive;
+    display: grid;
+    height: 100%;
+    place-items: center;
+    text-align: center;
+  }
+
+</style>
+</head>
+<body>
+
+<div id="title">Andy's Countdown Timer</div>
+
+<audio id="alarm" src="alarm.mp3"></audio>
+
+<div id="app">
+  <label for="duration">Set Timer Duration (in seconds):</label>
+  <br>
+  <input type="number" id="duration" name="duration" min="1" value="20">
+  <br>
+  <br>
+  <button onclick="startTimer()">Start Timer</button>
+  <br>
+  <br>
+  <button onclick="resetTimer()">Reset Timer</button>
+  <br>
+  <br>
+  <label for="warningPercentage">Warning Threshold (%):</label>
+  <input type="number" id="warningPercentage" name="warningPercentage" min="1" max="100" value="50">
+  <br>
+  <label for="alertPercentage">Alert Threshold (%):</label>
+  <input type="number" id="alertPercentage" name="alertPercentage" min="1" max="100" value="25">
+  <br>  <br>  <br>
+</div>
+
+<script>
+  // JavaScript Code
+  const FULL_DASH_ARRAY = 283;
+  let timeLimit = parseInt(document.getElementById("duration").value);
+  let warningPercentage = parseInt(document.getElementById("warningPercentage").value);
+  let alertPercentage = parseInt(document.getElementById("alertPercentage").value);
+
+  const COLOR_CODES = {
+    info: {
+      color: "green"
+    },
+    warning: {
+      color: "orange"
+    },
+    alert: {
+      color: "red"
+    }
+  };
+
+  let timePassed = 0;
+  let timeLeft = timeLimit;
+  let timerInterval = null;
+  let remainingPathColor = COLOR_CODES.info.color;
+
+  document.getElementById("app").innerHTML += `
+  <div class="base-timer">
+    <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <g class="base-timer__circle">
+        <circle class="base-timer__path-elapsed" cx="50" cy="50" r="45"></circle>
+        <path
+          id="base-timer-path-remaining"
+          stroke-dasharray="283"
+          class="base-timer__path-remaining ${remainingPathColor}"
+          d="
+            M 50, 50
+            m -45, 0
+            a 45,45 0 1,0 90,0
+            a 45,45 0 1,0 -90,0
+          "
+        ></path>
+      </g>
+    </svg>
+    <span id="base-timer-label" class="base-timer__label">${formatTime(
+      timeLeft
+    )}</span>
+  </div>
+  `;
+
+  function onTimesUp() {
+    clearInterval(timerInterval);
+    document.getElementById("alarm").play();
+  }
+
+  function startTimer() {
+    timeLimit = parseInt(document.getElementById("duration").value);
+    warningPercentage = parseInt(document.getElementById("warningPercentage").value);
+    alertPercentage = parseInt(document.getElementById("alertPercentage").value);
+    timeLeft = timeLimit;
+    document.getElementById("base-timer-label").innerHTML = formatTime(timeLeft);
+    clearInterval(timerInterval);
+    timePassed = 0;
+    timerInterval = setInterval(() => {
+      timePassed = timePassed += 1;
+      timeLeft = timeLimit - timePassed;
+      document.getElementById("base-timer-label").innerHTML = formatTime(timeLeft);
+      setCircleDasharray();
+      setRemainingPathColor(timeLeft);
+
+      if (timeLeft === 0) {
+        onTimesUp();
+      }
+    }, 1000);
+  }
+
+  function resetTimer() {
+    clearInterval(timerInterval);
+    timePassed = 0;
+    timeLeft = timeLimit;
+    document.getElementById("base-timer-label").innerHTML = formatTime(timeLeft);
+    remainingPathColor = COLOR_CODES.info.color;
+    document.getElementById("base-timer-path-remaining").classList.remove("orange", "red");
+    document.getElementById("base-timer-path-remaining").classList.add("green");
+    setCircleDasharray();
+  }
+
+  function formatTime(time) {
+    const minutes = Math.floor(time / 60);
+    let seconds = time % 60;
+
+    if (seconds < 10) {
+      seconds = `0${seconds}`;
+    }
+
+    return `${minutes}:${seconds}`;
+  }
+
+  function setRemainingPathColor(timeLeft) {
+    let percentageLeft = (timeLeft / timeLimit) * 100;
+
+    if (percentageLeft <= alertPercentage) {
+      remainingPathColor = COLOR_CODES.alert.color;
+    } else if (percentageLeft <= warningPercentage) {
+      remainingPathColor = COLOR_CODES.warning.color;
+    } else {
+      remainingPathColor = COLOR_CODES.info.color;
+    }
+
+    document.getElementById("base-timer-path-remaining").classList.remove("orange", "red", "green");
+    document.getElementById("base-timer-path-remaining").classList.add(remainingPathColor);
+  }
+
+  function calculateTimeFraction() {
+    const rawTimeFraction = timeLeft / timeLimit;
+    return rawTimeFraction - (1 / timeLimit) * (1 - rawTimeFraction);
+  }
+
+  function setCircleDasharray() {
+    const circleDasharray = `${(calculateTimeFraction() * FULL_DASH_ARRAY).toFixed(0)} 283`;
+    document.getElementById("base-timer-path-remaining").setAttribute("stroke-dasharray", circleDasharray);
+  }
+</script>
+
+</body>
+</html>
