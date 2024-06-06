@@ -1,97 +1,275 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Volume Meter</title>
-  <style>
-    .meter {
-      width: 200px;
-      height: 200px;
-      border: 10px solid #ddd;
-      border-radius: 50%;
-      position: relative;
-      overflow: hidden;
-    }
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dB Counter</title>
+    <style>
+        body {
+            height: 100vh; 
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex; 
+            flex-direction: column;
+            justify-content: space-evenly;
+        }
 
-    .volume {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      transition: height 0.1s ease-in-out;
-    }
+        main {
+            text-align: center;
+            flex-grow: 1;
+        }
 
-    .db {
-      text-align: center;
-      margin-top: 20px;
-      font-family: Arial, sans-serif;
-      font-size: 19px;
-    }
-  </style>
+        footer {
+            background-color: #333; 
+            color: white;
+            height: auto;
+            padding: 20px 0; 
+            width: 100%;
+            margin-top: auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 3em;
+            font-weight: bold; 
+        }
+
+        h2 {
+            font-size: 2.5em; 
+            font-style: italic;
+            text-align: center;
+        }
+
+        #db {
+            font-size: 4em;
+            font-family: Arial, sans-serif; 
+            color: #333;
+        }
+
+        #visuals {
+            background: #ff5733; 
+            height: 5px;
+            margin-top: 20px; 
+        }
+
+        .col {
+            text-align: center;
+            width: 100%; 
+        }
+
+        .col a, footer p {
+            font-family: Arial, sans-serif; 
+            color: white;
+            text-decoration: none;
+        }
+
+        .col p {
+            user-select: none;
+        }
+
+        .col a:hover {
+            color: #45a049; 
+        }
+
+        h3 a {
+            font-family: Arial, sans-serif; 
+            color: black;
+            text-decoration: none;
+        }
+
+        h3 a:hover {
+            color: white;
+            background-color: #333; 
+        }
+
+        p {
+            color: black;
+            text-align: center;
+            padding-inline: 20%;
+        }
+
+        .inputs {
+            padding: 50px 10px;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: space-evenly;
+        }
+
+        .input {
+            text-align: center;
+        }
+
+        .button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #2a18b6;
+            border: none;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            cursor: pointer;
+            transition-duration: 0.4s;
+            border-radius: 12px;
+            outline: none; 
+        }
+
+        .button:hover {
+            background-color: #45a049; 
+        }
+
+        @media screen and (max-width: 500px) {
+            .inputs {
+                flex-direction: column;
+                align-items: center; 
+            }
+            .input {
+                width: 80%; 
+                margin-bottom: 20px; 
+            }
+        }
+    </style>
 </head>
 <body>
-  <audio id="audioClip" src="alarm.mp3"></audio>
-  <div class="meter">
-    <div class="volume" id="volume"></div>
-  </div>
-  <div class="db" id="db">Current dB: -</div>
+    <header>
+        <h1>Decibel Meter</h1>
+    </header>
+    <div class="main-inputs">
+        <main>
+            <h2><span id="db">-</span> dB</h2>
+            <div id='visuals'></div>
+        </main>
+        <div class="inputs">
+            <div class="input">
+                <button class="button" id="startButton">Start</button>
+                <button class="button" id="stopButton">Stop</button>
+            </div>
+        </div>
+    </div>
 
-  <script>
-window.onload = function () {
-  const volumeElem = document.getElementById('volume');
-  const dbElem = document.getElementById('db');
-  let baseline = 1; // Manually set the baseline to 100 (or any other value you prefer)
-  let alarmAudio = new Audio('alarm.mp3');
-
-  navigator.mediaDevices.getUserMedia({ audio: true })
-    .then(function (stream) {
-      const audioCtx = new AudioContext();
-      const source = audioCtx.createMediaStreamSource(stream);
-      const analyser = audioCtx.createAnalyser();
-      source.connect(analyser);
-
-      const bufferLength = analyser.frequencyBinCount;
-      const dataArray = new Uint8Array(bufferLength);
-
-      function updateVolume() {
-        analyser.getByteFrequencyData(dataArray);
-        const volume = dataArray.reduce((acc, val) => acc + val, 0) / bufferLength;
-
-        let dB = 0;
-
-        if (volume !== 0 && baseline !== 0) {
-          dB = 20 * Math.log10(volume / baseline);
+    <script>
+        let localDbValues = [];
+        let refresh_rate = 100;
+        let interval;
+        let audioContext, analyser, source, stream;
+        let resetInterval;
+    
+        function startDbReadings() {
+            console.log("Starting dB readings...");
+            stopDbReadings(); // Ensure any previous readings are stopped
+            localDbValues = [];
+    
+            try {
+                navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+                    .then(s => {
+                        stream = s;
+                        audioContext = new AudioContext();
+                        source = audioContext.createMediaStreamSource(stream);
+                        analyser = audioContext.createAnalyser();
+    
+                        analyser.smoothingTimeConstant = 0.8;
+                        analyser.fftSize = 256;
+    
+                        source.connect(analyser);
+    
+                        interval = setInterval(() => {
+                            const data = new Uint8Array(analyser.frequencyBinCount);
+                            analyser.getByteFrequencyData(data);
+                            let rms = 0;
+    
+                            for (let i = 0; i < data.length; i++) {
+                                if (data[i] > 120) data[i] = 120;
+                                rms += data[i] * data[i];
+                            }
+                            rms = Math.sqrt(rms / data.length);
+    
+                            let value = rms;
+                            localDbValues.push(value);
+    
+                            const db = document.getElementById("db");
+                            db.innerText = Math.round(value);
+    
+                            changeColor(value);
+    
+                            console.log(`Current dB value: ${value}`);
+                        }, refresh_rate);
+                    })
+                    .catch(err => {
+                        console.error('Error accessing microphone', err);
+                    });
+            } catch (err) {
+                console.error('Error accessing microphone', err);
+            }
+    
+            // Reset variables every 30 seconds
+            resetInterval = setInterval(() => {
+        //stopDbReadings();
+        let localDbValues = [];
+        let refresh_rate = 100;
+        let interval;
+        let audioContext, analyser, source, stream;
+        let resetInterval;
+        console.log("Resetting...");
+        //startDbReadings()
+            }, 3000);
         }
-
-        const scaledVolume = Math.min((volume / 255) * 2000, 200);
-
-        volumeElem.style.height = `${scaledVolume}px`;
-
-        if (dB > 30) {
-          volumeElem.style.backgroundColor = "#FF0000"; // Red
-          alarmAudio.play();
-        } else if (dB > 20) {
-          volumeElem.style.backgroundColor = "#FFA500"; // Orange
-        } else {
-          volumeElem.style.backgroundColor = "#4CAF50"; // Green
-          alarmAudio.pause();
+    
+        function stopDbReadings() {
+            console.log("Stopping dB readings...");
+            if (interval) {
+                clearInterval(interval);
+                interval = null;
+            }
+            if (audioContext) {
+                audioContext.close();
+                audioContext = null;
+            }
+            if (source) {
+                source.disconnect();
+                source = null;
+            }
+            if (analyser) {
+                analyser.disconnect();
+                analyser = null;
+            }
+            if (stream) {
+                const tracks = stream.getTracks();
+                tracks.forEach(track => track.stop());
+                stream = null;
+            }
+            localDbValues = []; // Clear the array to reset values
+    
+            // Reset the displayed dB value
+            const db = document.getElementById("db");
+            db.innerText = '-';
+            document.getElementById("visuals").style.width = "0rem";
+            document.getElementById("visuals").style.background = 'black';
+            db.style.color = '#333';
+    
+            // Clear the reset interval
+            clearInterval(resetInterval);
         }
-
-        if (!isNaN(dB) && isFinite(dB)) {
-          dbElem.textContent = `Current dB: ${dB.toFixed(2)} dB`;
-        } else {
-          dbElem.textContent = "Current dB: Too low to calculate";
+    
+        document.getElementById("startButton").addEventListener("click", startDbReadings);
+        document.getElementById("stopButton").addEventListener("click", stopDbReadings);
+    
+        function changeColor(decibels) {
+            let color;
+            if (decibels < 50) { color = 'green' }
+            else if (decibels >= 50 && decibels < 70) { color = 'yellow' }
+            else if (decibels >= 70 && decibels < 90) { color = 'orange' }
+            else { color = 'red' }
+    
+            document.getElementById("visuals").style.width = decibels * 2 / 10 + "rem";
+            document.getElementById("visuals").style.background = (decibels >= 70) ? 'red' : 'black';
+            document.getElementById("db").style.color = color;
         }
-
-        requestAnimationFrame(updateVolume);
-      }
-
-      updateVolume();
-    })
-    .catch(function (err) {
-      console.error('Error accessing the microphone:', err);
-    });
-};
-  </script>
+    </script>
+    
+    
 </body>
 </html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown Timers</title>
+    <style>
+        body {
+            text-align: center;
+            padding: 70px 50px;
+            background: #0D1A29;
+            font-family: "Helvetica Neue", "Open Sans", helvetica, arial, sans-serif;  
+        }
+
+        h1 {
+            color: white;
+            text-shadow: 0 0 10px #48C8FF;
+            font-weight: 100;
+            margin-bottom: 5px;
+        }
+
+        .timer {
+            font-size: 3em;
+            font-weight: 100;
+            color: white;
+            text-shadow: 0 0 20px #48C8FF;
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+            padding-right: 100px; /* Adjust according to the image size */
+        }
+
+        .timer div {
+            display: inline-block;
+            min-width: 90px;
+            margin: 0 5px; /* Adjust spacing between timer elements */
+        }
+
+        .timer span {
+            color: #B1CDF1;
+            display: block;
+            font-size: .35em;
+            font-weight: 400;
+        }
+
+        .timer img {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            max-height: 50px; /* Adjust image height */
+            max-width: 50px; /* Adjust image width */
+            width: auto;
+            height: auto;
+        }
+
+        .separator {
+            border-top: 2px solid #48C8FF;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // Function to update timer
+        function updateTimer(id, futureDate) {
+            var future = Date.parse(futureDate);
+            var now = new Date();
+            var diff = future - now;
+    
+            if (diff < 0) {
+                // If the event has passed, calculate the number of days passed since the event
+                var daysPassed = Math.floor(-diff / (1000 * 60 * 60 * 24));
+    
+                // Display the number of days passed
+                document.getElementById('days' + id).innerText = daysPassed;
+    
+                // Hide the other time units (hours, minutes, seconds)
+                document.getElementById('hours' + id).style.display = 'none';
+                document.getElementById('minutes' + id).style.display = 'none';
+                document.getElementById('seconds' + id).style.display = 'none';
+            } else {
+                // If the event is in the future, calculate the countdown timer as before
+                var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                var secs = Math.floor((diff % (1000 * 60)) / 1000);
+    
+                document.getElementById('days' + id).innerText = days;
+                document.getElementById('hours' + id).innerText = hours;
+                document.getElementById('minutes' + id).innerText = mins;
+                document.getElementById('seconds' + id).innerText = secs;
+            }
+        }
+    
+    
+        // Array of events
+        var events = [
+            { id: 1, date: "June 11, 2024 11:30:00", title: "My Birthday" },
+            { id: 2, date: "December 25, 2024 00:00:00", title: "Christmas Eve" },
+            { id: 3, date: "January 1, 2025 00:00:00", title: "New Year's Eve" },
+            { id: 4, date: "July 4, 2024 00:00:00", title: "Independence Day" },
+            { id: 5, date: "October 31, 2024 00:00:00", title: "Halloween" },
+            { id: 6, date: "October 31, 2020 00:00:00", title: "Test1" },
+            { id: 7, date: "October 31, 1981 00:00:00", title: "Test2" }
+        ];
+    
+        // Sort events by date
+        events.sort(function(a, b) {
+            return new Date(a.date) - new Date(b.date);
+        });
+    
+        // Separate past and future events
+        var pastEvents = events.filter(event => Date.parse(event.date) < Date.now());
+        var futureEvents = events.filter(event => Date.parse(event.date) >= Date.now());
+    
+        // Sort past events in descending order
+        pastEvents.sort(function(a, b) {
+            return new Date(b.date) - new Date(a.date);
+        });
+    
+        // Concatenate future events followed by past events
+        var sortedEvents = futureEvents.concat(pastEvents);
+    
+        // Create timers dynamically with separators
+        for (var i = 0; i < sortedEvents.length; i++) {
+            var event = sortedEvents[i];
+            var timerDiv = document.createElement('div');
+            timerDiv.id = 'timer' + event.id;
+            timerDiv.className = 'timer';
+            document.body.appendChild(timerDiv);
+    
+            var headline = document.createElement('h1');
+            headline.id = 'headline' + event.id;
+            headline.innerText = event.title + ' Countdown';
+            timerDiv.appendChild(headline);
+    
+            var timeElements = ['days', 'hours', 'minutes', 'seconds'];
+            for (var j = 0; j < timeElements.length; j++) {
+                var timeElementDiv = document.createElement('div');
+                var timeSpan = document.createElement('span');
+                timeSpan.id = timeElements[j] + event.id;
+                timeSpan.innerText = '0';
+                timeElementDiv.appendChild(timeSpan);
+                timeElementDiv.innerHTML += '<span>' + timeElements[j] + '</span>';
+                timerDiv.appendChild(timeElementDiv);
+            }
+    
+            var image = document.createElement('img');
+            image.src = 'image' + event.id + '.png';
+            image.alt = 'Image ' + event.id;
+            timerDiv.appendChild(image);
+    
+            // Add a separator after each event except the last one
+            if (i < sortedEvents.length - 1) {
+                var separator = document.createElement('div');
+                separator.className = 'separator';
+                document.body.appendChild(separator);
+            }
+        }
+    
+        // Update timers
+        function updateTimers() {
+            for (var i = 0; i < events.length; i++) {
+                var event = events[i];
+                updateTimer(event.id, event.date);
+            }
+        }
+    
+        // Call updateTimers function initially
+        updateTimers();
+    
+        // Set interval to update timers every second
+        setInterval(updateTimers, 1000);
+    </script>
+    
+</body>
+</html>
