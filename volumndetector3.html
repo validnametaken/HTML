@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time Volume Meter</title>
+    <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
+</head>
+<body>
+    <h1>Real-time Volume Meter</h1>
+    <button id="startButton">Start Recording</button>
+    <button id="stopButton">Stop Recording</button>
+    <div id="volumeMeter">Volume: <span id="volumeValue">-</span></div>
+
+    <script>
+        let recorder;
+        let audioContext = new AudioContext();
+        let volumeMeter = document.getElementById('volumeMeter');
+        let volumeValue = document.getElementById('volumeValue');
+
+        function startRecording() {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    let input = audioContext.createMediaStreamSource(stream);
+                    recorder = new Recorder(input);
+                    recorder.record();
+                    console.log('Recording started...');
+                    analyzeVolume(input);
+                })
+                .catch(error => {
+                    console.error('Error accessing microphone:', error);
+                });
+        }
+
+        function stopRecording() {
+            if (recorder) {
+                recorder.stop();
+                console.log('Recording stopped...');
+            }
+        }
+
+        function analyzeVolume(input) {
+            if (!input) {
+                console.error('Audio source not initialized.');
+                return;
+            }
+            let analyser = audioContext.createAnalyser();
+            input.connect(analyser);
+
+            let dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+            function updateVolume() {
+    analyser.getByteTimeDomainData(dataArray);
+    console.log('Data Array:', dataArray); // Log the dataArray
+    let rms = calculateRMS(dataArray);
+    let volume = Math.round(rms * 100);
+    volumeValue.textContent = volume;
+    console.log('RMS:', rms); // Log RMS value
+    requestAnimationFrame(updateVolume);
+}
+
+            updateVolume();
+        }
+
+        function calculateRMS(dataArray) {
+            let sumOfSquares = 0;
+            for (let i = 0; i < dataArray.length; i++) {
+                let value = (dataArray[i] - 128) / 128; // Normalize values to [-1, 1]
+                sumOfSquares += value ** 2;
+            }
+            let rms = Math.sqrt(sumOfSquares / dataArray.length);
+            return rms;
+        }
+
+        document.getElementById('startButton').addEventListener('click', startRecording);
+        document.getElementById('stopButton').addEventListener('click', stopRecording);
+    </script>
+</body>
+</html>

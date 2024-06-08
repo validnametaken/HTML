@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Countdown Timers</title>
+    <title>Dates Tracker</title>
     <style>
         body {
             text-align: center;
@@ -27,19 +27,19 @@
             margin-bottom: 20px;
             position: relative;
             display: inline-block;
-            padding-right: 100px; /* Adjust according to the image size */
+            padding-right: 100px;
         }
 
         .timer div {
             display: inline-block;
             min-width: 90px;
-            margin: 0 5px; /* Adjust spacing between timer elements */
+            margin: 0 5px;
         }
 
         .timer span {
             color: #B1CDF1;
             display: block;
-            font-size: .35em;
+            font-size: .6em;
             font-weight: 400;
         }
 
@@ -48,8 +48,8 @@
             right: 0;
             top: 50%;
             transform: translateY(-50%);
-            max-height: 50px; /* Adjust image height */
-            max-width: 50px; /* Adjust image width */
+            max-height: 50px;
+            max-width: 50px;
             width: auto;
             height: auto;
         }
@@ -58,121 +58,169 @@
             border-top: 2px solid #48C8FF;
             margin: 20px 0;
         }
+
+        .past-event {
+            opacity: 0.8;
+        }   
+
+        .past-event .timer {
+            display: none;
+        }
+        .past-event p {
+        font-size: 0.6em; /* Adjust the font size as needed */
+        /* You can also add other styles like color, etc. here */
+    }
     </style>
 </head>
 <body>
     <script>
+        // Array of events with dates
+        var events = [
+            { id: 1, date: "June 26, 2024 00:00:00", title: "Nobu's Birthday" },
+            { id: 2, date: "July 18, 2024 00:00:00", title: "Allan's Birthday" },
+            { id: 3, date: "August 10, 2024 00:00:00", title: "Andy's Birthday" },
+            { id: 4, date: "October 2, 2024 00:00:00", title: "Nina's Birthday" },
+            { id: 5, date: "November 25, 2024 00:00:00", title: "Noah's Birthday" },
+            { id: 6, date: "June 25, 2008 00:00:00", title: "Andy&Nobu Meeting" },
+            { id: 7, date: "February 23, 2009 00:00:00", title: "Marriage Day" },
+            { id: 8, date: "July 18, 2018 00:00:00", title: "Allan was born" },
+            { id: 9, date: "November 25, 2014 00:00:00", title: "Noah was born" },
+            { id: 10, date: "October 2, 2020 00:00:00", title: "Nina was born" },
+            { id: 11, date: "June 26, 1983 00:00:00", title: "Nobu was born" },
+            { id: 12, date: "April 14, 2012 00:00:00", title: "Ocean View House" },
+            { id: 13, date: "August 10, 1981 00:00:00", title: "Andy was born" }
+        ];
+
         // Function to update timer
         function updateTimer(id, futureDate) {
             var future = Date.parse(futureDate);
             var now = new Date();
             var diff = future - now;
-    
+
             if (diff < 0) {
-                // If the event has passed, calculate the number of days passed since the event
                 var daysPassed = Math.floor(-diff / (1000 * 60 * 60 * 24));
-    
-                // Display the number of days passed
                 document.getElementById('days' + id).innerText = daysPassed;
-    
-                // Hide the other time units (hours, minutes, seconds)
                 document.getElementById('hours' + id).style.display = 'none';
                 document.getElementById('minutes' + id).style.display = 'none';
                 document.getElementById('seconds' + id).style.display = 'none';
             } else {
-                // If the event is in the future, calculate the countdown timer as before
                 var days = Math.floor(diff / (1000 * 60 * 60 * 24));
                 var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 var mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                 var secs = Math.floor((diff % (1000 * 60)) / 1000);
-    
+
                 document.getElementById('days' + id).innerText = days;
                 document.getElementById('hours' + id).innerText = hours;
                 document.getElementById('minutes' + id).innerText = mins;
                 document.getElementById('seconds' + id).innerText = secs;
             }
         }
-    
-    
-        // Array of events
-        var events = [
-            { id: 1, date: "June 11, 2024 11:30:00", title: "My Birthday" },
-            { id: 2, date: "December 25, 2024 00:00:00", title: "Christmas Eve" },
-            { id: 3, date: "January 1, 2025 00:00:00", title: "New Year's Eve" },
-            { id: 4, date: "July 4, 2024 00:00:00", title: "Independence Day" },
-            { id: 5, date: "October 31, 2024 00:00:00", title: "Halloween" },
-            { id: 6, date: "October 31, 2020 00:00:00", title: "Test1" },
-            { id: 7, date: "October 31, 1981 00:00:00", title: "Test2" }
-        ];
-    
-        // Sort events by date
-        events.sort(function(a, b) {
-            return new Date(a.date) - new Date(b.date);
-        });
-    
-        // Separate past and future events
-        var pastEvents = events.filter(event => Date.parse(event.date) < Date.now());
-        var futureEvents = events.filter(event => Date.parse(event.date) >= Date.now());
-    
-        // Sort past events in descending order
-        pastEvents.sort(function(a, b) {
-            return new Date(b.date) - new Date(a.date);
-        });
-    
-        // Concatenate future events followed by past events
-        var sortedEvents = futureEvents.concat(pastEvents);
-    
+
+        // Function to load images
+        function loadImage(src) {
+            return new Promise(function(resolve, reject) {
+                var image = new Image();
+                image.onload = function() {
+                    resolve(image);
+                };
+                image.onerror = function() {
+                    reject();
+                };
+                image.src = src;
+            });
+        }
+
+        // Separate events into past and future, and sort accordingly
+        function separateEvents(events) {
+            events.sort(function(a, b) {
+                return new Date(a.date) - new Date(b.date);
+            });
+
+            var pastEvents = events.filter(event => Date.parse(event.date) < Date.now());
+            var futureEvents = events.filter(event => Date.parse(event.date) >= Date.now());
+
+            pastEvents.sort(function(a, b) {
+                return new Date(b.date) - new Date(a.date);
+            });
+
+            return { pastEvents, futureEvents };
+        }
+
         // Create timers dynamically with separators
-        for (var i = 0; i < sortedEvents.length; i++) {
-            var event = sortedEvents[i];
-            var timerDiv = document.createElement('div');
-            timerDiv.id = 'timer' + event.id;
-            timerDiv.className = 'timer';
-            document.body.appendChild(timerDiv);
-    
-            var headline = document.createElement('h1');
-            headline.id = 'headline' + event.id;
-            headline.innerText = event.title + ' Countdown';
-            timerDiv.appendChild(headline);
-    
-            var timeElements = ['days', 'hours', 'minutes', 'seconds'];
-            for (var j = 0; j < timeElements.length; j++) {
-                var timeElementDiv = document.createElement('div');
-                var timeSpan = document.createElement('span');
-                timeSpan.id = timeElements[j] + event.id;
-                timeSpan.innerText = '0';
-                timeElementDiv.appendChild(timeSpan);
-                timeElementDiv.innerHTML += '<span>' + timeElements[j] + '</span>';
-                timerDiv.appendChild(timeElementDiv);
-            }
-    
-            var image = document.createElement('img');
-            image.src = 'image' + event.id + '.png';
-            image.alt = 'Image ' + event.id;
-            timerDiv.appendChild(image);
-    
-            // Add a separator after each event except the last one
-            if (i < sortedEvents.length - 1) {
-                var separator = document.createElement('div');
-                separator.className = 'separator';
-                document.body.appendChild(separator);
+        async function createTimers() {
+            var { pastEvents, futureEvents } = separateEvents(events);
+            var sortedEvents = futureEvents.concat(pastEvents);
+
+            for (var i = 0; i < sortedEvents.length; i++) {
+                var event = sortedEvents[i];
+                var timerDiv = document.createElement('div');
+                timerDiv.id = 'timer' + event.id;
+                timerDiv.className = 'timer';
+                document.body.appendChild(timerDiv);
+
+                var headline = document.createElement('h1');
+                headline.id = 'headline' + event.id;
+                headline.innerText = event.title;
+                timerDiv.appendChild(headline);
+
+                // Check if the event is in the past
+                if (Date.parse(event.date) < Date.now()) {
+                    // Create and append the message for past events
+                    var eventDate = new Date(event.date);
+                    var currentDate = new Date();
+                    var timeDiff = Math.abs(currentDate.getTime() - eventDate.getTime());
+                    var daysPassed = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                    var yearsPassed = (daysPassed / 365.25).toFixed(0);
+                    var months = Math.floor((daysPassed % 365) / 30.44); // Approximate months
+                    var remainingDays = daysPassed % 30.44; // Approximate remaining days
+
+                    var pastMessage = document.createElement('p');
+                    pastMessage.innerText =  yearsPassed + ' years and ' + months +' months ago (' + daysPassed + ' days).';
+                    timerDiv.appendChild(pastMessage);
+                    timerDiv.classList.add('past-event');
+                } else {
+                    // Create time elements for future events
+                    var timeElements = ['days', 'hours', 'minutes', 'seconds'];
+                    for (var j = 0; j < timeElements.length; j++) {
+                        var timeElementDiv = document.createElement('div');
+                        var timeSpan = document.createElement('span');
+                        timeSpan.id = timeElements[j] + event.id;
+                        timeSpan.innerText = '0';
+                        timeElementDiv.appendChild(timeSpan);
+                        timeElementDiv.innerHTML += '<span>' + timeElements[j] + '</span>';
+                        timerDiv.appendChild(timeElementDiv);
+                    }
+                }
+
+                // Load image if available
+                try {
+                    var image = await loadImage('image' + event.id + '.png');
+                    image.alt = 'Image ' + event.id;
+                    timerDiv.appendChild(image);
+                } catch (error) {
+                    // Do nothing if image does not exist
+                }
+
+                if (i < sortedEvents.length - 1) {
+                    var separator = document.createElement('div');
+                    separator.className = 'separator';
+                    document.body.appendChild(separator);
+                }
             }
         }
-    
-        // Update timers
+
+        createTimers();
+
         function updateTimers() {
             for (var i = 0; i < events.length; i++) {
                 var event = events[i];
-                updateTimer(event.id, event.date);
+                if (Date.parse(event.date) >= Date.now()) {
+                    updateTimer(event.id, event.date);
+                }
             }
         }
-    
-        // Call updateTimers function initially
-        updateTimers();
-    
-        // Set interval to update timers every second
+
         setInterval(updateTimers, 1000);
     </script>
-    
 </body>
 </html>
