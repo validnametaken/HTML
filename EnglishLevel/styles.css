@@ -1,0 +1,63 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
+    height: 80%;
+}
+
+.ruler {
+    position: relative;
+    width: 20%; /* Width of the ruler */
+    height: 100%; /* Ensure the ruler covers the entire height */
+    background-color: #fff;
+    border: 1px solid #ccc;
+    overflow: hidden; /* Hide overflow for a cleaner look */
+}
+
+.cm {
+    position: absolute;
+    width: 100%; /* Each cm covers the entire width of the ruler */
+    height: 0; /* Initially hidden height */
+    transition: height 0.5s ease-in-out; /* Smooth transition for height change */
+}
+
+.level {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Align content to the bottom */
+    align-items: center;
+    width: 100%;
+    background-color: transparent; /* Initially transparent */
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+.level1 { background-color: blue; }
+.level2 { background-color: green; }
+.level3 { background-color: pink; }
+.level4 { background-color: yellow; }
+.level5 { background-color: purple; }
+
+.explanation-box {
+    width: 50%; /* Width of the explanation box */
+    height: 100%; /* Ensure it covers the entire height */
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    padding: 20px;
+}
+
+.explanation {
+    height: 100%;
+    overflow-y: auto; /* Enable scrolling if content exceeds box height */
+}

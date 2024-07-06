@@ -1,0 +1,67 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    height: 80%;
+    overflow: hidden; /* Ensures content outside container is hidden initially */
+}
+
+.level {
+    width: 200px;
+    height: 200px;
+    text-align: center;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    position: absolute; /* Allows positioning relative to the container */
+    transition: transform 0.5s ease-in-out;
+}
+
+.level1 {
+    transform: scale(1);
+    left: 50%;
+    top: 50%;
+    z-index: 5; /* Ensures level 1 is on top initially */
+}
+
+.level2 {
+    transform: scale(0.5);
+    left: 45%;
+    top: 45%;
+    z-index: 4;
+}
+
+.level3 {
+    transform: scale(0.5);
+    left: 40%;
+    top: 40%;
+    z-index: 3;
+}
+
+.level4 {
+    transform: scale(0.5);
+    left: 35%;
+    top: 35%;
+    z-index: 2;
+}
+
+.level5 {
+    transform: scale(0.0625);
+    left: 30%;
+    top: 30%;
+    z-index: 1;
+}
+
+.level:hover {
+    transform: scale(1.1);
+}

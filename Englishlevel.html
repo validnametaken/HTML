@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Learning Progress</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 80%;
+            height: 80%;
+            overflow: hidden; /* Ensures content outside container is hidden initially */
+        }
+
+        .level {
+            width: 200px;
+            height: 200px;
+            text-align: center;
+            padding: 20px;
+            background-color: #ffffff;
+            border: 1px solid #cccccc;
+            position: absolute; /* Allows positioning relative to the container */
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .level1 {
+            transform: scale(1);
+            left: 50%;
+            top: 50%;
+            z-index: 5; /* Ensures level 1 is on top initially */
+        }
+
+        .level2 {
+            transform: scale(0.5);
+            left: 45%;
+            top: 45%;
+            z-index: 4;
+        }
+
+        .level3 {
+            transform: scale(0.5);
+            left: 40%;
+            top: 40%;
+            z-index: 3;
+        }
+
+        .level4 {
+            transform: scale(0.5);
+            left: 35%;
+            top: 35%;
+            z-index: 2;
+        }
+
+        .level5 {
+            transform: scale(0.0625);
+            left: 30%;
+            top: 30%;
+            z-index: 1;
+        }
+
+        .level:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="level level1">
+            <h2>Level 0</h2>
+            <p>Can't say anything.</p>
+            <p>Want to say things like "apple" or anything at all!</p>
+        </div>
+        <div class="level level2">
+            <h2>Level 1</h2>
+            <p>Can say basic words like "apple".</p>
+            <p>Want to say things like "I like apples".</p>
+        </div>
+        <div class="level level3">
+            <h2>Level 2</h2>
+            <p>Can say "I like apples"</p>
+            <p>Want to say "I sometimes like apples, when they are not sour".</p>
+        </div>
+        <div class="level level4">
+            <h2>Level 3</h2>
+            <p>Can say "I sometimes like apples, when they are not sour".</p>
+            <p>Want to say "I like apples, but it depends on a range of factors like season, kind of apple, mood and other factors"</p>
+        </div>
+        <div class="level level5">
+            <h2>Level X</h2>
+            <p>There are many things they can't express</p>
+            <p>Don't care, try and communicate as best as possible</p>
+        </div>
+    </div>
+
+    <script>
+        // Initialize current level index
+        let currentLevelIndex = 0;
+
+        document.addEventListener('click', function() {
+            // Select all elements with class 'level'
+            let levels = document.querySelectorAll('.level');
+
+            // Ensure current level index stays within bounds
+            if (currentLevelIndex < levels.length) {
+                // Reset all levels to their initial scale and z-index
+                levels.forEach(function(level, index) {
+                    level.style.transform = 'scale(0.5)';
+                    level.style.zIndex = levels.length - index; // Set z-index in reverse order
+                });
+
+                // Scale up the current level and set it to the top layer
+                levels[currentLevelIndex].style.transform = 'scale(3.0)';
+                levels[currentLevelIndex].style.zIndex = levels.length + 1;
+
+                // Increment current level index for the next click
+                currentLevelIndex++;
+            } else {
+                // Reset current level index to start over
+                currentLevelIndex = 0;
+            }
+        });
+    </script>
+</body>
+</html>
