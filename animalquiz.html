@@ -23,110 +23,25 @@
             align-items: center;
             height: 50vh; /* Set height to 50% of viewport height */
             width: 100%;
-            flex-wrap: nowrap; /* Prevent wrapping to the next line */
+            overflow: hidden; /* Ensure no horizontal overflow */
         }
 
         .button-77 {
-            align-items: center;
-            appearance: none;
-            background-clip: padding-box;
-            background-color: initial;
-            background-image: none;
-            border-style: none;
-            box-sizing: border-box;
+            background: linear-gradient(92.83deg, #ff7426 0, #f93a13 100%);
+            border: none;
+            border-radius: 10px;
             color: #fff;
             cursor: pointer;
-            display: inline-block;
-            flex-direction: row;
-            flex-shrink: 0;
             font-family: Eina01, sans-serif;
-            font-size: 10vh; /* Increased font size */
-            font-weight: 800;
-            justify-content: center;
-            line-height: 1; /* Adjusted line-height */
-            margin: 0;
-            min-height: 50px; /* Adjusted min-height */
-            max-height: 200px; /* Adjusted min-height */
-            outline: none;
-            overflow: visible;
-            padding: 1vh 2vh; /* Adjusted padding */
-            pointer-events: auto;
-            position: relative;
-            text-align: center;
-            text-decoration: none;
-            text-transform: none;
-            user-select: none;
-            -webkit-user-select: none;
-            touch-action: manipulation;
-            vertical-align: middle;
-            width: auto;
-            word-break: keep-all;
-            z-index: 0;
-            margin-top: 20px; /* Adjust this value to move the button closer or further from the top */
+            font-size: 5vh;
+            font-weight: bold;
+            padding: 20px 40px;
+            margin-top: 20px;
+            text-transform: uppercase;
         }
 
-        @media (min-width: 768px) {
-            .button-77 {
-                padding: 30px 60px; /* Adjusted padding for larger screens */
-            }
-        }
-
-        .button-77:before,
-        .button-77:after {
-            border-radius: 80px;
-        }
-
-        .button-77:before {
-            background-color: rgba(249, 58, 19, .32);
-            content: "";
-            display: block;
-            height: 100%;
-            left: 0;
-            overflow: hidden;
-            position: absolute;
-            top: 0;
-            width: 100%;
-            z-index: -2;
-        }
-
-        .button-77:after {
-            background-color: initial;
-            background-image: linear-gradient(92.83deg, #ff7426 0, #f93a13 100%);
-            bottom: 4px;
-            content: "";
-            display: block;
-            left: 4px;
-            overflow: hidden;
-            position: absolute;
-            right: 4px;
-            top: 4px;
-            transition: all 100ms ease-out;
-            z-index: -1;
-        }
-
-        .button-77:hover:not(:disabled):after {
-            bottom: 0;
-            left: 0;
-            right: 0;
-            top: 0;
-            transition-timing-function: ease-in;
-        }
-
-        .button-77:active:not(:disabled) {
-            color: #ccc;
-        }
-
-        .button-77:active:not(:disabled):after {
-            background-image: linear-gradient(0deg, rgba(0, 0, 0, .2), rgba(0, 0, 0, .2)), linear-gradient(92.83deg, #ff7426 0, #f93a13 100%);
-            bottom: 4px;
-            left: 4px;
-            right: 4px;
-            top: 4px;
-        }
-
-        .button-77:disabled {
-            cursor: default;
-            opacity: .24;
+        .button-77:hover {
+            opacity: 0.8;
         }
 
         ul {
@@ -134,7 +49,6 @@
             padding: 0;
             display: flex;
             justify-content: center;
-            max-height: 100%; /* Ensure it fits within the container */
             width: 100%;
             margin: 0;
         }
@@ -146,22 +60,18 @@
 
         img {
             cursor: pointer;
-            max-height: 100%; /* Ensure it fits within the container */
             max-width: 100%; /* Ensure it fits within the container */
             height: auto; /* Maintain aspect ratio */
-            width: auto; /* Maintain aspect ratio */
             object-fit: contain; /* Ensure it scales properly */
         }
 
         #answerBox {
             margin-top: 20px; /* Adjust margin as needed */
-            margin-bottom: 30px;
-            font-size: 5em; /* Adjust font size */
+            font-size: 3em; /* Adjust font size */
             height: 50px; /* Adjust height as needed */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.5s ease; /* Smooth transition */
+            text-align: center;
+            display: none; /* Initially hide */
+            transition: all 0.3s ease; /* Smooth transition */
         }
 
         .correct {
@@ -176,11 +86,9 @@
     </style>
 </head>
 <body>
-    <div>
-        <button class="button-77" id="playSound" onclick="playAnimalSound()">Play Sound</button>
-    </div>
-
     <div id="quiz"></div>
+
+    <button class="button-77" id="playSound" onclick="playAnimalSound()">Play Sound</button>
 
     <div id="answerBox"></div>
 
@@ -263,10 +171,15 @@
             if (selected === currentQuestion.name) {
                 answerBox.textContent = 'Correct!';
                 answerBox.className = 'correct';
-                setTimeout(generateQuestion, 1000); // Wait 1 second before generating next question
+                answerBox.style.display = 'block'; // Show answer box
+                setTimeout(() => {
+                    answerBox.style.display = 'none'; // Hide after delay
+                    generateQuestion(); // Generate next question
+                }, 1000);
             } else {
                 answerBox.textContent = 'Try again';
                 answerBox.className = 'incorrect';
+                answerBox.style.display = 'block'; // Show answer box
             }
         }
 
