@@ -21,7 +21,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 50vh; /* Set height to 50% of viewport height */
+            height: 65vh; /* Adjusted height */
             width: 100%;
             overflow: hidden; /* Ensure no horizontal overflow */
         }
@@ -33,45 +33,33 @@
             color: #fff;
             cursor: pointer;
             font-family: Eina01, sans-serif;
-            font-size: 5vh;
+            font-size: 7vh; /* Adjusted font size */
             font-weight: bold;
-            padding: 20px 40px;
-            margin-top: 20px;
+            padding: 10px 20px; /* Adjusted padding */
+            margin-top: 15px; /* Adjusted margin */
             text-transform: uppercase;
+            position: relative; /* Ensure relative positioning */
+            z-index: 1; /* Ensure it's above answerBox */
         }
 
         .button-77:hover {
             opacity: 0.8;
         }
 
-        ul {
-            list-style-type: none;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            width: 100%;
-            margin: 0;
-        }
-
-        li {
-            margin: 0 10px; /* Adjust margin between images */
-            flex: 1; /* Allow items to grow equally */
-        }
-
-        img {
-            cursor: pointer;
-            max-width: 100%; /* Ensure it fits within the container */
-            height: auto; /* Maintain aspect ratio */
-            object-fit: contain; /* Ensure it scales properly */
-        }
-
         #answerBox {
-            margin-top: 20px; /* Adjust margin as needed */
-            font-size: 3em; /* Adjust font size */
-            height: 50px; /* Adjust height as needed */
+            margin-top: 10px; /* Adjust margin as needed */
+            font-size: 6vh; /* Adjust font size */
+            height: 10vh; /* Adjusted height */
             text-align: center;
-            display: none; /* Initially hide */
+            /* display: none; Remove this line to keep it visible */
             transition: all 0.3s ease; /* Smooth transition */
+            position: relative; /* Position relatively */
+            width: 100%; /* Full width */
+    
+            padding: 10px; /* Padding for content */
+            border-radius: 10px; /* Rounded corners */
+            z-index: 2; /* Ensure above quiz images */
+            background: linear-gradient(to right, #ffecd2 0%, #fcb69f 100%);
         }
 
         .correct {
@@ -83,12 +71,38 @@
             color: red;
             font-weight: bold;
         }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            max-height: 100%; /* Ensure it fits within the container */
+            width: 100%;
+            margin: 0;
+        }
+
+        li {
+            margin: 0 10px; /* Adjust margin between images */
+            flex: 1; /* Allow items to grow equally */
+        }
+
+        img {
+            cursor: pointer;
+            max-height: 100%; /* Ensure it fits within the container */
+            max-width: 100%; /* Ensure it fits within the container */
+            height: auto; /* Maintain aspect ratio */
+            width: auto; /* Maintain aspect ratio */
+            object-fit: contain; /* Ensure it scales properly */
+        }
     </style>
 </head>
 <body>
     <div id="quiz"></div>
 
-    <button class="button-77" id="playSound" onclick="playAnimalSound()">Play Sound</button>
+    <div>
+        <button class="button-77" id="playSound" onclick="playAnimalSound()">Play Sound</button>
+    </div>
 
     <div id="answerBox"></div>
 
@@ -148,6 +162,7 @@
             `;
 
             answerBox.textContent = ''; // Clear previous answer
+            answerBox.style.display = 'block'; // Ensure answer box is visible
         }
 
         function playAnimalSound() {
@@ -171,15 +186,15 @@
             if (selected === currentQuestion.name) {
                 answerBox.textContent = 'Correct!';
                 answerBox.className = 'correct';
-                answerBox.style.display = 'block'; // Show answer box
+                // answerBox.style.display = 'block'; // No longer needed to show it here
                 setTimeout(() => {
-                    answerBox.style.display = 'none'; // Hide after delay
+                    // answerBox.style.display = 'none'; // Hide after delay, remove this line
                     generateQuestion(); // Generate next question
                 }, 1000);
             } else {
                 answerBox.textContent = 'Try again';
                 answerBox.className = 'incorrect';
-                answerBox.style.display = 'block'; // Show answer box
+                // answerBox.style.display = 'block'; // No longer needed to show it here
             }
         }
 
