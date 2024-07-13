@@ -261,11 +261,11 @@
 
         function checkAnswer(selected) {
             if (selected === currentQuestion.name) {
-                answerBox.textContent = '✓';
+                answerBox.textContent = 'Correct!';
                 answerBox.className = 'correct';
                 setTimeout(generateQuestion, 1000); // Wait 1 second before generating next question
             } else {
-                answerBox.textContent = '✗';
+                answerBox.textContent = 'Try again';
                 answerBox.className = 'incorrect';
             }
         }
