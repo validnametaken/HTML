@@ -2,79 +2,84 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real-time Volume Meter</title>
-    <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
+    <title>Text Animation</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            overflow-y: scroll; /* Always show vertical scrollbar */
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 3rem;
+            font-family: Arial, sans-serif;
+        }
+
+        .word {
+            display: flex;
+        }
+
+        .letter {
+            opacity: 0;
+            position: relative;
+            animation: slideIn 1s forwards;
+            margin: 0; /* Remove default margin */
+            padding: 0; /* Remove default padding */
+            transform-origin: center; /* Set transform origin */
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100vw);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .container .word:nth-child(1) .letter { animation-delay: 0.1s; }
+        .container .word:nth-child(1) .letter:nth-child(2) { animation-delay: 0.2s; }
+        .container .word:nth-child(1) .letter:nth-child(3) { animation-delay: 0.3s; }
+        .container .word:nth-child(1) .letter:nth-child(4) { animation-delay: 0.4s; }
+        .container .word:nth-child(1) .letter:nth-child(5) { animation-delay: 0.5s; }
+        .container .word:nth-child(1) .letter:nth-child(6) { animation-delay: 0.6s; }
+
+        .container .word:nth-child(2) .letter:nth-child(1) { animation-delay: 0.7s; }
+        .container .word:nth-child(2) .letter:nth-child(2) { animation-delay: 0.8s; }
+        .container .word:nth-child(2) .letter:nth-child(3) { animation-delay: 0.9s; }
+        .container .word:nth-child(2) .letter:nth-child(4) { animation-delay: 1s; }
+        .container .word:nth-child(2) .letter:nth-child(5) { animation-delay: 1.1s; }
+        .container .word:nth-child(2) .letter:nth-child(6) { animation-delay: 1.2s; }
+    </style>
 </head>
 <body>
-    <h1>Real-time Volume Meter</h1>
-    <button id="startButton">Start Recording</button>
-    <button id="stopButton">Stop Recording</button>
-    <div id="volumeMeter">Volume: <span id="volumeValue">-</span></div>
-
-    <script>
-        let recorder;
-        let audioContext = new AudioContext();
-        let volumeMeter = document.getElementById('volumeMeter');
-        let volumeValue = document.getElementById('volumeValue');
-
-        function startRecording() {
-            navigator.mediaDevices.getUserMedia({ audio: true })
-                .then(stream => {
-                    let input = audioContext.createMediaStreamSource(stream);
-                    recorder = new Recorder(input);
-                    recorder.record();
-                    console.log('Recording started...');
-                    analyzeVolume(input);
-                })
-                .catch(error => {
-                    console.error('Error accessing microphone:', error);
-                });
-        }
-
-        function stopRecording() {
-            if (recorder) {
-                recorder.stop();
-                console.log('Recording stopped...');
-            }
-        }
-
-        function analyzeVolume(input) {
-            if (!input) {
-                console.error('Audio source not initialized.');
-                return;
-            }
-            let analyser = audioContext.createAnalyser();
-            input.connect(analyser);
-
-            let dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-            function updateVolume() {
-    analyser.getByteTimeDomainData(dataArray);
-    console.log('Data Array:', dataArray); // Log the dataArray
-    let rms = calculateRMS(dataArray);
-    let volume = Math.round(rms * 100);
-    volumeValue.textContent = volume;
-    console.log('RMS:', rms); // Log RMS value
-    requestAnimationFrame(updateVolume);
-}
-
-            updateVolume();
-        }
-
-        function calculateRMS(dataArray) {
-            let sumOfSquares = 0;
-            for (let i = 0; i < dataArray.length; i++) {
-                let value = (dataArray[i] - 128) / 128; // Normalize values to [-1, 1]
-                sumOfSquares += value ** 2;
-            }
-            let rms = Math.sqrt(sumOfSquares / dataArray.length);
-            return rms;
-        }
-
-        document.getElementById('startButton').addEventListener('click', startRecording);
-        document.getElementById('stopButton').addEventListener('click', stopRecording);
-    </script>
+    <div class="container">
+        <div class="word">
+            <span class="letter">L</span>
+            <span class="letter">o</span>
+            <span class="letter">v</span>
+            <span class="letter">i</span>
+            <span class="letter">n</span>
+            <span class="letter">g</span>
+        </div>
+        <div class="word">
+            <span class="letter">F</span>
+            <span class="letter">a</span>
+            <span class="letter">m</span>
+            <span class="letter">i</span>
+            <span class="letter">l</span>
+            <span class="letter">y</span>
+        </div>
+    </div>
 </body>
 </html>

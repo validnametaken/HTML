@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animal Quiz</title>
+    <style>
+        img {
+            display: block;
+            margin: 10px auto;
+            cursor: pointer;
+            width: 200px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            text-align: center;
+        }
+        li {
+            display: inline-block;
+            margin: 10px;
+        }
+        #playSound {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="quiz"></div>
+
+    <audio id="animalSound" preload="auto">
+        <!-- Fallback audio source for compatibility -->
+        <source src="" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <button id="playSound" onclick="playAnimalSound()">Play Sound</button>
+
+    <script>
+        const animals = [
+            {name: "Elephant", image: "animalquiz/images/elephant.gif", sound: "animalquiz/sounds/elephantsound.mp3"},
+            {name: "Tiger", image: "animalquiz/images/tiger.gif", sound: "animalquiz/sounds/tigersound.mp3"},
+            {name: "Penguin", image: "animalquiz/images/penguin.gif", sound: "animalquiz/sounds/penguinsound.mp3"},
+            {name: "Dog", image: "animalquiz/images/dog.gif", sound: "animalquiz/sounds/dogsound.mp3"},
+            {name: "Dolphin", image: "animalquiz/images/dolphin.gif", sound: "animalquiz/sounds/dolphinsound.mp3"},
+            {name: "Pig", image: "animalquiz/images/pig.gif", sound: "animalquiz/sounds/pigsound.mp3"},
+            // Add more animals here
+        ];
+
+        let currentQuestion;
+        const quizContainer = document.getElementById('quiz');
+        const animalSound = document.getElementById('animalSound');
+        const playSoundButton = document.getElementById('playSound');
+
+        function getRandomAnimal(exclude = []) {
+            let animal;
+            do {
+                animal = animals[Math.floor(Math.random() * animals.length)];
+            } while (exclude.includes(animal.name));
+            return animal;
+        }
+
+        function generateQuestion() {
+            currentQuestion = getRandomAnimal();
+            const options = [currentQuestion];
+            while (options.length < 3) {
+                const randomAnimal = getRandomAnimal(options.map(animal => animal.name));
+                options.push(randomAnimal);
+            }
+            options.sort(() => 0.5 - Math.random()); // Shuffle the options
+            displayQuestion(currentQuestion, options);
+        }
+
+        function displayQuestion(question, options) {
+            // Reset audio element
+            animalSound.pause();
+            animalSound.src = question.sound;
+
+            // Show play sound button
+            playSoundButton.style.display = 'inline-block';
+
+            quizContainer.innerHTML = `
+                <ul>
+                    ${options.map(option => `<li><img src="${option.image}" alt="${option.name}" onclick="checkAnswer('${option.name}')"></li>`).join('')}
+                </ul>
+            `;
+        }
+
+        function playAnimalSound() {
+            // Check if audio source is set
+            if (animalSound.src === '') {
+                console.error('Audio source not set.');
+                return;
+            }
+
+            animalSound.play()
+                .then(() => {
+                    // Audio successfully started
+                    console.log('Audio playing.');
+                })
+                .catch(error => {
+                    console.error('Failed to play audio:', error);
+                });
+            
+            // Hide play sound button after playing once
+            playSoundButton.style.display = 'none';
+        }
+
+        function checkAnswer(selected) {
+            if (selected === currentQuestion.name) {
+                alert('Correct!');
+                generateQuestion();
+            } else {
+                alert(`Wrong! The correct answer was ${currentQuestion.name}. Try again.`);
+            }
+        }
+
+        generateQuestion();
+    </script>
+</body>
+</html>
