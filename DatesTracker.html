@@ -67,9 +67,8 @@
             display: none;
         }
         .past-event p {
-        font-size: 0.6em; /* Adjust the font size as needed */
-        /* You can also add other styles like color, etc. here */
-    }
+            font-size: 0.6em; /* Adjust the font size as needed */
+        }
     </style>
 </head>
 <body>
@@ -168,14 +167,28 @@
                     // Create and append the message for past events
                     var eventDate = new Date(event.date);
                     var currentDate = new Date();
-                    var timeDiff = Math.abs(currentDate.getTime() - eventDate.getTime());
-                    var daysPassed = Math.ceil(timeDiff / (1000 * 3600 * 24));
-                    var yearsPassed = (daysPassed / 365.25).toFixed(0);
-                    var months = Math.floor((daysPassed % 365) / 30.44); // Approximate months
-                    var remainingDays = daysPassed % 30.44; // Approximate remaining days
+
+                    var years = currentDate.getFullYear() - eventDate.getFullYear();
+                    var months = currentDate.getMonth() - eventDate.getMonth();
+                    if (months < 0) {
+                        years--;
+                        months += 12;
+                    }
+                    var days = currentDate.getDate() - eventDate.getDate();
+                    if (days < 0) {
+                        if (months > 0) {
+                            months--;
+                        } else {
+                            years--;
+                            months = 11;
+                        }
+                        days += new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate();
+                    }
+
+                    var daysPassed = Math.floor((currentDate - eventDate) / (1000 * 60 * 60 * 24));
 
                     var pastMessage = document.createElement('p');
-                    pastMessage.innerText =  yearsPassed + ' years and ' + months +' months ago (' + daysPassed + ' days).';
+                    pastMessage.innerText = years + ' years and ' + months + ' months ago (' + daysPassed + ' days).';
                     timerDiv.appendChild(pastMessage);
                     timerDiv.classList.add('past-event');
                 } else {
