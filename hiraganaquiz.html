@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animal Quiz</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(to right, #ffecd2 0%, #fcb69f 100%);
+            font-family: Arial, sans-serif;
+            overflow: hidden; /* Prevent vertical scrolling */
+        }
+
+        #quiz {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 65vh; /* Adjusted height */
+            width: 100%;
+            overflow: hidden; /* Ensure no horizontal overflow */
+        }
+
+        .button-77 {
+            background: linear-gradient(92.83deg, #ff7426 0, #f93a13 100%);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            font-family: Eina01, sans-serif;
+            font-size: 7vh; /* Adjusted font size */
+            font-weight: bold;
+            padding: 10px 20px; /* Adjusted padding */
+            margin-top: 15px; /* Adjusted margin */
+            text-transform: uppercase;
+            position: relative; /* Ensure relative positioning */
+            z-index: 1; /* Ensure it's above answerBox */
+        }
+
+        .button-77:hover {
+            opacity: 0.8;
+        }
+
+        #answerBox {
+            margin-top: 10px; /* Adjust margin as needed */
+            font-size: 6vh; /* Adjust font size */
+            height: 10vh; /* Adjusted height */
+            text-align: center;
+            /* display: none; Remove this line to keep it visible */
+            transition: all 0.3s ease; /* Smooth transition */
+            position: relative; /* Position relatively */
+            width: 100%; /* Full width */
+    
+            padding: 10px; /* Padding for content */
+            border-radius: 10px; /* Rounded corners */
+            z-index: 2; /* Ensure above quiz images */
+            background: linear-gradient(92.83deg, #ff7426 0, #f93a13 100%);
+        }
+
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            max-height: 100%; /* Ensure it fits within the container */
+            width: 100%;
+            margin: 0;
+        }
+
+        li {
+            margin: 0 10px; /* Adjust margin between images */
+            flex: 1; /* Allow items to grow equally */
+        }
+
+        img {
+            cursor: pointer;
+            max-height: 100%; /* Ensure it fits within the container */
+            max-width: 100%; /* Ensure it fits within the container */
+            height: auto; /* Maintain aspect ratio */
+            width: auto; /* Maintain aspect ratio */
+            object-fit: contain; /* Ensure it scales properly */
+            border: 1px solid black; /* Change the color as needed */
+            padding: 10px; /* Optional: Adds some space between the border and the content */
+        }
+    </style>
+</head>
+<body>
+    <div id="quiz"></div>
+
+    <div>
+        <button class="button-77" id="playSound" onclick="playAnimalSound()">Play Sound</button>
+    </div>
+
+    <div id="answerBox"></div>
+
+    <audio id="animalSound" preload="auto">
+        <!-- Fallback audio source for compatibility -->
+        <source src="" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        const animals = [
+            {name: "a", image: "hiraganaquiz/images/hiragana-a.png", sound: "hiraganaquiz/sounds/hiragana-a.mp3"},
+            {name: "i", image: "hiraganaquiz/images/hiragana-i.png", sound: "hiraganaquiz/sounds/hiragana-i.mp3"},
+            {name: "u", image: "hiraganaquiz/images/hiragana-u.png", sound: "hiraganaquiz/sounds/hiragana-u.mp3"},
+            {name: "e", image: "hiraganaquiz/images/hiragana-e.png", sound: "hiraganaquiz/sounds/hiragana-e.mp3"},
+            {name: "0", image: "hiraganaquiz/images/hiragana-o.png", sound: "hiraganaquiz/sounds/hiragana-o.mp3"},
+            // Add more animals here
+        ];
+
+        let currentQuestion;
+        const quizContainer = document.getElementById('quiz');
+        const animalSound = document.getElementById('animalSound');
+        const answerBox = document.getElementById('answerBox');
+
+        function getRandomAnimal(exclude = []) {
+            let animal;
+            do {
+                animal = animals[Math.floor(Math.random() * animals.length)];
+            } while (exclude.includes(animal.name));
+            return animal;
+        }
+
+        function generateQuestion() {
+            currentQuestion = getRandomAnimal();
+            const options = [currentQuestion];
+            while (options.length < 3) {
+                const randomAnimal = getRandomAnimal(options.map(animal => animal.name));
+                options.push(randomAnimal);
+            }
+            options.sort(() => 0.5 - Math.random()); // Shuffle the options
+            displayQuestion(currentQuestion, options);
+        }
+
+        function displayQuestion(question, options) {
+            // Reset audio element
+            animalSound.pause();
+            animalSound.src = question.sound;
+
+            // Show play sound button
+            document.getElementById('playSound').style.display = 'inline-block';
+
+            quizContainer.innerHTML = `
+                <ul>
+                    ${options.map(option => `<li><img src="${option.image}" alt="${option.name}" onclick="checkAnswer('${option.name}')"></li>`).join('')}
+                </ul>
+            `;
+
+            answerBox.textContent = ''; // Clear previous answer
+            answerBox.style.display = 'block'; // Ensure answer box is visible
+        }
+
+        function playAnimalSound() {
+            // Check if audio source is set
+            if (animalSound.src === '') {
+                console.error('Audio source not set.');
+                return;
+            }
+
+            animalSound.play()
+                .then(() => {
+                    // Audio successfully started
+                    console.log('Audio playing.');
+                })
+                .catch(error => {
+                    console.error('Failed to play audio:', error);
+                });
+        }
+
+        function checkAnswer(selected) {
+            if (selected === currentQuestion.name) {
+                answerBox.textContent = 'Correct!';
+                answerBox.className = 'correct';
+                // answerBox.style.display = 'block'; // No longer needed to show it here
+                setTimeout(() => {
+                    // answerBox.style.display = 'none'; // Hide after delay, remove this line
+                    generateQuestion(); // Generate next question
+                }, 1000);
+            } else {
+                answerBox.textContent = 'Try again';
+                answerBox.className = 'incorrect';
+                // answerBox.style.display = 'block'; // No longer needed to show it here
+            }
+        }
+
+        generateQuestion();
+    </script>
+</body>
+</html>
