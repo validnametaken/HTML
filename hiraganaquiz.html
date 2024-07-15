@@ -97,14 +97,65 @@
             border: 1px solid black; /* Change the color as needed */
             padding: 10px; /* Optional: Adds some space between the border and the content */
         }
+
+        #levelButtons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px; /* Adjust margin as needed */
+        }
+
+        .level-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .level-button:hover {
+            background-color: #45a049;
+        }
+
+        #autoPlayToggle {
+            margin-top: 15px; /* Adjust margin as needed */
+            background: #f93a13;
+            color: white;
+            border: none;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        #autoPlayToggle:hover {
+            background-color: #ff7426;
+        }
     </style>
 </head>
 <body>
+    <div id="levelButtons">
+        <button class="level-button" onclick="startQuiz(1)">Level 1</button>
+        <button class="level-button" onclick="startQuiz(2)">Level 2</button>
+        <button class="level-button" onclick="startQuiz(3)">Level 3</button>
+        <!-- Add more levels as needed -->
+    </div>
+
     <div id="quiz"></div>
 
     <div>
         <button class="button-77" id="playSound" onclick="playAnimalSound()">Play Sound</button>
     </div>
+
+    <button id="autoPlayToggle" onclick="toggleAutoPlay()">Auto Play: Off</button>
 
     <div id="answerBox"></div>
 
@@ -121,18 +172,31 @@
             {name: "u", image: "hiraganaquiz/images/hiragana-u.png", sound: "hiraganaquiz/sounds/hiragana-u.mp3"},
             {name: "e", image: "hiraganaquiz/images/hiragana-e.png", sound: "hiraganaquiz/sounds/hiragana-e.mp3"},
             {name: "0", image: "hiraganaquiz/images/hiragana-o.png", sound: "hiraganaquiz/sounds/hiragana-o.mp3"},
+            {name: "0", image: "hiraganaquiz/images/hiragana-ka.png", sound: "hiraganaquiz/sounds/hiragana-ka.mp3"},
+            {name: "0", image: "hiraganaquiz/images/hiragana-ki.png", sound: "hiraganaquiz/sounds/hiragana-ki.mp3"},
+            {name: "0", image: "hiraganaquiz/images/hiragana-ku.png", sound: "hiraganaquiz/sounds/hiragana-ku.mp3"},
+            {name: "0", image: "hiraganaquiz/images/hiragana-ke.png", sound: "hiraganaquiz/sounds/hiragana-ke.mp3"},
+            {name: "0", image: "hiraganaquiz/images/hiragana-ko.png", sound: "hiraganaquiz/sounds/hiragana-ko.mp3"},
+            {name: "a", image: "hiraganaquiz/images/hiragana-sa.png", sound: "hiraganaquiz/sounds/hiragana-sa.mp3"},
+            {name: "i", image: "hiraganaquiz/images/hiragana-shi.png", sound: "hiraganaquiz/sounds/hiragana-shi.mp3"},
+            {name: "u", image: "hiraganaquiz/images/hiragana-su.png", sound: "hiraganaquiz/sounds/hiragana-su.mp3"},
+            {name: "e", image: "hiraganaquiz/images/hiragana-se.png", sound: "hiraganaquiz/sounds/hiragana-se.mp3"},
+            {name: "0", image: "hiraganaquiz/images/hiragana-so.png", sound: "hiraganaquiz/sounds/hiragana-so.mp3"},
             // Add more animals here
         ];
 
         let currentQuestion;
+        let selectedAnimals = [];
+        let autoPlay = false;
         const quizContainer = document.getElementById('quiz');
         const animalSound = document.getElementById('animalSound');
         const answerBox = document.getElementById('answerBox');
+        const autoPlayToggleButton = document.getElementById('autoPlayToggle');
 
         function getRandomAnimal(exclude = []) {
             let animal;
             do {
-                animal = animals[Math.floor(Math.random() * animals.length)];
+                animal = selectedAnimals[Math.floor(Math.random() * selectedAnimals.length)];
             } while (exclude.includes(animal.name));
             return animal;
         }
@@ -146,6 +210,10 @@
             }
             options.sort(() => 0.5 - Math.random()); // Shuffle the options
             displayQuestion(currentQuestion, options);
+
+            if (autoPlay) {
+                playAnimalSound();
+            }
         }
 
         function displayQuestion(question, options) {
@@ -199,7 +267,19 @@
             }
         }
 
-        generateQuestion();
+        function startQuiz(level) {
+            const numberOfQuestions = level * 5;
+            selectedAnimals = animals.slice(0, numberOfQuestions);
+            generateQuestion();
+        }
+
+        function toggleAutoPlay() {
+            autoPlay = !autoPlay;
+            autoPlayToggleButton.textContent = `Auto Play: ${autoPlay ? 'On' : 'Off'}`;
+        }
+
+        // Initialize with level 1
+        startQuiz(1);
     </script>
 </body>
 </html>
