@@ -3,14 +3,14 @@
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta charset="utf-8">
-		<title>ValidStory</title>
+		<title>Index</title>
 		<style>
 		/*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */html{line-height:1.15;-webkit-text-size-adjust:100%}details,main,tw-passage{display:block}h1{font-size:2em;margin:.67em 0}hr{box-sizing:content-box;height:0;overflow:visible}code,kbd,pre,samp{font-family:monospace,monospace;font-size:1em}a{background-color:transparent;color:#222;text-decoration-color:#ccc}abbr[title]{border-bottom:none;text-decoration:underline;text-decoration:underline dotted}b,strong{font-weight:bolder}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:ButtonText dotted 1px}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}[hidden],template,tw-storydata{display:none}body{font:1.5em "Helvetica Neue",Helvetica,Arial,sans-serif;color:#222;margin:.5em}tw-story{max-width:35em;margin:0 auto;line-height:150%;display:block}a:hover{color:#cc8929;text-decoration-color:#cc8929}a:active{color:#ffb040;text-decoration-color:#cc8929}@media screen and (max-width:480px){#passage{font-size:70%}}
 		</style>
 	</head>
 	<body>
 		<tw-story tags></tw-story>
-		<tw-storydata name="ValidStory" startnode="9" creator="Twine" creator-version="2.9.0" format="Snowman" format-version="2.0.2" ifid="9D6A6B2C-08CD-4BA0-A1C7-076FACBE5795" options="" tags="" zoom="1" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">/* Style for the fixed navigation bar */
+		<tw-storydata name="Index" startnode="1" creator="Twine" creator-version="2.9.0" format="Snowman" format-version="2.0.2" ifid="0EF55DE2-7A47-44A7-B39F-414EE976AA07" options="" tags="" zoom="1" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">/* Style for the fixed navigation bar */
 #navBar {
     position: fixed;
     top: 0;
@@ -53,169 +53,864 @@
 #mainContent {
     padding-top: 100px; /* Same height as the navigation bar */
 }
-</style><script role="script" id="twine-user-script" type="text/twine-javascript"></script><tw-passagedata pid="1" name="stage1" tags="" position="400,325" size="100,100">&lt;div id=&quot;navBar&quot;&gt;
+</style><script role="script" id="twine-user-script" type="text/twine-javascript">// Updated navigateToPassage function to remove dynamically added elements
+window.navigateToPassage = function(passage) {
+    console.log('Navigating to passage:', passage);
+
+    // Clear timers and separators dynamically added to body
+    var timers = document.querySelectorAll('.timer');
+    timers.forEach(timer => timer.remove());
+
+    var separators = document.querySelectorAll('.separator');
+    separators.forEach(separator => separator.remove());
+
+    // Navigate to the specified passage
+    window.story.show(passage);
+}
+</script><tw-passagedata pid="1" name="Index" tags="" position="800,325" size="100,100">&lt;div id=&quot;navBar&quot;&gt;
     &lt;div class=&quot;navWrapper&quot;&gt;
-      	[[stage2]]
-		[[stage3]]
-		[[test]]
+    
+    Welcome to Andy&#39;s HTML Index
+    
     &lt;/div&gt;
 &lt;/div&gt;
 
-Start of the journey!
 
-</tw-passagedata><tw-passagedata pid="2" name="stage2" tags="" position="600,325" size="100,100">&lt;div id=&quot;navBar&quot;&gt;
-    &lt;!-- Add your navigation links here --&gt;
-    &lt;a href=&quot;javascript:void(0)&quot; onclick=&quot;window.story.show(&#39;stage1&#39;)&quot;&gt;Previous&lt;/a&gt;
-    &lt;a href=&quot;javascript:void(0)&quot; onclick=&quot;window.story.show(&#39;stage3&#39;)&quot;&gt;Next&lt;/a&gt;
-    &lt;!-- Add more links as needed --&gt;
-&lt;/div&gt;
 
 &lt;div id=&quot;mainContent&quot;&gt;
+ &lt;br&gt;
+      	[[Animal Quiz]]
+        &lt;br&gt; &lt;br&gt;
+		[[Hiragana Quiz]]
+         &lt;br&gt; &lt;br&gt;
+		[[Dates Tracker]]
+                 &lt;br&gt; &lt;br&gt;
+		[[test]]
 
-
-&lt;/div&gt;</tw-passagedata><tw-passagedata pid="3" name="stage3" tags="" position="750,325" size="100,100">&lt;div id=&quot;navBar&quot;&gt;
-    &lt;!-- Add your navigation links here --&gt;
-    &lt;a href=&quot;javascript:void(0)&quot; onclick=&quot;window.story.show(&#39;stage1&#39;)&quot;&gt;Previous&lt;/a&gt;
-    &lt;a href=&quot;javascript:void(0)&quot; onclick=&quot;window.story.show(&#39;stage3&#39;)&quot;&gt;Next&lt;/a&gt;
-    &lt;!-- Add more links as needed --&gt;
+      &lt;a href=&quot;javascript:void(0)&quot; onclick=&quot;window.navigateToPassage(&#39;Dates Tracker&#39;)&quot;&gt;Go to Dates Tracker&lt;/a&gt;
+      
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="2" name="Animal Quiz" tags="" position="675,450" size="100,100">&lt;div id=&quot;navBar&quot;&gt;
+    &lt;div class=&quot;navWrapper&quot;&gt;
+    
+    [[Index]]
+        &lt;a href=&quot;javascript:void(0)&quot; onclick=&quot;window.story.show(&#39;Index&#39;)&quot;&gt;Previous&lt;/a&gt;
+    
+    &lt;/div&gt;
 &lt;/div&gt;
 
+
+
 &lt;div id=&quot;mainContent&quot;&gt;
+ &lt;br&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;Animal Quiz&lt;/title&gt;
+    &lt;style&gt;
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(to right, #ffecd2 0%, #fcb69f 100%);
+            font-family: Arial, sans-serif;
+            overflow: hidden; /* Prevent vertical scrolling */
+        }
+
+        #quiz {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 65vh; /* Adjusted height */
+            width: 100%;
+            overflow: hidden; /* Ensure no horizontal overflow */
+        }
+
+        .button-77 {
+            background: linear-gradient(92.83deg, #ff7426 0, #f93a13 100%);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            font-family: Eina01, sans-serif;
+            font-size: 7vh; /* Adjusted font size */
+            font-weight: bold;
+            padding: 10px 20px; /* Adjusted padding */
+            margin-top: 15px; /* Adjusted margin */
+            text-transform: uppercase;
+            position: relative; /* Ensure relative positioning */
+            z-index: 1; /* Ensure it&#39;s above answerBox */
+        }
+
+        .button-77:hover {
+            opacity: 0.8;
+        }
+
+        #answerBox {
+            margin-top: 10px; /* Adjust margin as needed */
+            font-size: 6vh; /* Adjust font size */
+            height: 10vh; /* Adjusted height */
+            text-align: center;
+            /* display: none; Remove this line to keep it visible */
+            transition: all 0.3s ease; /* Smooth transition */
+            position: relative; /* Position relatively */
+            width: 100%; /* Full width */
+    
+            padding: 10px; /* Padding for content */
+            border-radius: 10px; /* Rounded corners */
+            z-index: 2; /* Ensure above quiz images */
+            background: linear-gradient(92.83deg, #ff7426 0, #f93a13 100%);
+        }
+
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            max-height: 100%; /* Ensure it fits within the container */
+            width: 100%;
+            margin: 0;
+        }
+
+        li {
+            margin: 0 10px; /* Adjust margin between images */
+            flex: 1; /* Allow items to grow equally */
+        }
+
+        img {
+            cursor: pointer;
+            max-height: 100%; /* Ensure it fits within the container */
+            max-width: 100%; /* Ensure it fits within the container */
+            height: auto; /* Maintain aspect ratio */
+            width: auto; /* Maintain aspect ratio */
+            object-fit: contain; /* Ensure it scales properly */
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div id=&quot;quiz&quot;&gt;&lt;/div&gt;
+
+    &lt;div&gt;
+        &lt;button class=&quot;button-77&quot; id=&quot;playSound&quot; onclick=&quot;playAnimalSound()&quot;&gt;Play Sound&lt;/button&gt;
+    &lt;/div&gt;
+
+    &lt;div id=&quot;answerBox&quot;&gt;&lt;/div&gt;
+
+    &lt;audio id=&quot;animalSound&quot; preload=&quot;auto&quot;&gt;
+        &lt;!-- Fallback audio source for compatibility --&gt;
+        &lt;source src=&quot;&quot; type=&quot;audio/mpeg&quot;&gt;
+        Your browser does not support the audio element.
+    &lt;/audio&gt;
+
+    &lt;script&gt;
+        const animals = [
+            {name: &quot;Bat&quot;, image: &quot;animalquiz/images/bat.gif&quot;, sound: &quot;animalquiz/sounds/bat.mp3&quot;},
+            {name: &quot;Bear&quot;, image: &quot;animalquiz/images/bear.gif&quot;, sound: &quot;animalquiz/sounds/bear.mp3&quot;},
+            {name: &quot;Cat&quot;, image: &quot;animalquiz/images/cat.gif&quot;, sound: &quot;animalquiz/sounds/cat.mp3&quot;},
+            {name: &quot;Chicken&quot;, image: &quot;animalquiz/images/chicken.gif&quot;, sound: &quot;animalquiz/sounds/chicken.mp3&quot;},
+            {name: &quot;Cow&quot;, image: &quot;animalquiz/images/cow.gif&quot;, sound: &quot;animalquiz/sounds/cow.mp3&quot;},
+            {name: &quot;Dog&quot;, image: &quot;animalquiz/images/dog.gif&quot;, sound: &quot;animalquiz/sounds/dog.mp3&quot;},
+            {name: &quot;Dolphin&quot;, image: &quot;animalquiz/images/dolphin.gif&quot;, sound: &quot;animalquiz/sounds/dolphin.mp3&quot;},
+            {name: &quot;Duck&quot;, image: &quot;animalquiz/images/duck.gif&quot;, sound: &quot;animalquiz/sounds/duck.mp3&quot;},
+            {name: &quot;Elephant&quot;, image: &quot;animalquiz/images/elephant.gif&quot;, sound: &quot;animalquiz/sounds/elephant.mp3&quot;},
+            {name: &quot;Frog&quot;, image: &quot;animalquiz/images/frog.gif&quot;, sound: &quot;animalquiz/sounds/frog.mp3&quot;},
+            {name: &quot;Goat&quot;, image: &quot;animalquiz/images/goat.gif&quot;, sound: &quot;animalquiz/sounds/goat.mp3&quot;},
+            {name: &quot;Gorilla&quot;, image: &quot;animalquiz/images/gorilla.gif&quot;, sound: &quot;animalquiz/sounds/gorilla.mp3&quot;},
+            {name: &quot;Hippo&quot;, image: &quot;animalquiz/images/hippo.gif&quot;, sound: &quot;animalquiz/sounds/hippo.mp3&quot;},
+            {name: &quot;Horse&quot;, image: &quot;animalquiz/images/horse.gif&quot;, sound: &quot;animalquiz/sounds/horse.mp3&quot;},
+            {name: &quot;Lion&quot;, image: &quot;animalquiz/images/lion.gif&quot;, sound: &quot;animalquiz/sounds/lion.mp3&quot;},
+            {name: &quot;Monkey&quot;, image: &quot;animalquiz/images/monkey.gif&quot;, sound: &quot;animalquiz/sounds/monkey.mp3&quot;},
+            {name: &quot;Moose&quot;, image: &quot;animalquiz/images/moose.gif&quot;, sound: &quot;animalquiz/sounds/moose.mp3&quot;},
+            {name: &quot;Owl&quot;, image: &quot;animalquiz/images/owl.gif&quot;, sound: &quot;animalquiz/sounds/owl.mp3&quot;},
+            {name: &quot;Parrot&quot;, image: &quot;animalquiz/images/parrot.gif&quot;, sound: &quot;animalquiz/sounds/parrot.mp3&quot;},
+            {name: &quot;Penguin&quot;, image: &quot;animalquiz/images/penguin.gif&quot;, sound: &quot;animalquiz/sounds/penguin.mp3&quot;},
+            {name: &quot;Pig&quot;, image: &quot;animalquiz/images/pig.gif&quot;, sound: &quot;animalquiz/sounds/pig.mp3&quot;},
+            {name: &quot;Rabbit&quot;, image: &quot;animalquiz/images/rabbit.gif&quot;, sound: &quot;animalquiz/sounds/rabbit.mp3&quot;},
+            {name: &quot;Sheep&quot;, image: &quot;animalquiz/images/sheep.gif&quot;, sound: &quot;animalquiz/sounds/sheep.mp3&quot;},
+            {name: &quot;Snake&quot;, image: &quot;animalquiz/images/snake.gif&quot;, sound: &quot;animalquiz/sounds/snake.mp3&quot;},
+            {name: &quot;Tiger&quot;, image: &quot;animalquiz/images/tiger.gif&quot;, sound: &quot;animalquiz/sounds/tiger.mp3&quot;},
+            {name: &quot;Whale&quot;, image: &quot;animalquiz/images/whale.gif&quot;, sound: &quot;animalquiz/sounds/whale.mp3&quot;},
+            {name: &quot;Wolf&quot;, image: &quot;animalquiz/images/wolf.gif&quot;, sound: &quot;animalquiz/sounds/wolf.mp3&quot;},
+            // Add more animals here
+        ];
+
+        let currentQuestion;
+        const quizContainer = document.getElementById(&#39;quiz&#39;);
+        const animalSound = document.getElementById(&#39;animalSound&#39;);
+        const answerBox = document.getElementById(&#39;answerBox&#39;);
+
+        function getRandomAnimal(exclude = []) {
+            let animal;
+            do {
+                animal = animals[Math.floor(Math.random() * animals.length)];
+            } while (exclude.includes(animal.name));
+            return animal;
+        }
+
+        function generateQuestion() {
+            currentQuestion = getRandomAnimal();
+            const options = [currentQuestion];
+            while (options.length &lt; 3) {
+                const randomAnimal = getRandomAnimal(options.map(animal =&gt; animal.name));
+                options.push(randomAnimal);
+            }
+            options.sort(() =&gt; 0.5 - Math.random()); // Shuffle the options
+            displayQuestion(currentQuestion, options);
+        }
+
+        function displayQuestion(question, options) {
+            // Reset audio element
+            animalSound.pause();
+            animalSound.src = question.sound;
+
+            // Show play sound button
+            document.getElementById(&#39;playSound&#39;).style.display = &#39;inline-block&#39;;
+
+            quizContainer.innerHTML = `
+                &lt;ul&gt;
+                    ${options.map(option =&gt; `&lt;li&gt;&lt;img src=&quot;${option.image}&quot; alt=&quot;${option.name}&quot; onclick=&quot;checkAnswer(&#39;${option.name}&#39;)&quot;&gt;&lt;/li&gt;`).join(&#39;&#39;)}
+                &lt;/ul&gt;
+            `;
+
+            answerBox.textContent = &#39;&#39;; // Clear previous answer
+            answerBox.style.display = &#39;block&#39;; // Ensure answer box is visible
+        }
+
+        function playAnimalSound() {
+            // Check if audio source is set
+            if (animalSound.src === &#39;&#39;) {
+                console.error(&#39;Audio source not set.&#39;);
+                return;
+            }
+
+            animalSound.play()
+                .then(() =&gt; {
+                    // Audio successfully started
+                    console.log(&#39;Audio playing.&#39;);
+                })
+                .catch(error =&gt; {
+                    console.error(&#39;Failed to play audio:&#39;, error);
+                });
+        }
+
+        function checkAnswer(selected) {
+            if (selected === currentQuestion.name) {
+                answerBox.textContent = &#39;Correct!&#39;;
+                answerBox.className = &#39;correct&#39;;
+                // answerBox.style.display = &#39;block&#39;; // No longer needed to show it here
+                setTimeout(() =&gt; {
+                    // answerBox.style.display = &#39;none&#39;; // Hide after delay, remove this line
+                    generateQuestion(); // Generate next question
+                }, 1000);
+            } else {
+                answerBox.textContent = &#39;Try again&#39;;
+                answerBox.className = &#39;incorrect&#39;;
+                // answerBox.style.display = &#39;block&#39;; // No longer needed to show it here
+            }
+        }
+
+        generateQuestion();
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="3" name="Hiragana Quiz" tags="" position="800,450" size="100,100">&lt;div id=&quot;navBar&quot;&gt;
+    &lt;div class=&quot;navWrapper&quot;&gt;
+    
+    [[Index]]
+    
+    &lt;/div&gt;
+&lt;/div&gt;
+
+
+
+&lt;div id=&quot;mainContent&quot;&gt;
+ &lt;br&gt;
 
 &lt;!DOCTYPE html&gt;
 &lt;html lang=&quot;en&quot;&gt;
 &lt;head&gt;
     &lt;meta charset=&quot;UTF-8&quot;&gt;
     &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
-    &lt;title&gt;Text Animation&lt;/title&gt;
+    &lt;title&gt;Animal Quiz&lt;/title&gt;
     &lt;style&gt;
         body {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
-            overflow-y: scroll; /* Always show vertical scrollbar */
-        }
-
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-size: 3rem;
+            background: linear-gradient(to right, #ffecd2 0%, #fcb69f 100%);
             font-family: Arial, sans-serif;
+            overflow: hidden; /* Prevent vertical scrolling */
         }
 
-        .word {
+        #quiz {
             display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 65vh; /* Adjusted height */
+            width: 100%;
+            overflow: hidden; /* Ensure no horizontal overflow */
         }
 
-        .letter {
-            opacity: 0;
-            position: relative;
-            animation: slideIn 1s forwards;
-            margin: 0; /* Remove default margin */
-            padding: 0; /* Remove default padding */
-            transform-origin: center; /* Set transform origin */
+        .button-77 {
+            background: linear-gradient(92.83deg, #ff7426 0, #f93a13 100%);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            font-family: Eina01, sans-serif;
+            font-size: 7vh; /* Adjusted font size */
+            font-weight: bold;
+            padding: 10px 20px; /* Adjusted padding */
+            margin-top: 15px; /* Adjusted margin */
+            text-transform: uppercase;
+            position: relative; /* Ensure relative positioning */
+            z-index: 1; /* Ensure it&#39;s above answerBox */
         }
 
-        @keyframes slideIn {
-            from {
-                transform: translateX(100vw);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
+        .button-77:hover {
+            opacity: 0.8;
         }
 
-        .container .word:nth-child(1) .letter { animation-delay: 0.1s; }
-        .container .word:nth-child(1) .letter:nth-child(2) { animation-delay: 0.2s; }
-        .container .word:nth-child(1) .letter:nth-child(3) { animation-delay: 0.3s; }
-        .container .word:nth-child(1) .letter:nth-child(4) { animation-delay: 0.4s; }
-        .container .word:nth-child(1) .letter:nth-child(5) { animation-delay: 0.5s; }
-        .container .word:nth-child(1) .letter:nth-child(6) { animation-delay: 0.6s; }
+        #answerBox {
+            margin-top: 10px; /* Adjust margin as needed */
+            font-size: 6vh; /* Adjust font size */
+            height: 10vh; /* Adjusted height */
+            text-align: center;
+            /* display: none; Remove this line to keep it visible */
+            transition: all 0.3s ease; /* Smooth transition */
+            position: relative; /* Position relatively */
+            width: 100%; /* Full width */
+    
+            padding: 10px; /* Padding for content */
+            border-radius: 10px; /* Rounded corners */
+            z-index: 2; /* Ensure above quiz images */
+            background: linear-gradient(92.83deg, #ff7426 0, #f93a13 100%);
+        }
 
-        .container .word:nth-child(2) .letter:nth-child(1) { animation-delay: 0.7s; }
-        .container .word:nth-child(2) .letter:nth-child(2) { animation-delay: 0.8s; }
-        .container .word:nth-child(2) .letter:nth-child(3) { animation-delay: 0.9s; }
-        .container .word:nth-child(2) .letter:nth-child(4) { animation-delay: 1s; }
-        .container .word:nth-child(2) .letter:nth-child(5) { animation-delay: 1.1s; }
-        .container .word:nth-child(2) .letter:nth-child(6) { animation-delay: 1.2s; }
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            max-height: 100%; /* Ensure it fits within the container */
+            width: 100%;
+            margin: 0;
+        }
+
+        li {
+            margin: 0 10px; /* Adjust margin between images */
+            flex: 1; /* Allow items to grow equally */
+        }
+
+        img {
+            cursor: pointer;
+            max-height: 100%; /* Ensure it fits within the container */
+            max-width: 100%; /* Ensure it fits within the container */
+            height: auto; /* Maintain aspect ratio */
+            width: auto; /* Maintain aspect ratio */
+            object-fit: contain; /* Ensure it scales properly */
+            border: 1px solid black; /* Change the color as needed */
+            padding: 10px; /* Optional: Adds some space between the border and the content */
+        }
+
+        #levelButtons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px; /* Adjust margin as needed */
+        }
+
+        .level-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .level-button:hover {
+            background-color: #45a049;
+        }
+
+        #autoPlayToggle {
+            margin-top: 15px; /* Adjust margin as needed */
+            background: #f93a13;
+            color: white;
+            border: none;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        #autoPlayToggle:hover {
+            background-color: #ff7426;
+        }
     &lt;/style&gt;
 &lt;/head&gt;
 &lt;body&gt;
-    &lt;div class=&quot;container&quot;&gt;
-        &lt;div class=&quot;word&quot;&gt;
-            &lt;span class=&quot;letter&quot;&gt;L&lt;/span&gt;
-            &lt;span class=&quot;letter&quot;&gt;o&lt;/span&gt;
-            &lt;span class=&quot;letter&quot;&gt;v&lt;/span&gt;
-            &lt;span class=&quot;letter&quot;&gt;i&lt;/span&gt;
-            &lt;span class=&quot;letter&quot;&gt;n&lt;/span&gt;
-            &lt;span class=&quot;letter&quot;&gt;g&lt;/span&gt;
-        &lt;/div&gt;
-        &lt;div class=&quot;word&quot;&gt;
-            &lt;span class=&quot;letter&quot;&gt;F&lt;/span&gt;
-            &lt;span class=&quot;letter&quot;&gt;a&lt;/span&gt;
-            &lt;span class=&quot;letter&quot;&gt;m&lt;/span&gt;
-            &lt;span class=&quot;letter&quot;&gt;i&lt;/span&gt;
-            &lt;span class=&quot;letter&quot;&gt;l&lt;/span&gt;
-            &lt;span class=&quot;letter&quot;&gt;y&lt;/span&gt;
-        &lt;/div&gt;
+    &lt;div id=&quot;levelButtons&quot;&gt;
+        &lt;button class=&quot;level-button&quot; onclick=&quot;startQuiz(1)&quot;&gt;Level 1&lt;/button&gt;
+        &lt;button class=&quot;level-button&quot; onclick=&quot;startQuiz(2)&quot;&gt;Level 2&lt;/button&gt;
+        &lt;button class=&quot;level-button&quot; onclick=&quot;startQuiz(3)&quot;&gt;Level 3&lt;/button&gt;
+        &lt;!-- Add more levels as needed --&gt;
     &lt;/div&gt;
+
+    &lt;div id=&quot;quiz&quot;&gt;&lt;/div&gt;
+
+    &lt;div&gt;
+        &lt;button class=&quot;button-77&quot; id=&quot;playSound&quot; onclick=&quot;playAnimalSound()&quot;&gt;Play Sound&lt;/button&gt;
+    &lt;/div&gt;
+
+    &lt;button id=&quot;autoPlayToggle&quot; onclick=&quot;toggleAutoPlay()&quot;&gt;Auto Play: Off&lt;/button&gt;
+
+    &lt;div id=&quot;answerBox&quot;&gt;&lt;/div&gt;
+
+    &lt;audio id=&quot;animalSound&quot; preload=&quot;auto&quot;&gt;
+        &lt;!-- Fallback audio source for compatibility --&gt;
+        &lt;source src=&quot;&quot; type=&quot;audio/mpeg&quot;&gt;
+        Your browser does not support the audio element.
+    &lt;/audio&gt;
+
+    &lt;script&gt;
+        const animals = [
+            {name: &quot;a&quot;, image: &quot;hiraganaquiz/images/hiragana-a.png&quot;, sound: &quot;hiraganaquiz/sounds/hiragana-a.mp3&quot;},
+            {name: &quot;i&quot;, image: &quot;hiraganaquiz/images/hiragana-i.png&quot;, sound: &quot;hiraganaquiz/sounds/hiragana-i.mp3&quot;},
+            {name: &quot;u&quot;, image: &quot;hiraganaquiz/images/hiragana-u.png&quot;, sound: &quot;hiraganaquiz/sounds/hiragana-u.mp3&quot;},
+            {name: &quot;e&quot;, image: &quot;hiraganaquiz/images/hiragana-e.png&quot;, sound: &quot;hiraganaquiz/sounds/hiragana-e.mp3&quot;},
+            {name: &quot;0&quot;, image: &quot;hiraganaquiz/images/hiragana-o.png&quot;, sound: &quot;hiraganaquiz/sounds/hiragana-o.mp3&quot;},
+            {name: &quot;0&quot;, image: &quot;hiraganaquiz/images/hiragana-ka.png&quot;, sound: &quot;hiraganaquiz/sounds/hiragana-ka.mp3&quot;},
+            {name: &quot;0&quot;, image: &quot;hiraganaquiz/images/hiragana-ki.png&quot;, sound: &quot;hiraganaquiz/sounds/hiragana-ki.mp3&quot;},
+            {name: &quot;0&quot;, image: &quot;hiraganaquiz/images/hiragana-ku.png&quot;, sound: &quot;hiraganaquiz/sounds/hiragana-ku.mp3&quot;},
+            {name: &quot;0&quot;, image: &quot;hiraganaquiz/images/hiragana-ke.png&quot;, sound: &quot;hiraganaquiz/sounds/hiragana-ke.mp3&quot;},
+            {name: &quot;0&quot;, image: &quot;hiraganaquiz/images/hiragana-ko.png&quot;, sound: &quot;hiraganaquiz/sounds/hiragana-ko.mp3&quot;},
+            {name: &quot;a&quot;, image: &quot;hiraganaquiz/images/hiragana-sa.png&quot;, sound: &quot;hiraganaquiz/sounds/hiragana-sa.mp3&quot;},
+            {name: &quot;i&quot;, image: &quot;hiraganaquiz/images/hiragana-shi.png&quot;, sound: &quot;hiraganaquiz/sounds/hiragana-shi.mp3&quot;},
+            {name: &quot;u&quot;, image: &quot;hiraganaquiz/images/hiragana-su.png&quot;, sound: &quot;hiraganaquiz/sounds/hiragana-su.mp3&quot;},
+            {name: &quot;e&quot;, image: &quot;hiraganaquiz/images/hiragana-se.png&quot;, sound: &quot;hiraganaquiz/sounds/hiragana-se.mp3&quot;},
+            {name: &quot;0&quot;, image: &quot;hiraganaquiz/images/hiragana-so.png&quot;, sound: &quot;hiraganaquiz/sounds/hiragana-so.mp3&quot;},
+            // Add more animals here
+        ];
+
+        let currentQuestion;
+        let selectedAnimals = [];
+        let autoPlay = false;
+        const quizContainer = document.getElementById(&#39;quiz&#39;);
+        const animalSound = document.getElementById(&#39;animalSound&#39;);
+        const answerBox = document.getElementById(&#39;answerBox&#39;);
+        const autoPlayToggleButton = document.getElementById(&#39;autoPlayToggle&#39;);
+
+        function getRandomAnimal(exclude = []) {
+            let animal;
+            do {
+                animal = selectedAnimals[Math.floor(Math.random() * selectedAnimals.length)];
+            } while (exclude.includes(animal.name));
+            return animal;
+        }
+
+        function generateQuestion() {
+            currentQuestion = getRandomAnimal();
+            const options = [currentQuestion];
+            while (options.length &lt; 3) {
+                const randomAnimal = getRandomAnimal(options.map(animal =&gt; animal.name));
+                options.push(randomAnimal);
+            }
+            options.sort(() =&gt; 0.5 - Math.random()); // Shuffle the options
+            displayQuestion(currentQuestion, options);
+
+            if (autoPlay) {
+                playAnimalSound();
+            }
+        }
+
+        function displayQuestion(question, options) {
+            // Reset audio element
+            animalSound.pause();
+            animalSound.src = question.sound;
+
+            // Show play sound button
+            document.getElementById(&#39;playSound&#39;).style.display = &#39;inline-block&#39;;
+
+            quizContainer.innerHTML = `
+                &lt;ul&gt;
+                    ${options.map(option =&gt; `&lt;li&gt;&lt;img src=&quot;${option.image}&quot; alt=&quot;${option.name}&quot; onclick=&quot;checkAnswer(&#39;${option.name}&#39;)&quot;&gt;&lt;/li&gt;`).join(&#39;&#39;)}
+                &lt;/ul&gt;
+            `;
+
+            answerBox.textContent = &#39;&#39;; // Clear previous answer
+            answerBox.style.display = &#39;block&#39;; // Ensure answer box is visible
+        }
+
+        function playAnimalSound() {
+            // Check if audio source is set
+            if (animalSound.src === &#39;&#39;) {
+                console.error(&#39;Audio source not set.&#39;);
+                return;
+            }
+
+            animalSound.play()
+                .then(() =&gt; {
+                    // Audio successfully started
+                    console.log(&#39;Audio playing.&#39;);
+                })
+                .catch(error =&gt; {
+                    console.error(&#39;Failed to play audio:&#39;, error);
+                });
+        }
+
+        function checkAnswer(selected) {
+            if (selected === currentQuestion.name) {
+                answerBox.textContent = &#39;Correct!&#39;;
+                answerBox.className = &#39;correct&#39;;
+                // answerBox.style.display = &#39;block&#39;; // No longer needed to show it here
+                setTimeout(() =&gt; {
+                    // answerBox.style.display = &#39;none&#39;; // Hide after delay, remove this line
+                    generateQuestion(); // Generate next question
+                }, 1000);
+            } else {
+                answerBox.textContent = &#39;Try again&#39;;
+                answerBox.className = &#39;incorrect&#39;;
+                // answerBox.style.display = &#39;block&#39;; // No longer needed to show it here
+            }
+        }
+
+        function startQuiz(level) {
+            const numberOfQuestions = level * 5;
+            selectedAnimals = animals.slice(0, numberOfQuestions);
+            generateQuestion();
+        }
+
+        function toggleAutoPlay() {
+            autoPlay = !autoPlay;
+            autoPlayToggleButton.textContent = `Auto Play: ${autoPlay ? &#39;On&#39; : &#39;Off&#39;}`;
+        }
+
+        // Initialize with level 1
+        startQuiz(1);
+    &lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;
 
-&lt;/div&gt;
-</tw-passagedata><tw-passagedata pid="4" name="stage4" tags="" position="600,450" size="100,100"></tw-passagedata><tw-passagedata pid="5" name="test" tags="" position="475,450" size="100,100">&lt;div id=&quot;navBar&quot;&gt;
+
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="4" name="Dates Tracker" tags="" position="925,450" size="100,100">&lt;div id=&quot;navBar&quot;&gt;
     &lt;div class=&quot;navWrapper&quot;&gt;
-        &lt;!-- Add your navigation links here --&gt;
-        &lt;a href=&quot;javascript:void(0)&quot; onclick=&quot;window.story.show(&#39;stage1&#39;)&quot;&gt;Previous&lt;/a&gt;
-        &lt;a href=&quot;javascript:void(0)&quot; onclick=&quot;window.story.show(&#39;stage3&#39;)&quot;&gt;Next&lt;/a&gt;
-        [[stage2]]
+        &lt;a href=&quot;javascript:void(0)&quot; onclick=&quot;return navigateToPassage(&#39;Index&#39;)&quot;&gt;Back to Index&lt;/a&gt;
     &lt;/div&gt;
 &lt;/div&gt;
 
-&lt;div id=&quot;mainContent&quot;&gt;
-    &lt;!-- Your passage content goes here --&gt;
-    &lt;p&gt;This is the main content of your passage.&lt;/p&gt;
-    &lt;p&gt;More content...&lt;/p&gt;
-&lt;/div&gt;
-</tw-passagedata><tw-passagedata pid="6" name="AnimalData" tags="" position="900,150" size="100,100">&lt;&lt;set $animals = [
-    {name: &quot;Elephant&quot;, image: &quot;elephant.jpg&quot;},
-    {name: &quot;Tiger&quot;, image: &quot;tiger.jpg&quot;},
-    {name: &quot;Penguin&quot;, image: &quot;penguin.jpg&quot;},
-    // Add more animals here
-]&gt;&gt;
-</tw-passagedata><tw-passagedata pid="7" name="Quiz" tags="" position="925,325" size="100,100">&lt;&lt;set $currentQuestion = $animals[Math.floor(Math.random() * $animals.length)]&gt;&gt;
-&lt;&lt;set $options = [$currentQuestion.name]&gt;&gt;
-&lt;&lt;for _i = 0; _i &lt; 2; _i++&gt;&gt;
-  &lt;&lt;set _randomAnimal = $animals[Math.floor(Math.random() * $animals.length)].name&gt;&gt;
-  &lt;&lt;if $options.indexOf(_randomAnimal) == -1&gt;&gt;
-    &lt;&lt;set $options.push(_randomAnimal)&gt;&gt;
-  &lt;&lt;/if&gt;&gt;
-&lt;&lt;/for&gt;&gt;
-&lt;&lt;set $options = $options.sort(() =&gt; 0.5 - Math.random())&gt;&gt; &lt;!-- Shuffle the options --&gt;
 
-&lt;img src=&quot;$currentQuestion.image&quot; alt=&quot;$currentQuestion.name&quot; width=&quot;200px&quot;&gt;
-&lt;ul&gt;
-  &lt;&lt;for _option in $options&gt;&gt;
-    &lt;li&gt;&lt;&lt;link [[_option|Result]]&gt;&gt;&lt;/li&gt;
-  &lt;&lt;/for&gt;&gt;
-&lt;/ul&gt;
-</tw-passagedata><tw-passagedata pid="8" name="Result" tags="" position="925,525" size="100,100">&lt;&lt;if $link == $currentQuestion.name&gt;&gt;
-  Correct! &lt;&lt;link [[Next Question|Quiz]]&gt;&gt;
-&lt;&lt;else&gt;&gt;
-  Wrong! The correct answer was $currentQuestion.name. &lt;&lt;link [[Try Again|Quiz]]&gt;&gt;
-&lt;&lt;/if&gt;&gt;
-</tw-passagedata><tw-passagedata pid="9" name="Untitled Passage" tags="" position="800,450" size="100,100">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
+&lt;div id=&quot;mainContent&quot;&gt;
+ &lt;br&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;Dates Tracker&lt;/title&gt;
+    &lt;style&gt;
+        body {
+            text-align: center;
+            padding: 70px 50px;
+            background: #0D1A29;
+            font-family: &quot;Helvetica Neue&quot;, &quot;Open Sans&quot;, helvetica, arial, sans-serif;  
+        }
+
+        h1 {
+            color: white;
+            text-shadow: 0 0 10px #48C8FF;
+            font-weight: 100;
+            margin-bottom: 5px;
+        }
+
+        .timer {
+            font-size: 3em;
+            font-weight: 100;
+            color: white;
+            text-shadow: 0 0 20px #48C8FF;
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+            padding-right: 100px;
+        }
+
+        .timer div {
+            display: inline-block;
+            min-width: 90px;
+            margin: 0 5px;
+        }
+
+        .timer span {
+            color: #B1CDF1;
+            display: block;
+            font-size: .6em;
+            font-weight: 400;
+        }
+
+        .timer img {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            max-height: 50px;
+            max-width: 50px;
+            width: auto;
+            height: auto;
+        }
+
+        .separator {
+            border-top: 2px solid #48C8FF;
+            margin: 20px 0;
+        }
+
+        .past-event {
+            opacity: 0.8;
+        }   
+
+        .past-event .timer {
+            display: none;
+        }
+        .past-event p {
+            font-size: 0.6em; /* Adjust the font size as needed */
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
 &lt;body&gt;
-   &lt;p&gt;&lt;img src=&quot;https://www.tutorialspoint.com/assets/questions/media/426142-1668760872.png&quot; style=&quot;width:50px;height:50px;&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+    &lt;script&gt;
+        // Array of events with dates
+        var events = [
+            { id: 1, date: &quot;June 26, 2025 00:00:00&quot;, title: &quot;Nobu&#39;s Birthday&quot; },
+            { id: 2, date: &quot;July 18, 2024 00:00:00&quot;, title: &quot;Allan&#39;s Birthday&quot; },
+            { id: 3, date: &quot;August 10, 2024 00:00:00&quot;, title: &quot;Andy&#39;s Birthday&quot; },
+            { id: 4, date: &quot;October 2, 2024 00:00:00&quot;, title: &quot;Nina&#39;s Birthday&quot; },
+            { id: 5, date: &quot;November 25, 2024 00:00:00&quot;, title: &quot;Noah&#39;s Birthday&quot; },
+            { id: 6, date: &quot;June 25, 2008 00:00:00&quot;, title: &quot;Andy&amp;Nobu Meeting&quot; },
+            { id: 7, date: &quot;February 23, 2009 00:00:00&quot;, title: &quot;Marriage Day&quot; },
+            { id: 8, date: &quot;July 18, 2018 00:00:00&quot;, title: &quot;Allan was born&quot; },
+            { id: 9, date: &quot;November 25, 2014 00:00:00&quot;, title: &quot;Noah was born&quot; },
+            { id: 10, date: &quot;October 2, 2020 00:00:00&quot;, title: &quot;Nina was born&quot; },
+            { id: 11, date: &quot;June 26, 1983 00:00:00&quot;, title: &quot;Nobu was born&quot; },
+            { id: 12, date: &quot;April 14, 2012 00:00:00&quot;, title: &quot;Ocean View House&quot; },
+            { id: 13, date: &quot;August 10, 1981 00:00:00&quot;, title: &quot;Andy was born&quot; }
+        ];
+
+        // Function to update timer
+        function updateTimer(id, futureDate) {
+            var future = Date.parse(futureDate);
+            var now = new Date();
+            var diff = future - now;
+
+            if (diff &lt; 0) {
+                var daysPassed = Math.floor(-diff / (1000 * 60 * 60 * 24));
+                document.getElementById(&#39;days&#39; + id).innerText = daysPassed;
+                document.getElementById(&#39;hours&#39; + id).style.display = &#39;none&#39;;
+                document.getElementById(&#39;minutes&#39; + id).style.display = &#39;none&#39;;
+                document.getElementById(&#39;seconds&#39; + id).style.display = &#39;none&#39;;
+            } else {
+                var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                var secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+                document.getElementById(&#39;days&#39; + id).innerText = days;
+                document.getElementById(&#39;hours&#39; + id).innerText = hours;
+                document.getElementById(&#39;minutes&#39; + id).innerText = mins;
+                document.getElementById(&#39;seconds&#39; + id).innerText = secs;
+            }
+        }
+
+        // Function to load images
+        function loadImage(src) {
+            return new Promise(function(resolve, reject) {
+                var image = new Image();
+                image.onload = function() {
+                    resolve(image);
+                };
+                image.onerror = function() {
+                    reject();
+                };
+                image.src = src;
+            });
+        }
+
+        // Separate events into past and future, and sort accordingly
+        function separateEvents(events) {
+            events.sort(function(a, b) {
+                return new Date(a.date) - new Date(b.date);
+            });
+
+            var pastEvents = events.filter(event =&gt; Date.parse(event.date) &lt; Date.now());
+            var futureEvents = events.filter(event =&gt; Date.parse(event.date) &gt;= Date.now());
+
+            pastEvents.sort(function(a, b) {
+                return new Date(b.date) - new Date(a.date);
+            });
+
+            return { pastEvents, futureEvents };
+        }
+
+        // Create timers dynamically with separators
+        async function createTimers() {
+            var { pastEvents, futureEvents } = separateEvents(events);
+            var sortedEvents = futureEvents.concat(pastEvents);
+
+            for (var i = 0; i &lt; sortedEvents.length; i++) {
+                var event = sortedEvents[i];
+                var timerDiv = document.createElement(&#39;div&#39;);
+                timerDiv.id = &#39;timer&#39; + event.id;
+                timerDiv.className = &#39;timer&#39;;
+                document.body.appendChild(timerDiv);
+
+                var headline = document.createElement(&#39;h1&#39;);
+                headline.id = &#39;headline&#39; + event.id;
+                headline.innerText = event.title;
+                timerDiv.appendChild(headline);
+
+                // Check if the event is in the past
+                if (Date.parse(event.date) &lt; Date.now()) {
+                    // Create and append the message for past events
+                    var eventDate = new Date(event.date);
+                    var currentDate = new Date();
+
+                    var years = currentDate.getFullYear() - eventDate.getFullYear();
+                    var months = currentDate.getMonth() - eventDate.getMonth();
+                    if (months &lt; 0) {
+                        years--;
+                        months += 12;
+                    }
+                    var days = currentDate.getDate() - eventDate.getDate();
+                    if (days &lt; 0) {
+                        if (months &gt; 0) {
+                            months--;
+                        } else {
+                            years--;
+                            months = 11;
+                        }
+                        days += new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate();
+                    }
+
+                    var daysPassed = Math.floor((currentDate - eventDate) / (1000 * 60 * 60 * 24));
+
+                    var pastMessage = document.createElement(&#39;p&#39;);
+                    pastMessage.innerText = years + &#39; years and &#39; + months + &#39; months ago (&#39; + daysPassed + &#39; days).&#39;;
+                    timerDiv.appendChild(pastMessage);
+                    timerDiv.classList.add(&#39;past-event&#39;);
+                } else {
+                    // Create time elements for future events
+                    var timeElements = [&#39;days&#39;, &#39;hours&#39;, &#39;minutes&#39;, &#39;seconds&#39;];
+                    for (var j = 0; j &lt; timeElements.length; j++) {
+                        var timeElementDiv = document.createElement(&#39;div&#39;);
+                        var timeSpan = document.createElement(&#39;span&#39;);
+                        timeSpan.id = timeElements[j] + event.id;
+                        timeSpan.innerText = &#39;0&#39;;
+                        timeElementDiv.appendChild(timeSpan);
+                        timeElementDiv.innerHTML += &#39;&lt;span&gt;&#39; + timeElements[j] + &#39;&lt;/span&gt;&#39;;
+                        timerDiv.appendChild(timeElementDiv);
+                    }
+                }
+
+                // Load image if available
+                try {
+                    var image = await loadImage(&#39;image&#39; + event.id + &#39;.png&#39;);
+                    image.alt = &#39;Image &#39; + event.id;
+                    timerDiv.appendChild(image);
+                } catch (error) {
+                    // Do nothing if image does not exist
+                }
+
+                if (i &lt; sortedEvents.length - 1) {
+                    var separator = document.createElement(&#39;div&#39;);
+                    separator.className = &#39;separator&#39;;
+                    document.body.appendChild(separator);
+                }
+            }
+        }
+
+        createTimers();
+
+function updateTimers() {
+    for (var i = 0; i &lt; events.length; i++) {
+        var event = events[i];
+                if (Date.parse(event.date) &gt;= Date.now()) {
+                    updateTimer(event.id, event.date);
+                }
+}
+}
+
+
+        setInterval(updateTimers, 1000);
+    &lt;/script&gt;
 &lt;/body&gt;
-&lt;/html&gt;</tw-passagedata></tw-storydata>
+&lt;/html&gt;
+
+
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="5" name="Template" tags="" position="475,25" size="100,100"> &lt;div id=&quot;navBar&quot;&gt;
+    &lt;div class=&quot;navWrapper&quot;&gt;
+    
+    [[Index]]
+    
+    &lt;/div&gt;
+&lt;/div&gt;
+
+
+
+&lt;div id=&quot;mainContent&quot;&gt;
+ &lt;br&gt;
+
+
+
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="6" name="test" tags="" position="925,325" size="100,100"> &lt;div id=&quot;navBar&quot;&gt;
+    &lt;div class=&quot;navWrapper&quot;&gt;
+    
+    [[Index]]
+    
+    &lt;/div&gt;
+&lt;/div&gt;
+
+
+
+&lt;div id=&quot;mainContent&quot;&gt;
+ &lt;br&gt;
+&lt;&lt;include &quot;hiraganaquiz.html&quot;&gt;&gt;
+
+
+&lt;/div&gt;</tw-passagedata></tw-storydata>
 		<script>
 		(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";window.either=function(){for(var n=[],t=0;t<arguments.length;t++)if(arguments[t]instanceof Array)for(var r=0;r<arguments[t].length;r++)n.push(arguments[t][r]);else n.push(arguments[t]);return n[_.random(n.length-1)]},window.hasVisited=function(){var n=null;if(1==arguments.length)return null!=(n=window.story.passage(arguments[0]))&&window.story.history.includes(n.id);for(var t=0;t<arguments.length;t++)if(null==(n=window.story.passage(arguments[t]))||0==window.story.history.includes(n.id))return!1;return!0},window.visited=function(){for(var n=[],t=[],r=0;r<arguments.length;r++){var e=window.story.passage(arguments[r]);null!=e&&(t=window.story.history.filter(function(n){return n==e.id})),n.push(t.length)}return Math.min.apply(Math,n)},window.renderToSelector=function(n,t){var r=window.story.passage(t);null!=r&&$(n).html(r.render())},window.getStyles=function(){return $.when.apply($,$.map(arguments,function(n){return $.get(n,function(n){$("<style>"+n+"</style>").appendTo("head")})}))};
