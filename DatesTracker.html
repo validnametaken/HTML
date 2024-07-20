@@ -72,9 +72,10 @@
     </style>
 </head>
 <body>
+
     <script>
         // Array of events with dates
-        var events = [
+        const events = [
             { id: 1, date: "June 26, 2025 00:00:00", title: "Nobu's Birthday" },
             { id: 2, date: "July 18, 2024 00:00:00", title: "Allan's Birthday" },
             { id: 3, date: "August 10, 2024 00:00:00", title: "Andy's Birthday" },
@@ -89,151 +90,157 @@
             { id: 12, date: "April 14, 2012 00:00:00", title: "Ocean View House" },
             { id: 13, date: "August 10, 1981 00:00:00", title: "Andy was born" }
         ];
-
+    
         // Function to update timer
         function updateTimer(id, futureDate) {
-            var future = Date.parse(futureDate);
-            var now = new Date();
-            var diff = future - now;
-
+            const future = Date.parse(futureDate);
+            const now = new Date();
+            const diff = future - now;
+    
             if (diff < 0) {
-                var daysPassed = Math.floor(-diff / (1000 * 60 * 60 * 24));
-                document.getElementById('days' + id).innerText = daysPassed;
-                document.getElementById('hours' + id).style.display = 'none';
-                document.getElementById('minutes' + id).style.display = 'none';
-                document.getElementById('seconds' + id).style.display = 'none';
+                const daysPassed = Math.floor(-diff / (1000 * 60 * 60 * 24));
+                document.getElementById(`days${id}`).innerText = daysPassed;
+                document.getElementById(`hours${id}`).style.display = 'none';
+                document.getElementById(`minutes${id}`).style.display = 'none';
+                document.getElementById(`seconds${id}`).style.display = 'none';
             } else {
-                var days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                var mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                var secs = Math.floor((diff % (1000 * 60)) / 1000);
-
-                document.getElementById('days' + id).innerText = days;
-                document.getElementById('hours' + id).innerText = hours;
-                document.getElementById('minutes' + id).innerText = mins;
-                document.getElementById('seconds' + id).innerText = secs;
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const secs = Math.floor((diff % (1000 * 60)) / 1000);
+    
+                document.getElementById(`days${id}`).innerText = days;
+                document.getElementById(`hours${id}`).innerText = hours;
+                document.getElementById(`minutes${id}`).innerText = mins;
+                document.getElementById(`seconds${id}`).innerText = secs;
             }
         }
-
+    
         // Function to load images
         function loadImage(src) {
-            return new Promise(function(resolve, reject) {
-                var image = new Image();
-                image.onload = function() {
-                    resolve(image);
-                };
-                image.onerror = function() {
-                    reject();
-                };
+            return new Promise((resolve, reject) => {
+                const image = new Image();
+                image.onload = () => resolve(image);
+                image.onerror = reject;
                 image.src = src;
             });
         }
-
+    
         // Separate events into past and future, and sort accordingly
         function separateEvents(events) {
-            events.sort(function(a, b) {
-                return new Date(a.date) - new Date(b.date);
-            });
-
-            var pastEvents = events.filter(event => Date.parse(event.date) < Date.now());
-            var futureEvents = events.filter(event => Date.parse(event.date) >= Date.now());
-
-            pastEvents.sort(function(a, b) {
-                return new Date(b.date) - new Date(a.date);
-            });
-
+            const sortedEvents = [...events].sort((a, b) => new Date(a.date) - new Date(b.date));
+            const now = Date.now();
+            const pastEvents = sortedEvents.filter(event => Date.parse(event.date) < now).reverse();
+            const futureEvents = sortedEvents.filter(event => Date.parse(event.date) >= now);
             return { pastEvents, futureEvents };
         }
-
+    
+        // Function to format date difference
+        function formatDateDifference(eventDate, currentDate) {
+            let years = currentDate.getFullYear() - eventDate.getFullYear();
+            let months = currentDate.getMonth() - eventDate.getMonth();
+            let days = currentDate.getDate() - eventDate.getDate();
+    
+            if (months < 0 || (months === 0 && days < 0)) {
+                years--;
+                months += 12;
+            }
+    
+            if (days < 0) {
+                const lastMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0);
+                days += lastMonthDate.getDate();
+                months--;
+            }
+    
+            const daysPassed = Math.floor((currentDate - eventDate) / (1000 * 60 * 60 * 24));
+            return `${years} years and ${months} months ago (${daysPassed} days).`;
+        }
+    
+        // Function to validate date input
+        function isValidDate(dateString) {
+            const date = new Date(dateString);
+            return date instanceof Date && !isNaN(date);
+        }
+    
         // Create timers dynamically with separators
         async function createTimers() {
-            var { pastEvents, futureEvents } = separateEvents(events);
-            var sortedEvents = futureEvents.concat(pastEvents);
-
-            for (var i = 0; i < sortedEvents.length; i++) {
-                var event = sortedEvents[i];
-                var timerDiv = document.createElement('div');
-                timerDiv.id = 'timer' + event.id;
-                timerDiv.className = 'timer';
-                document.body.appendChild(timerDiv);
-
-                var headline = document.createElement('h1');
-                headline.id = 'headline' + event.id;
-                headline.innerText = event.title;
-                timerDiv.appendChild(headline);
-
-                // Check if the event is in the past
-                if (Date.parse(event.date) < Date.now()) {
-                    // Create and append the message for past events
-                    var eventDate = new Date(event.date);
-                    var currentDate = new Date();
-
-                    var years = currentDate.getFullYear() - eventDate.getFullYear();
-                    var months = currentDate.getMonth() - eventDate.getMonth();
-                    if (months < 0) {
-                        years--;
-                        months += 12;
+            try {
+                const { pastEvents, futureEvents } = separateEvents(events);
+                const sortedEvents = [...futureEvents, ...pastEvents];
+    
+                for (let i = 0; i < sortedEvents.length; i++) {
+                    const event = sortedEvents[i];
+                    if (!isValidDate(event.date)) {
+                        console.error(`Invalid date for event: ${event.title}`);
+                        continue;
                     }
-                    var days = currentDate.getDate() - eventDate.getDate();
-                    if (days < 0) {
-                        if (months > 0) {
-                            months--;
-                        } else {
-                            years--;
-                            months = 11;
-                        }
-                        days += new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate();
+    
+                    const timerDiv = document.createElement('div');
+                    timerDiv.id = `timer${event.id}`;
+                    timerDiv.className = 'timer';
+                    document.body.appendChild(timerDiv);
+    
+                    const headline = document.createElement('h1');
+                    headline.id = `headline${event.id}`;
+                    headline.innerText = event.title;
+                    timerDiv.appendChild(headline);
+    
+                    if (Date.parse(event.date) < Date.now()) {
+                        const pastMessage = document.createElement('p');
+                        pastMessage.innerText = formatDateDifference(new Date(event.date), new Date());
+                        timerDiv.appendChild(pastMessage);
+                        timerDiv.classList.add('past-event');
+                    } else {
+                        const timeElements = ['days', 'hours', 'minutes', 'seconds'];
+                        timeElements.forEach(element => {
+                            const timeElementDiv = document.createElement('div');
+                            const timeSpan = document.createElement('span');
+                            timeSpan.id = `${element}${event.id}`;
+                            timeSpan.innerText = '0';
+                            timeElementDiv.appendChild(timeSpan);
+                            timeElementDiv.innerHTML += `<span>${element}</span>`;
+                            timerDiv.appendChild(timeElementDiv);
+                        });
                     }
-
-                    var daysPassed = Math.floor((currentDate - eventDate) / (1000 * 60 * 60 * 24));
-
-                    var pastMessage = document.createElement('p');
-                    pastMessage.innerText = years + ' years and ' + months + ' months ago (' + daysPassed + ' days).';
-                    timerDiv.appendChild(pastMessage);
-                    timerDiv.classList.add('past-event');
-                } else {
-                    // Create time elements for future events
-                    var timeElements = ['days', 'hours', 'minutes', 'seconds'];
-                    for (var j = 0; j < timeElements.length; j++) {
-                        var timeElementDiv = document.createElement('div');
-                        var timeSpan = document.createElement('span');
-                        timeSpan.id = timeElements[j] + event.id;
-                        timeSpan.innerText = '0';
-                        timeElementDiv.appendChild(timeSpan);
-                        timeElementDiv.innerHTML += '<span>' + timeElements[j] + '</span>';
-                        timerDiv.appendChild(timeElementDiv);
+    
+                    try {
+                        const image = await loadImage(`image${event.id}.png`);
+                        image.alt = `Image ${event.id}`;
+                        timerDiv.appendChild(image);
+                    } catch (error) {
+                        console.log(`Image for event ${event.id} not found`);
+                        // Add a placeholder image
+                        const placeholderImg = document.createElement('img');
+                        placeholderImg.src = 'placeholder.png';
+                        placeholderImg.alt = `Placeholder for ${event.title}`;
+                        timerDiv.appendChild(placeholderImg);
+                    }
+    
+                    if (i < sortedEvents.length - 1) {
+                        const separator = document.createElement('div');
+                        separator.className = 'separator';
+                        document.body.appendChild(separator);
                     }
                 }
-
-                // Load image if available
-                try {
-                    var image = await loadImage('image' + event.id + '.png');
-                    image.alt = 'Image ' + event.id;
-                    timerDiv.appendChild(image);
-                } catch (error) {
-                    // Do nothing if image does not exist
-                }
-
-                if (i < sortedEvents.length - 1) {
-                    var separator = document.createElement('div');
-                    separator.className = 'separator';
-                    document.body.appendChild(separator);
-                }
+            } catch (error) {
+                console.error('Error creating timers:', error);
             }
         }
-
+    
         createTimers();
-
+    
+        // Updates timers based on the current date and event dates
         function updateTimers() {
-            for (var i = 0; i < events.length; i++) {
-                var event = events[i];
+            events.forEach(event => {
                 if (Date.parse(event.date) >= Date.now()) {
                     updateTimer(event.id, event.date);
                 }
-            }
+            });
         }
-
+    
         setInterval(updateTimers, 1000);
     </script>
+    
+
 </body>
 </html>
