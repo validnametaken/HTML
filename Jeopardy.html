@@ -1,148 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Jeopardy</title>
 
-    <style>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jeopardy</title>
 
-      :root {
-  --font-scale: 1; /* define a CSS variable for font scaling */
-}
-      * {
-        box-sizing: border-box;
+  <style>
+    :root {
+      --font-scale: 1;
+      /* define a CSS variable for font scaling */
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    @keyframes jellytitle {
+      0% {
+        transform: scale3d(1, 1, 1);
       }
 
-      body {
-        margin: 0;
-        padding: 0;
+      30% {
+        transform: scale3d(0.75, 1.25, 1);
       }
 
-      @keyframes jellytitle {
-        0% {
-          transform: scale3d(1, 1, 1);
-        }
-
-        30% {
-          transform: scale3d(0.75, 1.25, 1);
-        }
-
-        40% {
-          transform: scale3d(1.25, 0.75, 1);
-        }
-
-        50% {
-          transform: scale3d(0.85, 1.15, 1);
-        }
-
-        65% {
-          transform: scale3d(1.05, 0.95, 1);
-        }
-
-        75% {
-          transform: scale3d(0.95, 1.05, 1);
-        }
-
-        100% {
-          transform: scale3d(1, 1, 1);
-        }
+      40% {
+        transform: scale3d(1.25, 0.75, 1);
       }
 
-      .container {
-        height: 100vh;
-        width: 100vw;
-        display: grid;
-        grid-template-columns: 5% 90% 5%;
-        grid-template-rows: 10% 85% 5%;
-        gap: 0px 0px;
-        grid-auto-flow: row;
-        grid-template-areas:
-          "topleft topcenter topright"
-          "midleft center midright"
-          "botleft botcenter botright";
-        overflow: hidden;
+      50% {
+        transform: scale3d(0.85, 1.15, 1);
       }
 
-      .topcenter {
-        max-height: 80vh; /* adjust the max height to your liking */
-        max-width: 80vw; /* adjust the max width to your liking */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  max-height: calc(100vh - 20px);
-}
-
-.topheading {
-  font-size: calc(var(--font-scale) * 1rem); /* use the CSS variable to scale the font size */
-  animation: jellytitle 3s ease 0s 1 normal forwards;
-  animation-delay: 2s;
-}
-
-.topheading h1 {
-  margin: 0; /* remove margin to avoid extra space */
-}
-
-.topcenter h3 {
-  font-size: calc(var(--font-scale) * 1.1rem); /* use the CSS variable to scale the font size */
-  margin-top: 0.5rem; /* add some margin to separate from h1 */
-}
-      .topleft {
-        grid-area: topleft;
-      }
-      .topright {
-        grid-area: topright;
-      }
-      .midleft {
-        grid-area: midleft;
-      }
-      .center {
-        grid-area: center;
-      }
-      .midright {
-        grid-area: midright;
-      }
-      .botleft {
-        grid-area: botleft;
-      }
-      .botcenter {
-        grid-area: botcenter;
-      }
-      .botright {
-        grid-area: botright;
+      65% {
+        transform: scale3d(1.05, 0.95, 1);
       }
 
-      .topcenter,
-      .topleft,
-      .topright,
-      .midleft,
-      .center,
-      .midright,
-      .botleft,
-      .botcenter,
-      .botright {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+      75% {
+        transform: scale3d(0.95, 1.05, 1);
       }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <div class="topcenter">
-        <div class="topheading"><h1>Welcome to Andy's Jeopardy</h1></div>
-        <h3>Made from scratch by himself.</h3>
+
+      100% {
+        transform: scale3d(1, 1, 1);
+      }
+    }
+
+    .container {
+      height: 100vh;
+      width: 100vw;
+      display: grid;
+      grid-template-columns: 5% 90% 5%;
+      grid-template-rows: 10% 85% 5%;
+      gap: 0px 0px;
+      grid-auto-flow: row;
+      grid-template-areas:
+        "topleft topcenter topright"
+        "midleft center midright"
+        "botleft botcenter botright";
+      overflow: hidden;
+    }
+
+    .topcenter {
+      max-height: 80vh;
+      /* adjust the max height to your liking */
+      max-width: 80vw;
+      /* adjust the max width to your liking */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      max-height: calc(100vh - 20px);
+    }
+
+    .topheading {
+      font-size: calc(var(--font-scale) * 1rem);
+      /* use the CSS variable to scale the font size */
+      animation: jellytitle 3s ease 0s 1 normal forwards;
+      animation-delay: 2s;
+    }
+
+    .topheading h1 {
+      margin: 0;
+      /* remove margin to avoid extra space */
+    }
+
+    .topcenter h3 {
+      font-size: calc(var(--font-scale) * 1.1rem);
+      /* use the CSS variable to scale the font size */
+      margin-top: 0.5rem;
+      /* add some margin to separate from h1 */
+    }
+
+    .topleft {
+      grid-area: topleft;
+    }
+
+    .topright {
+      grid-area: topright;
+    }
+
+    .midleft {
+      grid-area: midleft;
+    }
+
+    .center {
+      grid-area: center;
+    }
+
+    .midright {
+      grid-area: midright;
+    }
+
+    .botleft {
+      grid-area: botleft;
+    }
+
+    .botcenter {
+      grid-area: botcenter;
+    }
+
+    .botright {
+      grid-area: botright;
+    }
+
+    .topcenter,
+    .topleft,
+    .topright,
+    .midleft,
+    .center,
+    .midright,
+    .botleft,
+    .botcenter,
+    .botright {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+</head>
+
+
+<body>
+  <div class="container">
+    <div class="topcenter">
+      <div class="topheading">
+        <h1>Welcome to Andy's Jeopardy</h1>
       </div>
-      <div class="topleft">Hello</div>
-      <div class="topright">Hello</div>
-      <div class="midleft">Hello</div>
-      <div class="center">Hello</div>
-      <div class="midright">Hello</div>
-      <div class="botleft">Hello</div>
-      <div class="botcenter">Hello</div>
-      <div class="botright">Hello</div>
+      <h3>Made from scratch by himself.</h3>
     </div>
-  </body>
+    <div class="topleft">Hello</div>
+    <div class="topright">Hello</div>
+    <div class="midleft">Hello</div>
+    <div class="center">Hello</div>
+    <div class="midright">Hello</div>
+    <div class="botleft">Hello</div>
+    <div class="botcenter">Hello</div>
+    <div class="botright">Hello</div>
+  </div>
+</body>
+
 </html>
