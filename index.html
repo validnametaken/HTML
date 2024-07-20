@@ -8,30 +8,29 @@
     <style>
         /* Lego-inspired colors */
         :root {
-            --lego-yellow: #F7DC6F;
+            --lego-white: #e7e7e7;
+            --lego-black: rgb(50, 50, 50);
             --lego-blue: #0097A7;
             --lego-red: #ff3535;
-            --lego-gray: #454F55;
-            --lego-white: #f3f0f0;
-            --lego-green: #34C759;
+            --lego-green: #05b130;
             --lego-orange: #FFA07A;
             --lego-purple: #7A288A;
-            --lego-black: #000000;
-            --lego-pink: #FFC5C5;
-            --lego-brown: #964B00;
+            --lego-yellow: #ddb100;
+            --lego-brown: #814101;
+            --lego-coral: #f769b0;
+
+            --lego-gray: #454F55;
+            --lego-pink: #e79d9d;
             --lego-turquoise: #1ABC9C;
-            --lego-silver: #B1B1B1;
-            --lego-gold: #F8E231;
-            --lego-cyan: #00BFFF;
-            --lego-magenta: #FF00FF;
-            --lego-lime: #32CD32;
-            --lego-teal: #009688;
-            --lego-coral: #FF99CC;
+
+
         }
 
         body#index {
             font-family: Arial, sans-serif;
             background-color: var(--lego-black);
+            max-width: 800px; /* add this line */
+            margin: 0 auto; /* add this line to center the body */
         }
 
         .link-list {
@@ -58,9 +57,9 @@
             padding: 20px;
             width: 130px;
             height: 60px;
-            background-color: black;
+            background-color: var(--lego-black);
             border: none;
-            background-image: linear-gradient(to right, black, black 10px, transparent 10px, transparent 10px);
+            background-image: linear-gradient(to right, rgb(50, 50, 50), rgb(50, 50, 50) 10px, transparent 10px, transparent 10px);
             background-size: 40px 10px;
             background-position: 0% 0%;
             background-repeat: repeat-x;
@@ -91,21 +90,28 @@
         display: grid;
         grid-template-columns: repeat(3, 1fr); /* 3 columns of equal width */
         gap: 10px; /* spacing between items */
-    
     }
+
+    .link-list li {
+    display: flex; /* make each list item a flex container */
+    justify-content: center; /* center the button horizontally */
+    align-items: center; /* center the button vertically */
+}
+
+
     </style>
 </head>
 
 <body id="index">
-    <h1>Lego HTML Index</h1>
+    <h1>Andy's HTML Index</h1>
     <ul class="link-list">
-        <li><button class="lego-button" style="background-color: var(--lego-blue)"><ahref="Jeopardy.html">Jeopardy</a></button></li>
+        <li><button class="lego-button" style="background-color: var(--lego-blue)"><a href="jeopardy.html">Jeopardy</a></button></li>
         <li><button class="lego-button" style="background-color: var(--lego-red)"><a href="animalquiz.html">Animal Quiz</a></button></li>
         <li><button class="lego-button" style="background-color: var(--lego-green)"><a href="hiraganaquiz.html">Hiragana Quiz</a></button></li>
         <li><button class="lego-button" style="background-color: var(--lego-orange)"><a href="DatesTracker.html">Dates Tracker</a></button></li>
         <li><button class="lego-button" style="background-color: var(--lego-purple)"><a href="lovingfamily.html">Loving Family</a></button></li>
-        <li><button class="lego-button" style="background-color: var(--lego-yellow)"><ahref="spinner1.html">Spinner1</a></button></li>
-        <li><button class="lego-button" style="background-color: var(--lego-brown)"><ahref="spinner2.html">Spinner2</a></button></li>
+        <li><button class="lego-button" style="background-color: var(--lego-yellow)"><a href="spinner1.html">Spinner1</a></button></li>
+        <li><button class="lego-button" style="background-color: var(--lego-brown)"><a href="spinner2.html">Spinner2</a></button></li>
         <li><button class="lego-button" style="background-color: var(--lego-coral)"><a href="countdown.html">Countdown Timer</a></button></li>
         <!-- Add more files here -->
     </ul>
