@@ -51,118 +51,109 @@
       }
     }
 
-    .container {
-      height: 100vh;
-      width: 100vw;
-      display: grid;
-      grid-template-columns: 5% 90% 5%;
-      grid-template-rows: 10% 85% 5%;
-      gap: 0px 0px;
-      grid-auto-flow: row;
-      grid-template-areas:
-        "topleft topcenter topright"
-        "midleft center midright"
-        "botleft botcenter botright";
-      overflow: hidden;
-    }
-
-    .topcenter {
-      max-height: 80vh;
-      /* adjust the max height to your liking */
-      max-width: 80vw;
-      /* adjust the max width to your liking */
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-      max-height: calc(100vh - 20px);
-    }
-
-    .topheading {
-      font-size: calc(var(--font-scale) * 1rem);
+    .n3 {
+      font-size: calc(2vw);
       /* use the CSS variable to scale the font size */
       animation: jellytitle 3s ease 0s 1 normal forwards;
       animation-delay: 2s;
     }
+    div {
+  border: 1px dashed #666;
+}
 
-    .topheading h1 {
-      margin: 0;
-      /* remove margin to avoid extra space */
-    }
 
-    .topcenter h3 {
-      font-size: calc(var(--font-scale) * 1.1rem);
-      /* use the CSS variable to scale the font size */
-      margin-top: 0.5rem;
-      /* add some margin to separate from h1 */
-    }
-
-    .topleft {
-      grid-area: topleft;
-    }
-
-    .topright {
-      grid-area: topright;
-    }
-
-    .midleft {
-      grid-area: midleft;
-    }
-
-    .center {
-      grid-area: center;
-    }
-
-    .midright {
-      grid-area: midright;
-    }
-
-    .botleft {
-      grid-area: botleft;
-    }
-
-    .botcenter {
-      grid-area: botcenter;
-    }
-
-    .botright {
-      grid-area: botright;
-    }
-
-    .topcenter,
-    .topleft,
-    .topright,
-    .midleft,
-    .center,
-    .midright,
-    .botleft,
-    .botcenter,
-    .botright {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+    .container {
+      max-width: 100vw;
+      max-height: 100vh;
+  display: grid; 
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr; 
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr; 
+  gap: 0px 0px; 
+  grid-template-areas: 
+    "n1 n2 n3 n4 n5"
+    "n6 n7 n8 n9 n10"
+    "n11 n12 n13 n14 n15"
+    "n16 n17 n18 n19 n20"
+    "n21 n22 n23 n24 n25"
+    "n26 n27 n28 n29 n30"
+    "n31 n32 n33 n34 n35"; 
+}
+.n1 { grid-area: n1; }
+.n2 { grid-area: n2; }
+.n3 { grid-area: n3; }
+.n4 { grid-area: n4; }
+.n5 { grid-area: n5; }
+.n6 { grid-area: n6; }
+.n7 { grid-area: n7; }
+.n8 { grid-area: n8; }
+.n9 { grid-area: n9; }
+.n10 { grid-area: n10; }
+.n11 { grid-area: n11; }
+.n12 { grid-area: n12; }
+.n13 { grid-area: n13; }
+.n14 { grid-area: n14; }
+.n15 { grid-area: n15; }
+.n16 { grid-area: n16; }
+.n17 { grid-area: n17; }
+.n18 { grid-area: n18; }
+.n19 { grid-area: n19; }
+.n20 { grid-area: n20; }
+.n21 { grid-area: n21; }
+.n22 { grid-area: n22; }
+.n23 { grid-area: n23; }
+.n24 { grid-area: n24; }
+.n25 { grid-area: n25; }
+.n26 { grid-area: n26; }
+.n27 { grid-area: n27; }
+.n28 { grid-area: n28; }
+.n29 { grid-area: n29; }
+.n30 { grid-area: n30; }
+.n31 { grid-area: n31; }
+.n32 { grid-area: n32; }
+.n33 { grid-area: n33; }
+.n34 { grid-area: n34; }
+.n35 { grid-area: n35; }
   </style>
 </head>
 
 
 <body>
   <div class="container">
-    <div class="topcenter">
-      <div class="topheading">
-        <h1>Welcome to Andy's Jeopardy</h1>
-      </div>
-      <h3>Made from scratch by himself.</h3>
-    </div>
-    <div class="topleft">Hello</div>
-    <div class="topright">Hello</div>
-    <div class="midleft">Hello</div>
-    <div class="center">Hello</div>
-    <div class="midright">Hello</div>
-    <div class="botleft">Hello</div>
-    <div class="botcenter">Hello</div>
-    <div class="botright">Hello</div>
+    <div class="n1"></div>
+    <div class="n2"></div>
+    <div class="n3"><h1>Hello</h1></div>
+    <div class="n4"></div>
+    <div class="n5"></div>
+    <div class="n6"></div>
+    <div class="n7"></div>
+    <div class="n8"></div>
+    <div class="n9"></div>
+    <div class="n10"></div>
+    <div class="n11"></div>
+    <div class="n12"></div>
+    <div class="n13"></div>
+    <div class="n14"></div>
+    <div class="n15"></div>
+    <div class="n16"></div>
+    <div class="n17"></div>
+    <div class="n18"></div>
+    <div class="n19"></div>
+    <div class="n20"></div>
+    <div class="n21"></div>
+    <div class="n22"></div>
+    <div class="n23"></div>
+    <div class="n24"></div>
+    <div class="n25"></div>
+    <div class="n26"></div>
+    <div class="n27"></div>
+    <div class="n28"></div>
+    <div class="n29"></div>
+    <div class="n30"></div>
+    <div class="n31"></div>
+    <div class="n32"></div>
+    <div class="n33"></div>
+    <div class="n34"></div>
+    <div class="n35"></div>
   </div>
 </body>
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grid Template</title>
+    <title>Scaleable Div</title>
     <style>
      * {
         box-sizing: border-box;
@@ -29,7 +29,10 @@
         overflow: hidden;
       }
       
-     .topcenter { grid-area: topcenter; }
+     .topcenter { grid-area: topcenter;
+      overflow: hidden;
+      max-height: 100%; /* add this */
+    }
      .topleft { grid-area: topleft; }
      .topright { grid-area: topright; }
      .midleft { grid-area: midleft; }
@@ -43,16 +46,24 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        margin: 0;
       }
+
+      h1 {
+  font-size: clamp(1rem, 3vw, 3rem);
+}
+h3 {
+  font-size: clamp(1rem, 6vw, 6rem);
+}
     </style>
   </head>
   <body>
     <div class="container">
-      <div class="topcenter">Hello</div>
+      <div class="topcenter"><h1>Hello</h1></div>
       <div class="topleft"> Hello</div>
       <div class="topright"> Hello</div>
       <div class="midleft">Hello</div>
-      <div class="midcenter"> Hello </div>
+      <div class="midcenter"> <h3>Hello</h3> </div>
       <div class="midright">Hello</div>
       <div class="botleft">Hello</div>
       <div class="botcenter">Hello</div>
