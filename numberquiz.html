@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Numbers Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      margin: 0;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    #game-board {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    #game-board div {
+      background-color: #007BFF;
+      color: white;
+      font-size: 24px;
+      width: 50px;
+      height: 50px;
+      margin: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      border-radius: 5px;
+      user-select: none;
+      box-sizing: border-box;
+      /* Add this line */
+    }
+
+    #game-board div.correct {
+      border: 2px solid green;
+    }
+
+    #game-board div.correct:active {
+      transform: translateY(2px);
+    }
+
+    #timer,
+    #score {
+      margin-top: 20px;
+      font-size: 20px;
+    }
+
+    button {
+      background-color: #007BFF;
+      color: white;
+      font-size: 20px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: transform 0.1s ease-in-out;
+    }
+
+    button:active {
+      transform: translateY(2px);
+    }
+
+    #game-board div.correct {
+      border: 10px solid green;
+      transform: translateY(2px);
+    }
+
+    #game-board div:active {
+      transform: translateY(4px);
+    }
+
+    #game-board div.incorrect {
+      border: 2px solid red;
+      animation: shake 0.5s;
+    }
+    #game-board div.correct {
+  background-color: #28a745;
+  transform: scale(1.1);
+  transition: all 0.3s ease;
+}
+
+    @keyframes shake {
+      0% {
+        transform: translateX(0);
+      }
+
+      25% {
+        transform: translateX(-2px);
+      }
+
+      50% {
+        transform: translateX(2px);
+      }
+
+      75% {
+        transform: translateX(-2px);
+      }
+
+      100% {
+        transform: translateX(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Numbers Game</h1>
+    <div id="setup-screen">
+      <label for="min-range">Minimum number:</label>
+      <input type="number" id="min-range" value="0">
+      <label for="max-range">Maximum number:</label>
+      <input type="number" id="max-range" value="100">
+      <button id="start-button">Start Game</button>
+    </div>
+    <div id="game-screen" style="display: none;">
+      <div id="game-board"></div>
+      <div id="timer">Time Left: 45s</div>
+      <div id="score">Score: 0</div>
+    </div>
+    <div id="congrats-screen" style="display: none;">
+      <h2>Congratulations!</h2>
+      <p>Your final score: <span id="final-score"></span></p>
+      <button id="play-again">Play Again</button>
+    </div>
+  </div>
+
+  <script>
+  const INITIAL_TIME = 45;
+const INITIAL_LEVEL = 2;
+
+const gameState = {
+  timeLeft: INITIAL_TIME,
+  score: 0,
+  currentLevel: INITIAL_LEVEL,
+  numbers: [],
+  interval: null,
+  minRange: 0,
+  maxRange: 100
+};
+
+document.getElementById('start-button').addEventListener('click', startGame);
+document.getElementById('play-again').addEventListener('click', resetGame);
+
+function startGame() {
+  gameState.minRange = parseInt(document.getElementById('min-range').value);
+  gameState.maxRange = parseInt(document.getElementById('max-range').value);
+  
+  if (gameState.minRange >= gameState.maxRange) {
+    alert('Maximum number must be greater than minimum number');
+    return;
+  }
+
+  document.getElementById('setup-screen').style.display = 'none';
+  document.getElementById('game-screen').style.display = 'block';
+
+  gameState.score = 0;
+  gameState.currentLevel = INITIAL_LEVEL;
+  gameState.timeLeft = INITIAL_TIME;
+  updateUI();
+  gameState.interval = setInterval(updateTimer, 1000);
+  generateNumbers();
+}
+
+function updateTimer() {
+  if (gameState.timeLeft > 0) {
+    gameState.timeLeft--;
+    updateUI();
+  } else {
+    clearInterval(gameState.interval);
+    showCongratsScreen();
+  }
+}
+
+function generateNumbers() {
+  const gameBoard = document.getElementById('game-board');
+  gameBoard.innerHTML = '';
+  
+  // Generate unique numbers
+  const uniqueNumbers = new Set();
+  while (uniqueNumbers.size < gameState.currentLevel) {
+    uniqueNumbers.add(Math.floor(Math.random() * (gameState.maxRange - gameState.minRange + 1)) + gameState.minRange);
+  }
+  
+  gameState.numbers = Array.from(uniqueNumbers);
+  const sortedNumbers = [...gameState.numbers].sort((a, b) => a - b);
+  shuffleArray(gameState.numbers);
+  
+  gameState.numbers.forEach(num => {
+    const numberDiv = document.createElement('div');
+    numberDiv.innerText = num;
+    numberDiv.addEventListener('click', () => handleNumberClick(num, sortedNumbers));
+    gameBoard.appendChild(numberDiv);
+  });
+}
+
+function handleNumberClick(num, sortedNumbers) {
+  const clickedDiv = event.target;
+  if (num === sortedNumbers[0]) {
+    clickedDiv.classList.add('correct');
+    setTimeout(() => {
+      clickedDiv.classList.remove('correct');
+      sortedNumbers.shift();
+      if (sortedNumbers.length === 0) {
+        gameState.score++;
+        gameState.currentLevel++;
+        updateUI();
+        generateNumbers();
+      }
+    }, 300); // Adjust this timing as needed
+  } else {
+    clickedDiv.classList.add('incorrect');
+    setTimeout(() => {
+      clickedDiv.classList.remove('incorrect');
+      generateNumbers();
+    }, 500);
+  }
+}
+
+function updateUI() {
+  document.getElementById('score').innerText = `Score: ${gameState.score}`;
+  document.getElementById('timer').innerText = `Time Left: ${gameState.timeLeft}s`;
+}
+
+function showCongratsScreen() {
+  document.getElementById('game-screen').style.display = 'none';
+  document.getElementById('congrats-screen').style.display = 'block';
+  document.getElementById('final-score').innerText = gameState.score;
+}
+
+function resetGame() {
+  document.getElementById('congrats-screen').style.display = 'none';
+  document.getElementById('setup-screen').style.display = 'block';
+}
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+  </script>
+</body>
+
+</html>
