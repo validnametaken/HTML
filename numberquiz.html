@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Numbers Game</title>
   <style>
-    body {
+        body {
       font-family: Arial, sans-serif;
       display: flex;
       justify-content: center;
@@ -15,7 +15,89 @@
       background-color: #f0f0f0;
       margin: 0;
     }
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.animated-header {
+  font-size: 3em;
+  color: #007BFF;
+  text-align: center;
+  margin-bottom: 30px;
+  animation: fadeInDown 1s ease-out;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+
+#game-board div {
+  font-size: 20px;
+  width: 60px;
+  height: 60px;
+  margin: 8px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+#game-board div:hover {
+  transform: scale(1.05);
+}
     .container {
       text-align: center;
     }
@@ -118,14 +200,19 @@
 
 <body>
   <div class="container">
-    <h1>Numbers Game</h1>
-    <div id="setup-screen">
-      <label for="min-range">Minimum number:</label>
-      <input type="number" id="min-range" value="0">
-      <label for="max-range">Maximum number:</label>
-      <input type="number" id="max-range" value="100">
-      <button id="start-button">Start Game</button>
-    </div>
+    <div class="container">
+      <h1 class="animated-header">Numbers Game</h1>
+      <div id="setup-screen">
+        <div class="input-group">
+          <label for="min-range">Minimum number:</label>
+          <input type="number" id="min-range" value="0">
+        </div>
+        <div class="input-group">
+          <label for="max-range">Maximum number:</label>
+          <input type="number" id="max-range" value="100">
+        </div>
+        <button id="start-button" class="btn">Start Game</button>
+      </div>
     <div id="game-screen" style="display: none;">
       <div id="game-board"></div>
       <div id="timer">Time Left: 45s</div>
@@ -141,7 +228,7 @@
   <script>
   const INITIAL_TIME = 45;
 const INITIAL_LEVEL = 2;
-
+const ROUNDS_PER_LEVEL = 2;
 const gameState = {
   timeLeft: INITIAL_TIME,
   score: 0,
@@ -149,7 +236,8 @@ const gameState = {
   numbers: [],
   interval: null,
   minRange: 0,
-  maxRange: 100
+  maxRange: 100,
+  roundsInCurrentLevel: 0
 };
 
 document.getElementById('start-button').addEventListener('click', startGame);
@@ -158,7 +246,7 @@ document.getElementById('play-again').addEventListener('click', resetGame);
 function startGame() {
   gameState.minRange = parseInt(document.getElementById('min-range').value);
   gameState.maxRange = parseInt(document.getElementById('max-range').value);
-  
+  gameState.roundsInCurrentLevel = 0;
   if (gameState.minRange >= gameState.maxRange) {
     alert('Maximum number must be greater than minimum number');
     return;
@@ -216,7 +304,13 @@ function handleNumberClick(num, sortedNumbers) {
       sortedNumbers.shift();
       if (sortedNumbers.length === 0) {
         gameState.score++;
-        gameState.currentLevel++;
+        gameState.roundsInCurrentLevel++;
+        
+        if (gameState.roundsInCurrentLevel >= ROUNDS_PER_LEVEL) {
+          gameState.currentLevel++;
+          gameState.roundsInCurrentLevel = 0;
+        }
+        
         updateUI();
         generateNumbers();
       }
