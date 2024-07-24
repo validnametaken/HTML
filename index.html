@@ -22,28 +22,16 @@
             --lego-gray: #454F55;
             --lego-pink: #e79d9d;
             --lego-turquoise: #1ABC9C;
-
-
         }
 
         body#index {
             font-family: Arial, sans-serif;
             background-color: var(--lego-black);
-            max-width: 800px; /* add this line */
-            margin: 0 auto; /* add this line to center the body */
-        }
-
-        .link-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-gap: 10px;
             justify-content: center;
-        }
-
-        .link-list li {
-            margin: 10px;
+            align-items: center;
         }
 
         .lego-button {
@@ -83,28 +71,41 @@
             text-decoration: none;
             /* remove underline */
         }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            grid-gap: 10px;
+            justify-content: center;
+            align-items: center;
+        }
+
         .link-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: grid;
-        grid-template-columns: repeat(3, 1fr); /* 3 columns of equal width */
-        gap: 10px; /* spacing between items */
-    }
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
 
-    .link-list li {
-    display: flex; /* make each list item a flex container */
-    justify-content: center; /* center the button horizontally */
-    align-items: center; /* center the button vertically */
-}
+        .link-list li {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-
+        h1 {
+            grid-column: 1 / -1;
+            text-align: center;
+        }
     </style>
 </head>
 
 <body id="index">
-    <h1>Andy's HTML Index</h1>
-    <ul class="link-list">
+    <div class="container">
+        <h1>Andy's HTML Index</h1>
+        <ul class="link-list">
         <li><button class="lego-button" style="background-color: var(--lego-blue)"><a href="jeopardy.html">Jeopardy</a></button></li>
         <li><button class="lego-button" style="background-color: var(--lego-red)"><a href="animalquiz.html">Animal Quiz</a></button></li>
         <li><button class="lego-button" style="background-color: var(--lego-green)"><a href="hiraganaquiz.html">Hiragana Quiz</a></button></li>
@@ -116,6 +117,7 @@
         <li><button class="lego-button" style="background-color: var(--lego-blue)"><a href="numberquiz.html">Number Quiz</a></button></li>
         <!-- Add more files here -->
     </ul>
+</div>
 </body>
 
 </html>
