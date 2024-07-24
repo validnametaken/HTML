@@ -25,8 +25,10 @@
         }
 
         body#index {
-            margin: 0; /* add this line */
-            padding: 0; /* add this line */
+            margin: 0;
+            /* add this line */
+            padding: 0;
+            /* add this line */
             font-family: Arial, sans-serif;
             background-color: var(--lego-black);
             display: grid;
@@ -37,27 +39,28 @@
         }
 
         .lego-button {
-    font-size: 18px;
-    font-family: Open Sans, sans-serif;
-    font-weight: 600;
-    color: var(--lego-white);
-    text-align: center;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    aspect-ratio: 130/60; /* set the aspect ratio to match your original button dimensions */
-    background-color: var(--lego-black);
-    border: none;
-    background-image: linear-gradient(to right, rgb(50, 50, 50), rgb(50, 50, 50) 33%, transparent 33%, transparent 33%);
-    background-size: 30% 15%;
-    background-position: 0% 0%;
-    background-repeat: repeat-x;
-    cursor: pointer;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-    object-fit: cover;
-    padding: 0; /* make sure padding is 0 */
-    margin: 5; /* make sure margin is 0 */
-}
+            font-size: 18px;
+            font-family: Open Sans, sans-serif;
+            font-weight: 600;
+            color: var(--lego-white);
+            text-align: center;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            aspect-ratio: 130/60;
+            /* set the aspect ratio to match your original button dimensions */
+            background-color: var(--lego-black);
+            border: none;
+            background-image: linear-gradient(to right, rgb(50, 50, 50), rgb(50, 50, 50) 33%, transparent 33%, transparent 33%);
+            background-size: 30% 15%;
+            background-position: 0% 0%;
+            background-repeat: repeat-x;
+            cursor: pointer;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            object-fit: cover;
+            padding: 0;
+            margin: 0;
+        }
 
         .lego-button:hover {
             background-color: var(--lego-red);
@@ -81,22 +84,28 @@
             grid-gap: 10px;
             justify-content: center;
             align-items: center;
-            padding: 0 50px; /* add this line */
+            padding: 0 50px;
+            /* add this line */
         }
 
         .link-list {
-    list-style: none;
-    padding: 0; /* make sure padding is 0 */
-    margin: 0; /* make sure margin is 0 */
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-gap: 10px;
-}
+            list-style: none;
+            padding: 0;
+            /* make sure padding is 0 */
+            margin: 0;
+            /* make sure margin is 0 */
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-column-gap: 50px;
+            /* gap between columns */
+            grid-row-gap: 10px;
+            /* gap between rows */
+        }
 
-.link-list li {
-    display: grid;
-    place-items: center;
-}
+        .link-list li {
+            display: grid;
+            place-items: center;
+        }
 
         h1 {
             grid-column: 1 / -1;
@@ -109,18 +118,27 @@
     <div class="container">
         <h1>Andy's HTML Index</h1>
         <ul class="link-list">
-        <li><button class="lego-button" style="background-color: var(--lego-blue)"><a href="jeopardy.html">Jeopardy</a></button></li>
-        <li><button class="lego-button" style="background-color: var(--lego-red)"><a href="animalquiz.html">Animal Quiz</a></button></li>
-        <li><button class="lego-button" style="background-color: var(--lego-green)"><a href="hiraganaquiz.html">Hiragana Quiz</a></button></li>
-        <li><button class="lego-button" style="background-color: var(--lego-orange)"><a href="DatesTracker.html">Dates Tracker</a></button></li>
-        <li><button class="lego-button" style="background-color: var(--lego-purple)"><a href="lovingfamily.html">Loving Family</a></button></li>
-        <li><button class="lego-button" style="background-color: var(--lego-yellow)"><a href="spinner1.html">Spinner1</a></button></li>
-        <li><button class="lego-button" style="background-color: var(--lego-brown)"><a href="spinner2.html">Spinner2</a></button></li>
-        <li><button class="lego-button" style="background-color: var(--lego-coral)"><a href="countdown.html">Countdown Timer</a></button></li>
-        <li><button class="lego-button" style="background-color: var(--lego-blue)"><a href="numberquiz.html">Number Quiz</a></button></li>
-        <!-- Add more files here -->
-    </ul>
-</div>
+            <li><button class="lego-button" style="background-color: var(--lego-blue)"><a
+                        href="jeopardy.html">Jeopardy</a></button></li>
+            <li><button class="lego-button" style="background-color: var(--lego-red)"><a href="animalquiz.html">Animal
+                        Quiz</a></button></li>
+            <li><button class="lego-button" style="background-color: var(--lego-green)"><a
+                        href="hiraganaquiz.html">Hiragana Quiz</a></button></li>
+            <li><button class="lego-button" style="background-color: var(--lego-orange)"><a
+                        href="DatesTracker.html">Dates Tracker</a></button></li>
+            <li><button class="lego-button" style="background-color: var(--lego-purple)"><a
+                        href="lovingfamily.html">Loving Family</a></button></li>
+            <li><button class="lego-button" style="background-color: var(--lego-yellow)"><a
+                        href="spinner1.html">Spinner1</a></button></li>
+            <li><button class="lego-button" style="background-color: var(--lego-brown)"><a
+                        href="spinner2.html">Spinner2</a></button></li>
+            <li><button class="lego-button" style="background-color: var(--lego-coral)"><a
+                        href="countdown.html">Countdown Timer</a></button></li>
+            <li><button class="lego-button" style="background-color: var(--lego-blue)"><a href="numberquiz.html">Number
+                        Quiz</a></button></li>
+            <!-- Add more files here -->
+        </ul>
+    </div>
 </body>
 
 </html>
