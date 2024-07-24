@@ -40,9 +40,9 @@
     font-weight: 600;
     color: var(--lego-white);
     text-align: center;
-    padding: 10px; /* reduced padding to make buttons more compact */
+    padding: 0; /* remove padding to maintain aspect ratio */
     width: 100%; /* make buttons take up full width */
-    height: auto; /* make buttons auto-height */
+    aspect-ratio: 1/1; /* maintain 1:1 aspect ratio */
     background-color: var(--lego-black);
     border: none;
     background-image: linear-gradient(to right, rgb(50, 50, 50), rgb(50, 50, 50) 33%, transparent 33%, transparent 33%);
@@ -51,6 +51,7 @@
     background-repeat: repeat-x;
     cursor: pointer;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    object-fit: cover; /* ensure button content scales with button size */
 }
 
         .lego-button:hover {
@@ -78,20 +79,14 @@
         }
 
         .link-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
 
-        .link-list li {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-basis: calc(33.33% - 10px); /* calculate width based on 3 columns */
-    margin: 5px; /* add some margin to create gaps between buttons */
+.link-list li {
+    display: grid; /* use grid to center button */
+    place-items: center; /* center button horizontally and vertically */
 }
 
         h1 {
