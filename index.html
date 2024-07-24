@@ -35,26 +35,23 @@
         }
 
         .lego-button {
-            font-size: 18px;
-            font-family: Open Sans, sans-serif;
-            /* updated font family */
-            font-weight: 600;
-            /* added font weight for better readability */
-            color: var(--lego-white);
-            text-align: center;
-            padding: 20px;
-            width: 130px;
-            height: 60px;
-            background-color: var(--lego-black);
-            border: none;
-            background-image: linear-gradient(to right, rgb(50, 50, 50), rgb(50, 50, 50) 33%, transparent 33%, transparent 33%);
-            background-size: 30% 15%;
-            background-position: 0% 0%;
-            background-repeat: repeat-x;
-            cursor: pointer;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-            /* added text shadow for depth */
-        }
+    font-size: 18px;
+    font-family: Open Sans, sans-serif;
+    font-weight: 600;
+    color: var(--lego-white);
+    text-align: center;
+    padding: 10px; /* reduced padding to make buttons more compact */
+    width: 100%; /* make buttons take up full width */
+    height: auto; /* make buttons auto-height */
+    background-color: var(--lego-black);
+    border: none;
+    background-image: linear-gradient(to right, rgb(50, 50, 50), rgb(50, 50, 50) 33%, transparent 33%, transparent 33%);
+    background-size: 30% 15%;
+    background-position: 0% 0%;
+    background-repeat: repeat-x;
+    cursor: pointer;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
 
         .lego-button:hover {
             background-color: var(--lego-red);
@@ -90,10 +87,12 @@
         }
 
         .link-list li {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-basis: calc(33.33% - 10px); /* calculate width based on 3 columns */
+    margin: 5px; /* add some margin to create gaps between buttons */
+}
 
         h1 {
             grid-column: 1 / -1;
