@@ -1,0 +1,181 @@
+<html>
+
+<head>
+    <style>
+        /* #region =============== Background =============== */
+
+        body {
+            margin: auto;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow: auto;
+            background: linear-gradient(315deg, rgba(101, 0, 94, 1) 3%, rgba(60, 132, 206, 1) 38%, rgba(48, 238, 226, 1) 68%, rgba(255, 25, 25, 1) 98%);
+            animation: gradient 200s ease infinite;
+            background-size: 400% 400%;
+            background-attachment: fixed;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 0%;
+            }
+
+            50% {
+                background-position: 100% 100%;
+            }
+
+            100% {
+                background-position: 0% 0%;
+            }
+        }
+
+        /*#endregion*/
+        /* #region =============== Slides =============== */
+
+        .slideshow {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            border: none;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            display: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        h1,
+        p {
+            margin: 0;
+            line-height: 1;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        /*#endregion*/
+        /* #region =============== Waves =============== */
+
+        .wave {
+            background: rgb(255 255 255 / 25%);
+            border-radius: 1000% 1000% 0 0;
+            position: fixed;
+            width: 200%;
+            height: 12em;
+            animation: wave 30s -3s linear infinite;
+            transform: translate3d(0, 0, 0);
+            opacity: 0.8;
+            bottom: 0;
+            left: 0;
+            z-index: -2;
+        }
+
+        .wave:nth-of-type(2) {
+            bottom: -1.25em;
+            animation: wave 18s linear reverse infinite;
+            opacity: 0.8;
+        }
+
+        .wave:nth-of-type(3) {
+            bottom: -2.5em;
+            animation: wave 20s -1s reverse infinite;
+            opacity: 0.9;
+        }
+
+        @keyframes wave {
+            2% {
+                transform: translateX(1);
+            }
+
+            25% {
+                transform: translateX(-25%);
+            }
+
+            50% {
+                transform: translateX(-50%);
+            }
+
+            75% {
+                transform: translateX(-25%);
+            }
+
+            100% {
+                transform: translateX(1);
+            }
+        }
+
+        /*#endregion*/
+    </style>
+</head>
+
+<body>
+
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+
+    <!-- Slideshow container -->
+    <div class="slideshow" id="slideshow">
+        <!-- Slide 1 -->
+        <div class="slide" id="slide1">
+            <h1>Slide 1</h1>
+            <p>This is the first slide.</p>
+        </div>
+        <!-- Slide 2 -->
+        <div class="slide" id="slide2" style="display: none;">
+            <h1>Slide 2</h1>
+            <p>This is the second slide.</p>
+        </div>
+        <!-- Slide 3 -->
+        <div class="slide" id="slide3" style="display: none;">
+            <h1>Slide 3</h1>
+            <p>This is the third slide.</p>
+        </div>
+        <!-- Slide 4 -->
+        <div class="slide" id="slide4" style="display: none;">
+            <h1>Slide 4</h1>
+            <p>This is the fourth slide.</p>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        let totalSlides = 4;
+
+        function nextSlide() {
+            // Hide current slide
+            document.getElementById(`slide${currentSlide}`).style.display = 'none';
+            // Show next slide
+            currentSlide++;
+            if (currentSlide > totalSlides) {
+                currentSlide = 1;
+            }
+            document.getElementById(`slide${currentSlide}`).style.display = 'flex';
+        }
+
+        // Add event listener to slideshow container
+        document.getElementById('slideshow').addEventListener('click', nextSlide);
+
+        // Initialize slideshow
+        document.getElementById('slide1').style.display = 'flex';
+
+    </script>
+
+</body>
+
+</html>
