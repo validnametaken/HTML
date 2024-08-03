@@ -139,14 +139,54 @@
         #autoPlayToggle:hover {
             background-color: #ff7426;
         }
+        #loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #252525; /* Fully opaque black background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+}
+
+.level-button {
+    display: block;
+    width: 80%;
+    margin: 10px auto;
+    padding: 15px;
+    font-size: 18px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.level-button:hover {
+    background-color: #45a049;
+}
     </style>
 </head>
 <body>
+    
+    <div id="loader">
+        <div style="text-align: center; color: white; padding: 20px;">
+            <h1 style="margin-bottom: 20px;">Welcome to Hiragana Quiz</h1>
+            <div id="levelButtons" style="display: flex; flex-direction: column; align-items: center; justify-content: space-around; height: 200px;">
+                <button class="level-button" data-level="1" style="margin-bottom: 10px;">Level 1:<br> あ　い　う　え　お</button>
+                <button class="level-button" data-level="2" style="margin-bottom: 10px;">Level 2:<br> か　き　く　け　こ</button>
+                <button class="level-button" data-level="3">Level 3:<br> さ　し　す　せ　そ</button>
+                <!-- Add more level buttons as needed -->
+            </div>
+        </div>
+    </div>
+    
+
     <div id="levelButtons">
-        <button class="level-button" onclick="startQuiz(1)">Level 1</button>
-        <button class="level-button" onclick="startQuiz(2)">Level 2</button>
-        <button class="level-button" onclick="startQuiz(3)">Level 3</button>
-        <!-- Add more levels as needed -->
+Hiragana Quiz
     </div>
 
     <div id="quiz"></div>
@@ -166,82 +206,93 @@
     </audio>
 
     <script>
-        const animals = [
-            {name: "a", image: "hiraganaquiz/images/hiragana-a.png", sound: "hiraganaquiz/sounds/hiragana-a.mp3"},
-            {name: "i", image: "hiraganaquiz/images/hiragana-i.png", sound: "hiraganaquiz/sounds/hiragana-i.mp3"},
-            {name: "u", image: "hiraganaquiz/images/hiragana-u.png", sound: "hiraganaquiz/sounds/hiragana-u.mp3"},
-            {name: "e", image: "hiraganaquiz/images/hiragana-e.png", sound: "hiraganaquiz/sounds/hiragana-e.mp3"},
-            {name: "0", image: "hiraganaquiz/images/hiragana-o.png", sound: "hiraganaquiz/sounds/hiragana-o.mp3"},
-            {name: "0", image: "hiraganaquiz/images/hiragana-ka.png", sound: "hiraganaquiz/sounds/hiragana-ka.mp3"},
-            {name: "0", image: "hiraganaquiz/images/hiragana-ki.png", sound: "hiraganaquiz/sounds/hiragana-ki.mp3"},
-            {name: "0", image: "hiraganaquiz/images/hiragana-ku.png", sound: "hiraganaquiz/sounds/hiragana-ku.mp3"},
-            {name: "0", image: "hiraganaquiz/images/hiragana-ke.png", sound: "hiraganaquiz/sounds/hiragana-ke.mp3"},
-            {name: "0", image: "hiraganaquiz/images/hiragana-ko.png", sound: "hiraganaquiz/sounds/hiragana-ko.mp3"},
-            {name: "a", image: "hiraganaquiz/images/hiragana-sa.png", sound: "hiraganaquiz/sounds/hiragana-sa.mp3"},
-            {name: "i", image: "hiraganaquiz/images/hiragana-shi.png", sound: "hiraganaquiz/sounds/hiragana-shi.mp3"},
-            {name: "u", image: "hiraganaquiz/images/hiragana-su.png", sound: "hiraganaquiz/sounds/hiragana-su.mp3"},
-            {name: "e", image: "hiraganaquiz/images/hiragana-se.png", sound: "hiraganaquiz/sounds/hiragana-se.mp3"},
-            {name: "0", image: "hiraganaquiz/images/hiragana-so.png", sound: "hiraganaquiz/sounds/hiragana-so.mp3"},
-            // Add more animals here
-        ];
+const hiraganas = [
+    {name: "a", image: "hiraganaquiz/images/hiragana-a.png", sound: "hiraganaquiz/sounds/hiragana-a.mp3"},
+    {name: "i", image: "hiraganaquiz/images/hiragana-i.png", sound: "hiraganaquiz/sounds/hiragana-i.mp3"},
+    {name: "u", image: "hiraganaquiz/images/hiragana-u.png", sound: "hiraganaquiz/sounds/hiragana-u.mp3"},
+    {name: "e", image: "hiraganaquiz/images/hiragana-e.png", sound: "hiraganaquiz/sounds/hiragana-e.mp3"},
+    {name: "o", image: "hiraganaquiz/images/hiragana-o.png", sound: "hiraganaquiz/sounds/hiragana-o.mp3"},
+    {name: "ka", image: "hiraganaquiz/images/hiragana-ka.png", sound: "hiraganaquiz/sounds/hiragana-ka.mp3"},
+    {name: "ki", image: "hiraganaquiz/images/hiragana-ki.png", sound: "hiraganaquiz/sounds/hiragana-ki.mp3"},
+    {name: "ku", image: "hiraganaquiz/images/hiragana-ku.png", sound: "hiraganaquiz/sounds/hiragana-ku.mp3"},
+    {name: "ke", image: "hiraganaquiz/images/hiragana-ke.png", sound: "hiraganaquiz/sounds/hiragana-ke.mp3"},
+    {name: "ko", image: "hiraganaquiz/images/hiragana-ko.png", sound: "hiraganaquiz/sounds/hiragana-ko.mp3"},
+    {name: "sa", image: "hiraganaquiz/images/hiragana-sa.png", sound: "hiraganaquiz/sounds/hiragana-sa.mp3"},
+    {name: "shi", image: "hiraganaquiz/images/hiragana-shi.png", sound: "hiraganaquiz/sounds/hiragana-shi.mp3"},
+    {name: "su", image: "hiraganaquiz/images/hiragana-su.png", sound: "hiraganaquiz/sounds/hiragana-su.mp3"},
+    {name: "se", image: "hiraganaquiz/images/hiragana-se.png", sound: "hiraganaquiz/sounds/hiragana-se.mp3"},
+    {name: "so", image: "hiraganaquiz/images/hiragana-so.png", sound: "hiraganaquiz/sounds/hiragana-so.mp3"},
+];
 
+function filterHiraganasByLevel(level) {
+    const levelDefinitions = {
+        1: ['a', 'i', 'u', 'e', 'o'],
+        2: ['ka', 'ki', 'ku', 'ke', 'ko'],
+        3: ['sa', 'shi', 'su', 'se', 'so'],
+    };
+
+    const selectedCharacters = levelDefinitions[level] || [];
+    return hiraganas.filter(hiragana => selectedCharacters.includes(hiragana.name));
+}
+
+    
         let currentQuestion;
-        let selectedAnimals = [];
+        let selectedHiraganas = [];
         let autoPlay = false;
         const quizContainer = document.getElementById('quiz');
-        const animalSound = document.getElementById('animalSound');
+        const hiraganaSound = document.getElementById('animalSound');
         const answerBox = document.getElementById('answerBox');
         const autoPlayToggleButton = document.getElementById('autoPlayToggle');
-
-        function getRandomAnimal(exclude = []) {
-            let animal;
+    
+        function getRandomHiragana(exclude = []) {
+            let hiragana;
             do {
-                animal = selectedAnimals[Math.floor(Math.random() * selectedAnimals.length)];
-            } while (exclude.includes(animal.name));
-            return animal;
+                hiragana = selectedHiraganas[Math.floor(Math.random() * selectedHiraganas.length)];
+            } while (exclude.includes(hiragana.name));
+            return hiragana;
         }
-
+    
         function generateQuestion() {
-            currentQuestion = getRandomAnimal();
+            currentQuestion = getRandomHiragana();
             const options = [currentQuestion];
             while (options.length < 3) {
-                const randomAnimal = getRandomAnimal(options.map(animal => animal.name));
-                options.push(randomAnimal);
+                const randomHiragana = getRandomHiragana(options.map(hiragana => hiragana.name));
+                options.push(randomHiragana);
             }
             options.sort(() => 0.5 - Math.random()); // Shuffle the options
             displayQuestion(currentQuestion, options);
-
+    
             if (autoPlay) {
-                playAnimalSound();
+                playHiraganaSound();
             }
         }
-
+    
         function displayQuestion(question, options) {
             // Reset audio element
-            animalSound.pause();
-            animalSound.src = question.sound;
-
+            hiraganaSound.pause();
+            hiraganaSound.src = question.sound;
+    
             // Show play sound button
             document.getElementById('playSound').style.display = 'inline-block';
-
+    
             quizContainer.innerHTML = `
                 <ul>
                     ${options.map(option => `<li><img src="${option.image}" alt="${option.name}" onclick="checkAnswer('${option.name}')"></li>`).join('')}
                 </ul>
             `;
-
+    
             answerBox.textContent = ''; // Clear previous answer
             answerBox.style.display = 'block'; // Ensure answer box is visible
         }
-
-        function playAnimalSound() {
+    
+        function playHiraganaSound() {
             // Check if audio source is set
-            if (animalSound.src === '') {
+            if (hiraganaSound.src === '') {
                 console.error('Audio source not set.');
                 return;
             }
-
-            animalSound.play()
+    
+            hiraganaSound.play()
                 .then(() => {
                     // Audio successfully started
                     console.log('Audio playing.');
@@ -250,36 +301,61 @@
                     console.error('Failed to play audio:', error);
                 });
         }
-
+    
         function checkAnswer(selected) {
             if (selected === currentQuestion.name) {
                 answerBox.textContent = 'Correct!';
                 answerBox.className = 'correct';
-                // answerBox.style.display = 'block'; // No longer needed to show it here
                 setTimeout(() => {
-                    // answerBox.style.display = 'none'; // Hide after delay, remove this line
                     generateQuestion(); // Generate next question
                 }, 1000);
             } else {
                 answerBox.textContent = 'Try again';
                 answerBox.className = 'incorrect';
-                // answerBox.style.display = 'block'; // No longer needed to show it here
             }
         }
-
+    
         function startQuiz(level) {
-            const numberOfQuestions = level * 5;
-            selectedAnimals = animals.slice(0, numberOfQuestions);
+            selectedHiraganas = filterHiraganasByLevel(level);
             generateQuestion();
         }
-
+    
         function toggleAutoPlay() {
             autoPlay = !autoPlay;
             autoPlayToggleButton.textContent = `Auto Play: ${autoPlay ? 'On' : 'Off'}`;
         }
-
-        // Initialize with level 1
-        startQuiz(1);
+    
+        function filterHiraganasByLevel(level) {
+            const levelDefinitions = {
+                1: ['a', 'i', 'u', 'e', 'o'],
+                2: ['ka', 'ki', 'ku', 'ke', 'ko'],
+                3: ['sa', 'shi', 'su', 'se', 'so'],
+                // Add more levels as needed
+            };
+    
+            const selectedCharacters = levelDefinitions[level] || [];
+            return hiraganas.filter(hiragana => selectedCharacters.includes(hiragana.name));
+        }
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.level-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const levelAttribute = this.getAttribute('data-level');
+                    if (levelAttribute === null) {
+                        console.error('Level attribute is missing');
+                        return;
+                    }
+                    const selectedLevel = parseInt(levelAttribute);
+                    if (isNaN(selectedLevel)) {
+                        console.error('Invalid level attribute');
+                        return;
+                    }
+                    document.getElementById('loader').style.display = 'none';
+                    startQuiz(selectedLevel);
+                });
+            });
+        });
     </script>
+    
 </body>
 </html>
