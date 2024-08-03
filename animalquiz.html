@@ -95,6 +95,23 @@
             width: auto; /* Maintain aspect ratio */
             object-fit: contain; /* Ensure it scales properly */
         }
+        #autoPlayToggle {
+            margin-top: 15px; /* Adjust margin as needed */
+            background: #f93a13;
+            color: white;
+            border: none;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        #autoPlayToggle:hover {
+            background-color: #ff7426;
+        }
     </style>
 </head>
 <body>
@@ -103,6 +120,8 @@
     <div>
         <button class="button-77" id="playSound" onclick="playAnimalSound()">Play Sound</button>
     </div>
+
+    <button id="autoPlayToggle" onclick="toggleAutoPlay()">Auto Play: Off</button>
 
     <div id="answerBox"></div>
 
@@ -148,6 +167,8 @@
         const quizContainer = document.getElementById('quiz');
         const animalSound = document.getElementById('animalSound');
         const answerBox = document.getElementById('answerBox');
+        let autoPlay = false;
+        const autoPlayToggleButton = document.getElementById('autoPlayToggle');
 
         function getRandomAnimal(exclude = []) {
             let animal;
@@ -217,6 +238,11 @@
                 answerBox.className = 'incorrect';
                 // answerBox.style.display = 'block'; // No longer needed to show it here
             }
+        }
+
+        function toggleAutoPlay() {
+            autoPlay = !autoPlay;
+            autoPlayToggleButton.textContent = `Auto Play: ${autoPlay ? 'On' : 'Off'}`;
         }
 
         generateQuestion();

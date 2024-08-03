@@ -1,3 +1,4 @@
 {
-    "genieai.enableConversationHistory": true
+    "genieai.enableConversationHistory": true,
+    "maptz.regionfolder": {}
 }

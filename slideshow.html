@@ -1,7 +1,13 @@
 <html>
-
-<head>
+    <head>
     <style>
+
+        /* #region */
+/* CSS content here */
+        /* sfsdfsdfsd */
+/*#endregion*/
+
+
         /* #region =============== Background =============== */
 
         body {
@@ -51,6 +57,7 @@
             align-items: center;
             flex-direction: column;
             transition: opacity 0.5s ease-in-out;
+
         }
 
         body {
@@ -124,12 +131,12 @@
 </head>
 
 <body>
-
+    <!-- #region =============== Slides =============== -->
     <div class="wave"></div>
     <div class="wave"></div>
     <div class="wave"></div>
 
-    <!-- Slideshow container -->
+
     <div class="slideshow" id="slideshow">
         <!-- Slide 1 -->
         <div class="slide" id="slide1">
@@ -145,6 +152,7 @@
         <div class="slide" id="slide3" style="display: none;">
             <h1>Slide 3</h1>
             <p>This is the third slide.</p>
+            <button id="goto-slide1">Go to Slide 1</button>
         </div>
         <!-- Slide 4 -->
         <div class="slide" id="slide4" style="display: none;">
@@ -152,8 +160,9 @@
             <p>This is the fourth slide.</p>
         </div>
     </div>
-
+    <!-- #endregion -->
     <script>
+        //#region =============== Next slides =============== */
         let currentSlide = 1;
         let totalSlides = 4;
 
@@ -173,6 +182,43 @@
 
         // Initialize slideshow
         document.getElementById('slide1').style.display = 'flex';
+
+        // Add event listener to button
+        document.getElementById('goto-slide1').addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent the nextSlide function from being called
+            // Hide current slide
+            document.getElementById(`slide${currentSlide}`).style.display = 'none';
+            // Show slide 1
+            currentSlide = 1;
+            document.getElementById(`slide${currentSlide}`).style.display = 'flex';
+        });
+        //#endregion
+
+        
+        //#region =============== Keyboard navigation =============== */
+
+        // Add event listener to document for keydown events
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // Function to go to previous slide
+        function prevSlide() {
+            // Hide current slide
+            document.getElementById(`slide${currentSlide}`).style.display = 'none';
+            // Show previous slide
+            currentSlide--;
+            if (currentSlide < 1) {
+                currentSlide = totalSlides;
+            }
+            document.getElementById(`slide${currentSlide}`).style.display = 'flex';
+        }
+
+        //#endregion
 
     </script>
 
