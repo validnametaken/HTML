@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,16 +15,19 @@
             margin: 0;
             background: linear-gradient(to right, #ffecd2 0%, #fcb69f 100%);
             font-family: Arial, sans-serif;
-            overflow: hidden; /* Prevent vertical scrolling */
+            overflow: hidden;
+            /* Prevent vertical scrolling */
         }
 
         #quiz {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 65vh; /* Adjusted height */
+            height: 65vh;
+            /* Adjusted height */
             width: 100%;
-            overflow: hidden; /* Ensure no horizontal overflow */
+            overflow: hidden;
+            /* Ensure no horizontal overflow */
         }
 
         .button-77 {
@@ -33,13 +37,18 @@
             color: #fff;
             cursor: pointer;
             font-family: Eina01, sans-serif;
-            font-size: 7vh; /* Adjusted font size */
+            font-size: 7vh;
+            /* Adjusted font size */
             font-weight: bold;
-            padding: 10px 20px; /* Adjusted padding */
-            margin-top: 15px; /* Adjusted margin */
+            padding: 10px 20px;
+            /* Adjusted padding */
+            margin-top: 15px;
+            /* Adjusted margin */
             text-transform: uppercase;
-            position: relative; /* Ensure relative positioning */
-            z-index: 1; /* Ensure it's above answerBox */
+            position: relative;
+            /* Ensure relative positioning */
+            z-index: 1;
+            /* Ensure it's above answerBox */
         }
 
         .button-77:hover {
@@ -47,18 +56,27 @@
         }
 
         #answerBox {
-            margin-top: 10px; /* Adjust margin as needed */
-            font-size: 6vh; /* Adjust font size */
-            height: 10vh; /* Adjusted height */
+            margin-top: 10px;
+            /* Adjust margin as needed */
+            font-size: 6vh;
+            /* Adjust font size */
+            height: 10vh;
+            /* Adjusted height */
             text-align: center;
             /* display: none; Remove this line to keep it visible */
-            transition: all 0.3s ease; /* Smooth transition */
-            position: relative; /* Position relatively */
-            width: 100%; /* Full width */
-    
-            padding: 10px; /* Padding for content */
-            border-radius: 10px; /* Rounded corners */
-            z-index: 2; /* Ensure above quiz images */
+            transition: all 0.3s ease;
+            /* Smooth transition */
+            position: relative;
+            /* Position relatively */
+            width: 100%;
+            /* Full width */
+
+            padding: 10px;
+            /* Padding for content */
+            border-radius: 10px;
+            /* Rounded corners */
+            z-index: 2;
+            /* Ensure above quiz images */
             background: linear-gradient(92.83deg, #ff7426 0, #f93a13 100%);
         }
 
@@ -77,53 +95,42 @@
             padding: 0;
             display: flex;
             justify-content: center;
-            max-height: 100%; /* Ensure it fits within the container */
+            max-height: 100%;
+            /* Ensure it fits within the container */
             width: 100%;
             margin: 0;
         }
 
         li {
-            margin: 0 10px; /* Adjust margin between images */
-            flex: 1; /* Allow items to grow equally */
+            margin: 0 10px;
+            /* Adjust margin between images */
+            flex: 1;
+            /* Allow items to grow equally */
         }
 
         img {
             cursor: pointer;
-            max-height: 100%; /* Ensure it fits within the container */
-            max-width: 100%; /* Ensure it fits within the container */
-            height: auto; /* Maintain aspect ratio */
-            width: auto; /* Maintain aspect ratio */
-            object-fit: contain; /* Ensure it scales properly */
-            border: 1px solid black; /* Change the color as needed */
-            padding: 10px; /* Optional: Adds some space between the border and the content */
+            max-height: 100%;
+            /* Ensure it fits within the container */
+            max-width: 100%;
+            /* Ensure it fits within the container */
+            height: auto;
+            /* Maintain aspect ratio */
+            width: auto;
+            /* Maintain aspect ratio */
+            object-fit: contain;
+            /* Ensure it scales properly */
+            border: 1px solid black;
+            /* Change the color as needed */
+            padding: 10px;
+            /* Optional: Adds some space between the border and the content */
         }
 
-        #levelButtons {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px; /* Adjust margin as needed */
-        }
 
-        .level-button {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 15px 32px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-            border-radius: 8px;
-        }
-
-        .level-button:hover {
-            background-color: #45a049;
-        }
 
         #autoPlayToggle {
-            margin-top: 15px; /* Adjust margin as needed */
+            margin-top: 15px;
+            /* Adjust margin as needed */
             background: #f93a13;
             color: white;
             border: none;
@@ -139,43 +146,76 @@
         #autoPlayToggle:hover {
             background-color: #ff7426;
         }
+
         #loader {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #252525; /* Fully opaque black background */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2;
-}
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #252525;
+            /* Fully opaque black background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+        }
 
-.level-button {
-    display: block;
-    width: 80%;
-    margin: 10px auto;
-    padding: 15px;
-    font-size: 18px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+        #levelButtons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            /* Adjust margin as needed */
+        }
+        .level-button {
+            display: block;
+            width: 80%; min-width: 200px; max-width: 300px;
+            margin: 10px auto;
+            padding: 15px;
+            font-size: 18px;
+            background-color: #f93a13;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-.level-button:hover {
-    background-color: #45a049;
-}
+        .level-button:hover {
+            background-color: #ff7426;
+        }
+
+        #changelevelButtons {
+            display: flex;
+            justify-content: flex-start;
+            flex-direction: column;
+            text-align: left;
+        }
+        #changeLevelButton {
+            margin: 10px auto;
+            padding: 15px;
+            font-size: 18px;
+            background-color: #f93a13;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #changeLevelButton:hover {
+            background-color: #ff7426;
+        }
+        
+
+
     </style>
 </head>
+
 <body>
-    
+
     <div id="loader">
         <div style="text-align: center; color: white; padding: 20px;">
-            <h1 style="margin-bottom: 20px;">Welcome to Hiragana Quiz</h1>
-            <div id="levelButtons" style="display: flex; flex-direction: column; align-items: center; justify-content: space-around; height: 200px;">
+            <h1 style="margin-bottom: 20px;">Hiragana Quiz</h1>
+            <div id="levelButtons"
+                style="display: flex; flex-direction: column; align-items: center; justify-content: space-around; height: 200px;">
                 <button class="level-button" data-level="1" style="margin-bottom: 10px;">Level 1:<br> あ　い　う　え　お</button>
                 <button class="level-button" data-level="2" style="margin-bottom: 10px;">Level 2:<br> か　き　く　け　こ</button>
                 <button class="level-button" data-level="3">Level 3:<br> さ　し　す　せ　そ</button>
@@ -183,11 +223,12 @@
             </div>
         </div>
     </div>
-    
 
-    <div id="levelButtons">
-Hiragana Quiz
-    </div>
+
+    <div id="changelevelButtons">
+        <h1 style="font-size: 36px; font-weight: bold; color: #f93a13; text-shadow: 2px 2px 4px #333; margin-bottom: 20px;">Welcome to Hiragana Quiz!</h1>
+        <button id="changeLevelButton">Change Level</button>
+      </div>
 
     <div id="quiz"></div>
 
@@ -206,36 +247,36 @@ Hiragana Quiz
     </audio>
 
     <script>
-const hiraganas = [
-    {name: "a", image: "hiraganaquiz/images/hiragana-a.png", sound: "hiraganaquiz/sounds/hiragana-a.mp3"},
-    {name: "i", image: "hiraganaquiz/images/hiragana-i.png", sound: "hiraganaquiz/sounds/hiragana-i.mp3"},
-    {name: "u", image: "hiraganaquiz/images/hiragana-u.png", sound: "hiraganaquiz/sounds/hiragana-u.mp3"},
-    {name: "e", image: "hiraganaquiz/images/hiragana-e.png", sound: "hiraganaquiz/sounds/hiragana-e.mp3"},
-    {name: "o", image: "hiraganaquiz/images/hiragana-o.png", sound: "hiraganaquiz/sounds/hiragana-o.mp3"},
-    {name: "ka", image: "hiraganaquiz/images/hiragana-ka.png", sound: "hiraganaquiz/sounds/hiragana-ka.mp3"},
-    {name: "ki", image: "hiraganaquiz/images/hiragana-ki.png", sound: "hiraganaquiz/sounds/hiragana-ki.mp3"},
-    {name: "ku", image: "hiraganaquiz/images/hiragana-ku.png", sound: "hiraganaquiz/sounds/hiragana-ku.mp3"},
-    {name: "ke", image: "hiraganaquiz/images/hiragana-ke.png", sound: "hiraganaquiz/sounds/hiragana-ke.mp3"},
-    {name: "ko", image: "hiraganaquiz/images/hiragana-ko.png", sound: "hiraganaquiz/sounds/hiragana-ko.mp3"},
-    {name: "sa", image: "hiraganaquiz/images/hiragana-sa.png", sound: "hiraganaquiz/sounds/hiragana-sa.mp3"},
-    {name: "shi", image: "hiraganaquiz/images/hiragana-shi.png", sound: "hiraganaquiz/sounds/hiragana-shi.mp3"},
-    {name: "su", image: "hiraganaquiz/images/hiragana-su.png", sound: "hiraganaquiz/sounds/hiragana-su.mp3"},
-    {name: "se", image: "hiraganaquiz/images/hiragana-se.png", sound: "hiraganaquiz/sounds/hiragana-se.mp3"},
-    {name: "so", image: "hiraganaquiz/images/hiragana-so.png", sound: "hiraganaquiz/sounds/hiragana-so.mp3"},
-];
+        const hiraganas = [
+            { name: "a", image: "hiraganaquiz/images/hiragana-a.png", sound: "hiraganaquiz/sounds/hiragana-a.mp3" },
+            { name: "i", image: "hiraganaquiz/images/hiragana-i.png", sound: "hiraganaquiz/sounds/hiragana-i.mp3" },
+            { name: "u", image: "hiraganaquiz/images/hiragana-u.png", sound: "hiraganaquiz/sounds/hiragana-u.mp3" },
+            { name: "e", image: "hiraganaquiz/images/hiragana-e.png", sound: "hiraganaquiz/sounds/hiragana-e.mp3" },
+            { name: "o", image: "hiraganaquiz/images/hiragana-o.png", sound: "hiraganaquiz/sounds/hiragana-o.mp3" },
+            { name: "ka", image: "hiraganaquiz/images/hiragana-ka.png", sound: "hiraganaquiz/sounds/hiragana-ka.mp3" },
+            { name: "ki", image: "hiraganaquiz/images/hiragana-ki.png", sound: "hiraganaquiz/sounds/hiragana-ki.mp3" },
+            { name: "ku", image: "hiraganaquiz/images/hiragana-ku.png", sound: "hiraganaquiz/sounds/hiragana-ku.mp3" },
+            { name: "ke", image: "hiraganaquiz/images/hiragana-ke.png", sound: "hiraganaquiz/sounds/hiragana-ke.mp3" },
+            { name: "ko", image: "hiraganaquiz/images/hiragana-ko.png", sound: "hiraganaquiz/sounds/hiragana-ko.mp3" },
+            { name: "sa", image: "hiraganaquiz/images/hiragana-sa.png", sound: "hiraganaquiz/sounds/hiragana-sa.mp3" },
+            { name: "shi", image: "hiraganaquiz/images/hiragana-shi.png", sound: "hiraganaquiz/sounds/hiragana-shi.mp3" },
+            { name: "su", image: "hiraganaquiz/images/hiragana-su.png", sound: "hiraganaquiz/sounds/hiragana-su.mp3" },
+            { name: "se", image: "hiraganaquiz/images/hiragana-se.png", sound: "hiraganaquiz/sounds/hiragana-se.mp3" },
+            { name: "so", image: "hiraganaquiz/images/hiragana-so.png", sound: "hiraganaquiz/sounds/hiragana-so.mp3" },
+        ];
 
-function filterHiraganasByLevel(level) {
-    const levelDefinitions = {
-        1: ['a', 'i', 'u', 'e', 'o'],
-        2: ['ka', 'ki', 'ku', 'ke', 'ko'],
-        3: ['sa', 'shi', 'su', 'se', 'so'],
-    };
+        function filterHiraganasByLevel(level) {
+            const levelDefinitions = {
+                1: ['a', 'i', 'u', 'e', 'o'],
+                2: ['ka', 'ki', 'ku', 'ke', 'ko'],
+                3: ['sa', 'shi', 'su', 'se', 'so'],
+            };
 
-    const selectedCharacters = levelDefinitions[level] || [];
-    return hiraganas.filter(hiragana => selectedCharacters.includes(hiragana.name));
-}
+            const selectedCharacters = levelDefinitions[level] || [];
+            return hiraganas.filter(hiragana => selectedCharacters.includes(hiragana.name));
+        }
 
-    
+
         let currentQuestion;
         let selectedHiraganas = [];
         let autoPlay = false;
@@ -243,7 +284,7 @@ function filterHiraganasByLevel(level) {
         const hiraganaSound = document.getElementById('animalSound');
         const answerBox = document.getElementById('answerBox');
         const autoPlayToggleButton = document.getElementById('autoPlayToggle');
-    
+
         function getRandomHiragana(exclude = []) {
             let hiragana;
             do {
@@ -251,7 +292,7 @@ function filterHiraganasByLevel(level) {
             } while (exclude.includes(hiragana.name));
             return hiragana;
         }
-    
+
         function generateQuestion() {
             currentQuestion = getRandomHiragana();
             const options = [currentQuestion];
@@ -261,37 +302,37 @@ function filterHiraganasByLevel(level) {
             }
             options.sort(() => 0.5 - Math.random()); // Shuffle the options
             displayQuestion(currentQuestion, options);
-    
+
             if (autoPlay) {
                 playHiraganaSound();
             }
         }
-    
+
         function displayQuestion(question, options) {
             // Reset audio element
             hiraganaSound.pause();
             hiraganaSound.src = question.sound;
-    
+
             // Show play sound button
             document.getElementById('playSound').style.display = 'inline-block';
-    
+
             quizContainer.innerHTML = `
                 <ul>
                     ${options.map(option => `<li><img src="${option.image}" alt="${option.name}" onclick="checkAnswer('${option.name}')"></li>`).join('')}
                 </ul>
             `;
-    
+
             answerBox.textContent = ''; // Clear previous answer
             answerBox.style.display = 'block'; // Ensure answer box is visible
         }
-    
+
         function playHiraganaSound() {
             // Check if audio source is set
             if (hiraganaSound.src === '') {
                 console.error('Audio source not set.');
                 return;
             }
-    
+
             hiraganaSound.play()
                 .then(() => {
                     // Audio successfully started
@@ -301,7 +342,7 @@ function filterHiraganasByLevel(level) {
                     console.error('Failed to play audio:', error);
                 });
         }
-    
+
         function checkAnswer(selected) {
             if (selected === currentQuestion.name) {
                 answerBox.textContent = 'Correct!';
@@ -314,17 +355,17 @@ function filterHiraganasByLevel(level) {
                 answerBox.className = 'incorrect';
             }
         }
-    
+
         function startQuiz(level) {
             selectedHiraganas = filterHiraganasByLevel(level);
             generateQuestion();
         }
-    
+
         function toggleAutoPlay() {
             autoPlay = !autoPlay;
             autoPlayToggleButton.textContent = `Auto Play: ${autoPlay ? 'On' : 'Off'}`;
         }
-    
+
         function filterHiraganasByLevel(level) {
             const levelDefinitions = {
                 1: ['a', 'i', 'u', 'e', 'o'],
@@ -332,14 +373,14 @@ function filterHiraganasByLevel(level) {
                 3: ['sa', 'shi', 'su', 'se', 'so'],
                 // Add more levels as needed
             };
-    
+
             const selectedCharacters = levelDefinitions[level] || [];
             return hiraganas.filter(hiragana => selectedCharacters.includes(hiragana.name));
         }
-    
-        document.addEventListener('DOMContentLoaded', function() {
+
+        document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.level-button').forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function () {
                     const levelAttribute = this.getAttribute('data-level');
                     if (levelAttribute === null) {
                         console.error('Level attribute is missing');
@@ -355,7 +396,21 @@ function filterHiraganasByLevel(level) {
                 });
             });
         });
+
+
+        // code for the change level button, bringing up the loading screen
+        document.addEventListener('DOMContentLoaded', function () {
+            const changeLevelButton = document.getElementById('changeLevelButton');
+            changeLevelButton.addEventListener('click', function () {
+                document.getElementById('loader').style.display = 'block'; // Show the loader
+                // You might want to add some logic to select the level here
+                // For now, I'll just call startQuiz with a default level (1)
+                startQuiz();
+            });
+        });
+
     </script>
-    
+
 </body>
+
 </html>
