@@ -369,9 +369,14 @@
         }
 
         function startQuiz(level) {
-            selectedHiraganas = filterHiraganasByLevel(level);
-            generateQuestion();
-        }
+    selectedHiraganas = filterHiraganasByLevel(level);
+    if (selectedHiraganas.length > 0) {
+        generateQuestion();
+    } else {
+        console.error('No hiraganas available for the selected level');
+        // Handle the case when no hiraganas are available for the level
+    }
+}
 
         function toggleAutoPlay() {
             autoPlay = !autoPlay;
@@ -412,14 +417,13 @@
 
         // code for the change level button, bringing up the loading screen
         document.addEventListener('DOMContentLoaded', function () {
-            const changeLevelButton = document.getElementById('changeLevelButton');
-            changeLevelButton.addEventListener('click', function () {
-                document.getElementById('loader').style.display = 'block'; // Show the loader
-                // You might want to add some logic to select the level here
-                // For now, I'll just call startQuiz with a default level (1)
-                startQuiz();
-            });
-        });
+    const changeLevelButton = document.getElementById('changeLevelButton');
+    changeLevelButton.addEventListener('click', function () {
+        const loader = document.getElementById('loader');
+        loader.style.display = 'flex';
+        loader.querySelector('#levelButtons').style.display = 'flex';
+    });
+});
 
     </script>
 
