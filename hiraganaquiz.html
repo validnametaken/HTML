@@ -8,6 +8,8 @@
     <style>
         html {
     font-size: 16px; /* Or any other value you prefer */
+    height: 100%;
+    width: 100%;
 }
         body {
             display: flex;
@@ -31,6 +33,7 @@
             width: 100%;
             overflow: hidden;
             /* Ensure no horizontal overflow */
+            box-sizing: border-box;
         }
 
         .button-77 {
@@ -59,7 +62,7 @@
         }
 
         #answerBox {
-            margin-top: 10px;
+            margin-top: auto;
             /* Adjust margin as needed */
             font-size: 125%;
             /* Adjust font size */
@@ -73,7 +76,6 @@
             /* Position relatively */
             width: 100%;
             /* Full width */
-
             padding: 10px;
             /* Padding for content */
             border-radius: 10px;
@@ -81,6 +83,7 @@
             z-index: 2;
             /* Ensure above quiz images */
             background: linear-gradient(92.83deg, #ff7426 0, #f93a13 100%);
+            box-sizing: border-box;
         }
 
         .correct {
@@ -102,6 +105,7 @@
             /* Ensure it fits within the container */
             width: 100%;
             margin: 0;
+            box-sizing: border-box;
         }
 
         li {
@@ -127,6 +131,7 @@
             /* Change the color as needed */
             padding: 10px;
             /* Optional: Adds some space between the border and the content */
+            box-sizing: border-box;
         }
 
 
@@ -144,6 +149,7 @@
             font-size: 16px;
             cursor: pointer;
             border-radius: 8px;
+            margin-bottom: 20px; /* Add this line */
         }
 
         #autoPlayToggle:hover {
@@ -162,6 +168,7 @@
             justify-content: center;
             align-items: center;
             z-index: 2;
+            box-sizing: border-box;
         }
 
         #levelButtons {
@@ -181,6 +188,7 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            box-sizing: border-box;
         }
 
         .level-button:hover {
@@ -216,9 +224,10 @@
 
     <div id="loader">
         <div style="text-align: center; color: white; padding: 20px;">
-            <h1 style="margin-bottom: 20px;">Hiragana Quiz</h1>
+           
             <div id="levelButtons"
                 style="display: flex; flex-direction: column; align-items: center; justify-content: space-around; height: 200px;">
+                <h1 style="margin-bottom: 20px;">Hiragana Quiz</h1>
                 <button class="level-button" data-level="1" style="margin-bottom: 10px;">Level 1:<br> あ　い　う　え　お</button>
                 <button class="level-button" data-level="2" style="margin-bottom: 10px;">Level 2:<br> か　き　く　け　こ</button>
                 <button class="level-button" data-level="3">Level 3:<br> さ　し　す　せ　そ</button>
