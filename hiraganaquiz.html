@@ -6,11 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Animal Quiz</title>
     <style>
-        html {
-    font-size: 16px; /* Or any other value you prefer */
-    height: 100%;
-    width: 100%;
+
+* {
+  box-sizing: border-box;
 }
+
+        html {
+            font-size: 16px;
+            height: 100%;
+            width: 100%;
+        }
+
         body {
             display: flex;
             flex-direction: column;
@@ -35,6 +41,22 @@
             /* Ensure no horizontal overflow */
             box-sizing: border-box;
         }
+
+        .level-selection-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #252525;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+            box-sizing: border-box;
+        }
+
 
         .button-77 {
             background: linear-gradient(92.83deg, #ff7426 0, #f93a13 100%);
@@ -149,26 +171,12 @@
             font-size: 16px;
             cursor: pointer;
             border-radius: 8px;
-            margin-bottom: 20px; /* Add this line */
+            margin-bottom: 20px;
+            /* Add this line */
         }
 
         #autoPlayToggle:hover {
             background-color: #ff7426;
-        }
-
-        #loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #252525;
-            /* Fully opaque black background */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2;
-            box-sizing: border-box;
         }
 
         #levelButtons {
@@ -177,9 +185,12 @@
             margin-bottom: 20px;
             /* Adjust margin as needed */
         }
+
         .level-button {
             display: block;
-            width: 80%; min-width: 200px; max-width: 300px;
+            width: 80%;
+            min-width: 200px;
+            max-width: 300px;
             margin: 10px auto;
             padding: 15px;
             font-size: 18px;
@@ -201,6 +212,7 @@
             flex-direction: column;
             text-align: left;
         }
+
         #changeLevelButton {
             margin: 10px auto;
             padding: 15px;
@@ -211,36 +223,33 @@
             border-radius: 5px;
             cursor: pointer;
         }
+
         #changeLevelButton:hover {
             background-color: #ff7426;
         }
-        
-
-
     </style>
 </head>
 
 <body>
 
-    <div id="loader">
-        <div style="text-align: center; color: white; padding: 20px;">
-           
-            <div id="levelButtons"
-                style="display: flex; flex-direction: column; align-items: center; justify-content: space-around; height: 200px;">
-                <h1 style="margin-bottom: 20px;">Hiragana Quiz</h1>
-                <button class="level-button" data-level="1" style="margin-bottom: 10px;">Level 1:<br> あ　い　う　え　お</button>
-                <button class="level-button" data-level="2" style="margin-bottom: 10px;">Level 2:<br> か　き　く　け　こ</button>
+    <div id="levelSelectionScreen" class="level-selection-screen">
+
+                <h1 style="margin-bottom: 20px; display: block; color: white;">Hiragana Quiz</h1>
+                <button class="level-button" data-level="1">Level 1:<br> あ　い　う　え　お</button>
+                <button class="level-button" data-level="2">Level 2:<br> か　き　く　け　こ</button>
                 <button class="level-button" data-level="3">Level 3:<br> さ　し　す　せ　そ</button>
-                <!-- Add more level buttons as needed -->
-            </div>
-        </div>
+                <button class="level-button" data-level="4">Level 4:<br> た　ち　つ　て　と</button>
+                <button class="level-button" data-level="5">Level 5:<br> な　に　ぬ　ね　の</button>
+
     </div>
 
 
     <div id="changelevelButtons">
-        <h1 style="font-size: 36px; font-weight: bold; color: #f93a13; text-shadow: 2px 2px 4px #333; margin-bottom: 20px;">Welcome to Hiragana Quiz!</h1>
+        <h1
+            style="font-size: 36px; font-weight: bold; color: #f93a13; text-shadow: 2px 2px 4px #333; margin-bottom: 20px;">
+            Welcome to Hiragana Quiz!</h1>
         <button id="changeLevelButton">Change Level</button>
-      </div>
+    </div>
 
     <div id="quiz"></div>
 
@@ -265,6 +274,7 @@
             { name: "u", image: "hiraganaquiz/images/hiragana-u.png", sound: "hiraganaquiz/sounds/hiragana-u.mp3" },
             { name: "e", image: "hiraganaquiz/images/hiragana-e.png", sound: "hiraganaquiz/sounds/hiragana-e.mp3" },
             { name: "o", image: "hiraganaquiz/images/hiragana-o.png", sound: "hiraganaquiz/sounds/hiragana-o.mp3" },
+
             { name: "ka", image: "hiraganaquiz/images/hiragana-ka.png", sound: "hiraganaquiz/sounds/hiragana-ka.mp3" },
             { name: "ki", image: "hiraganaquiz/images/hiragana-ki.png", sound: "hiraganaquiz/sounds/hiragana-ki.mp3" },
             { name: "ku", image: "hiraganaquiz/images/hiragana-ku.png", sound: "hiraganaquiz/sounds/hiragana-ku.mp3" },
@@ -275,19 +285,19 @@
             { name: "su", image: "hiraganaquiz/images/hiragana-su.png", sound: "hiraganaquiz/sounds/hiragana-su.mp3" },
             { name: "se", image: "hiraganaquiz/images/hiragana-se.png", sound: "hiraganaquiz/sounds/hiragana-se.mp3" },
             { name: "so", image: "hiraganaquiz/images/hiragana-so.png", sound: "hiraganaquiz/sounds/hiragana-so.mp3" },
+
+            { name: "ta", image: "hiraganaquiz/images/hiragana-ta.png", sound: "hiraganaquiz/sounds/hiragana-ta.mp3" },
+            { name: "chi", image: "hiraganaquiz/images/hiragana-chi.png", sound: "hiraganaquiz/sounds/hiragana-chi.mp3" },
+            { name: "tsu", image: "hiraganaquiz/images/hiragana-tsu.png", sound: "hiraganaquiz/sounds/hiragana-tsu.mp3" },
+            { name: "te", image: "hiraganaquiz/images/hiragana-te.png", sound: "hiraganaquiz/sounds/hiragana-te.mp3" },
+            { name: "to", image: "hiraganaquiz/images/hiragana-to.png", sound: "hiraganaquiz/sounds/hiragana-to.mp3" },
+
+            { name: "na", image: "hiraganaquiz/images/hiragana-na.png", sound: "hiraganaquiz/sounds/hiragana-na.mp3" },
+            { name: "ni", image: "hiraganaquiz/images/hiragana-ni.png", sound: "hiraganaquiz/sounds/hiragana-ni.mp3" },
+            { name: "nu", image: "hiraganaquiz/images/hiragana-nu.png", sound: "hiraganaquiz/sounds/hiragana-nu.mp3" },
+            { name: "ne", image: "hiraganaquiz/images/hiragana-ne.png", sound: "hiraganaquiz/sounds/hiragana-ne.mp3" },
+            { name: "no", image: "hiraganaquiz/images/hiragana-no.png", sound: "hiraganaquiz/sounds/hiragana-no.mp3" },
         ];
-
-        function filterHiraganasByLevel(level) {
-            const levelDefinitions = {
-                1: ['a', 'i', 'u', 'e', 'o'],
-                2: ['ka', 'ki', 'ku', 'ke', 'ko'],
-                3: ['sa', 'shi', 'su', 'se', 'so'],
-            };
-
-            const selectedCharacters = levelDefinitions[level] || [];
-            return hiraganas.filter(hiragana => selectedCharacters.includes(hiragana.name));
-        }
-
 
         let currentQuestion;
         let selectedHiraganas = [];
@@ -296,6 +306,19 @@
         const hiraganaSound = document.getElementById('animalSound');
         const answerBox = document.getElementById('answerBox');
         const autoPlayToggleButton = document.getElementById('autoPlayToggle');
+
+        function filterHiraganasByLevel(level) {
+            const levelDefinitions = {
+                1: ['a', 'i', 'u', 'e', 'o'],
+                2: ['ka', 'ki', 'ku', 'ke', 'ko'],
+                3: ['sa', 'shi', 'su', 'se', 'so'],
+                4: ['ta', 'chi', 'tsu', 'te', 'to'],
+                5: ['na', 'ni', 'nu', 'ne', 'no'],
+            };
+
+            const selectedCharacters = levelDefinitions[level] || [];
+            return hiraganas.filter(hiragana => selectedCharacters.includes(hiragana.name));
+        }
 
         function getRandomHiragana(exclude = []) {
             let hiragana;
@@ -312,7 +335,7 @@
                 const randomHiragana = getRandomHiragana(options.map(hiragana => hiragana.name));
                 options.push(randomHiragana);
             }
-            options.sort(() => 0.5 - Math.random()); // Shuffle the options
+            options.sort(() => 0.5 - Math.random());
             displayQuestion(currentQuestion, options);
 
             if (autoPlay) {
@@ -321,47 +344,36 @@
         }
 
         function displayQuestion(question, options) {
-            // Reset audio element
             hiraganaSound.pause();
             hiraganaSound.src = question.sound;
-
-            // Show play sound button
             document.getElementById('playSound').style.display = 'inline-block';
 
             quizContainer.innerHTML = `
-                <ul>
-                    ${options.map(option => `<li><img src="${option.image}" alt="${option.name}" onclick="checkAnswer('${option.name}')"></li>`).join('')}
-                </ul>
-            `;
+            <ul>
+                ${options.map(option => `<li><img src="${option.image}" alt="${option.name}" onclick="checkAnswer('${option.name}')"></li>`).join('')}
+            </ul>
+        `;
 
-            answerBox.textContent = ''; // Clear previous answer
-            answerBox.style.display = 'block'; // Ensure answer box is visible
+            answerBox.textContent = '';
+            answerBox.style.display = 'block';
         }
 
         function playHiraganaSound() {
-            // Check if audio source is set
             if (hiraganaSound.src === '') {
                 console.error('Audio source not set.');
                 return;
             }
 
             hiraganaSound.play()
-                .then(() => {
-                    // Audio successfully started
-                    console.log('Audio playing.');
-                })
-                .catch(error => {
-                    console.error('Failed to play audio:', error);
-                });
+                .then(() => console.log('Audio playing.'))
+                .catch(error => console.error('Failed to play audio:', error));
         }
 
         function checkAnswer(selected) {
             if (selected === currentQuestion.name) {
                 answerBox.textContent = 'Correct!';
                 answerBox.className = 'correct';
-                setTimeout(() => {
-                    generateQuestion(); // Generate next question
-                }, 1000);
+                setTimeout(generateQuestion, 1000);
             } else {
                 answerBox.textContent = 'Try again';
                 answerBox.className = 'incorrect';
@@ -369,30 +381,25 @@
         }
 
         function startQuiz(level) {
-    selectedHiraganas = filterHiraganasByLevel(level);
-    if (selectedHiraganas.length > 0) {
-        generateQuestion();
-    } else {
-        console.error('No hiraganas available for the selected level');
-        // Handle the case when no hiraganas are available for the level
-    }
-}
+            selectedHiraganas = filterHiraganasByLevel(level);
+            if (selectedHiraganas.length > 0) {
+                generateQuestion();
+            } else {
+                console.error('No hiraganas available for the selected level');
+            }
+        }
 
         function toggleAutoPlay() {
             autoPlay = !autoPlay;
             autoPlayToggleButton.textContent = `Auto Play: ${autoPlay ? 'On' : 'Off'}`;
         }
 
-        function filterHiraganasByLevel(level) {
-            const levelDefinitions = {
-                1: ['a', 'i', 'u', 'e', 'o'],
-                2: ['ka', 'ki', 'ku', 'ke', 'ko'],
-                3: ['sa', 'shi', 'su', 'se', 'so'],
-                // Add more levels as needed
-            };
+        function showLevelSelectionScreen() {
+            document.getElementById('levelSelectionScreen').style.display = 'flex';
+        }
 
-            const selectedCharacters = levelDefinitions[level] || [];
-            return hiraganas.filter(hiragana => selectedCharacters.includes(hiragana.name));
+        function hideLevelSelectionScreen() {
+            document.getElementById('levelSelectionScreen').style.display = 'none';
         }
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -408,25 +415,15 @@
                         console.error('Invalid level attribute');
                         return;
                     }
-                    document.getElementById('loader').style.display = 'none';
+                    hideLevelSelectionScreen();
                     startQuiz(selectedLevel);
                 });
             });
+
+            document.getElementById('changeLevelButton').addEventListener('click', showLevelSelectionScreen);
+            showLevelSelectionScreen();
         });
-
-
-        // code for the change level button, bringing up the loading screen
-        document.addEventListener('DOMContentLoaded', function () {
-    const changeLevelButton = document.getElementById('changeLevelButton');
-    changeLevelButton.addEventListener('click', function () {
-        const loader = document.getElementById('loader');
-        loader.style.display = 'flex';
-        loader.querySelector('#levelButtons').style.display = 'flex';
-    });
-});
-
     </script>
-
 </body>
 
 </html>

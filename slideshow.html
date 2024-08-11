@@ -1,14 +1,8 @@
 <html>
-    <head>
-    <style>
+<head>
+<style>
 
-        /* #region */
-/* CSS content here */
-        /* sfsdfsdfsd */
-/*#endregion*/
-
-
-        /* #region =============== Background =============== */
+/* #region =============== Background =============== */
 
         body {
             margin: auto;
@@ -34,8 +28,8 @@
             }
         }
 
-        /*#endregion*/
-        /* #region =============== Slides =============== */
+/*#endregion*/
+/* #region =============== Slides =============== */
 
         .slideshow {
             position: relative;
@@ -75,8 +69,8 @@
             display: flex;
         }
 
-        /*#endregion*/
-        /* #region =============== Waves =============== */
+/*#endregion*/
+/* #region =============== Waves =============== */
 
         .wave {
             background: rgb(255 255 255 / 25%);
@@ -126,12 +120,12 @@
             }
         }
 
-        /*#endregion*/
-    </style>
+/*#endregion*/
+</style>
 </head>
 
 <body>
-    <!-- #region =============== Slides =============== -->
+<!-- #region =============== Slides =============== -->
     <div class="wave"></div>
     <div class="wave"></div>
     <div class="wave"></div>
@@ -160,9 +154,10 @@
             <p>This is the fourth slide.</p>
         </div>
     </div>
-    <!-- #endregion -->
-    <script>
-        //#region =============== Next slides =============== */
+<!-- #endregion -->
+
+<script>
+ //#region =============== Next slides =============== */
         let currentSlide = 1;
         let totalSlides = 4;
 
@@ -192,10 +187,10 @@
             currentSlide = 1;
             document.getElementById(`slide${currentSlide}`).style.display = 'flex';
         });
-        //#endregion
+//#endregion
 
         
-        //#region =============== Keyboard navigation =============== */
+//#region =============== Keyboard navigation =============== */
 
         // Add event listener to document for keydown events
         document.addEventListener('keydown', (e) => {
@@ -218,10 +213,8 @@
             document.getElementById(`slide${currentSlide}`).style.display = 'flex';
         }
 
-        //#endregion
+//#endregion
 
-    </script>
-
+</script>
 </body>
-
 </html>
