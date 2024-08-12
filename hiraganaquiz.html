@@ -6,10 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Animal Quiz</title>
     <style>
-
-* {
-  box-sizing: border-box;
-}
+        * {
+            box-sizing: border-box;
+        }
 
         html {
             font-size: 16px;
@@ -49,8 +48,10 @@
             width: 100%;
             height: 100%;
             background-color: #252525;
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-auto-rows: minmax(10px, auto);
+            gap: 20px; /* Add some space between buttons */
             justify-content: center;
             align-items: center;
             z-index: 2;
@@ -233,13 +234,17 @@
 <body>
 
     <div id="levelSelectionScreen" class="level-selection-screen">
-
-                <h1 style="margin-bottom: 20px; display: block; color: white;">Hiragana Quiz</h1>
-                <button class="level-button" data-level="1">Level 1:<br> あ　い　う　え　お</button>
-                <button class="level-button" data-level="2">Level 2:<br> か　き　く　け　こ</button>
-                <button class="level-button" data-level="3">Level 3:<br> さ　し　す　せ　そ</button>
-                <button class="level-button" data-level="4">Level 4:<br> た　ち　つ　て　と</button>
-                <button class="level-button" data-level="5">Level 5:<br> な　に　ぬ　ね　の</button>
+        <h1 style="margin-bottom: 20px; display: block; color: white;">Hiragana Quiz</h1>
+        <button class="level-button" data-level="1">Level 1:<br> あ　い　う　え　お</button>
+        <button class="level-button" data-level="2">Level 2:<br> か　き　く　け　こ</button>
+        <button class="level-button" data-level="3">Level 3:<br> さ　し　す　せ　そ</button>
+        <button class="level-button" data-level="4">Level 4:<br> た　ち　つ　て　と</button>
+        <button class="level-button" data-level="5">Level 5:<br> な　に　ぬ　ね　の</button>
+        <button class="level-button" data-level="6">Level 6:<br> は　ひ　ふ　へ　ほ</button>
+        <button class="level-button" data-level="7">Level 7:<br> ま　み　む　め　も</button>
+        <button class="level-button" data-level="8">Level 8:<br> や　ゆ　よ</button>
+        <button class="level-button" data-level="9">Level 9:<br> ら　り　る　れ　ろ</button>
+        <button class="level-button" data-level="10">Level 10:<br> わ　を　ん</button>
 
     </div>
 
@@ -280,6 +285,7 @@
             { name: "ku", image: "hiraganaquiz/images/hiragana-ku.png", sound: "hiraganaquiz/sounds/hiragana-ku.mp3" },
             { name: "ke", image: "hiraganaquiz/images/hiragana-ke.png", sound: "hiraganaquiz/sounds/hiragana-ke.mp3" },
             { name: "ko", image: "hiraganaquiz/images/hiragana-ko.png", sound: "hiraganaquiz/sounds/hiragana-ko.mp3" },
+
             { name: "sa", image: "hiraganaquiz/images/hiragana-sa.png", sound: "hiraganaquiz/sounds/hiragana-sa.mp3" },
             { name: "shi", image: "hiraganaquiz/images/hiragana-shi.png", sound: "hiraganaquiz/sounds/hiragana-shi.mp3" },
             { name: "su", image: "hiraganaquiz/images/hiragana-su.png", sound: "hiraganaquiz/sounds/hiragana-su.mp3" },
@@ -297,6 +303,32 @@
             { name: "nu", image: "hiraganaquiz/images/hiragana-nu.png", sound: "hiraganaquiz/sounds/hiragana-nu.mp3" },
             { name: "ne", image: "hiraganaquiz/images/hiragana-ne.png", sound: "hiraganaquiz/sounds/hiragana-ne.mp3" },
             { name: "no", image: "hiraganaquiz/images/hiragana-no.png", sound: "hiraganaquiz/sounds/hiragana-no.mp3" },
+
+            { name: "ha", image: "hiraganaquiz/images/hiragana-ha.png", sound: "hiraganaquiz/sounds/hiragana-ha.mp3" },
+            { name: "hi", image: "hiraganaquiz/images/hiragana-hi.png", sound: "hiraganaquiz/sounds/hiragana-hi.mp3" },
+            { name: "fu", image: "hiraganaquiz/images/hiragana-fu.png", sound: "hiraganaquiz/sounds/hiragana-fu.mp3" },
+            { name: "he", image: "hiraganaquiz/images/hiragana-he.png", sound: "hiraganaquiz/sounds/hiragana-he.mp3" },
+            { name: "ho", image: "hiraganaquiz/images/hiragana-ho.png", sound: "hiraganaquiz/sounds/hiragana-ho.mp3" },
+
+            { name: "ma", image: "hiraganaquiz/images/hiragana-ma.png", sound: "hiraganaquiz/sounds/hiragana-ma.mp3" },
+            { name: "mi", image: "hiraganaquiz/images/hiragana-mi.png", sound: "hiraganaquiz/sounds/hiragana-mi.mp3" },
+            { name: "mu", image: "hiraganaquiz/images/hiragana-mu.png", sound: "hiraganaquiz/sounds/hiragana-mu.mp3" },
+            { name: "me", image: "hiraganaquiz/images/hiragana-me.png", sound: "hiraganaquiz/sounds/hiragana-me.mp3" },
+            { name: "mo", image: "hiraganaquiz/images/hiragana-mo.png", sound: "hiraganaquiz/sounds/hiragana-mo.mp3" },
+
+            { name: "ya", image: "hiraganaquiz/images/hiragana-ya.png", sound: "hiraganaquiz/sounds/hiragana-ya.mp3" },
+            { name: "yu", image: "hiraganaquiz/images/hiragana-yu.png", sound: "hiraganaquiz/sounds/hiragana-yu.mp3" },
+            { name: "yo", image: "hiraganaquiz/images/hiragana-yo.png", sound: "hiraganaquiz/sounds/hiragana-yo.mp3" },
+
+            { name: "ra", image: "hiraganaquiz/images/hiragana-ra.png", sound: "hiraganaquiz/sounds/hiragana-ra.mp3" },
+            { name: "ri", image: "hiraganaquiz/images/hiragana-ri.png", sound: "hiraganaquiz/sounds/hiragana-ri.mp3" },
+            { name: "ru", image: "hiraganaquiz/images/hiragana-ru.png", sound: "hiraganaquiz/sounds/hiragana-ru.mp3" },
+            { name: "re", image: "hiraganaquiz/images/hiragana-re.png", sound: "hiraganaquiz/sounds/hiragana-re.mp3" },
+            { name: "ro", image: "hiraganaquiz/images/hiragana-ro.png", sound: "hiraganaquiz/sounds/hiragana-ro.mp3" },
+
+            { name: "wa", image: "hiraganaquiz/images/hiragana-wa.png", sound: "hiraganaquiz/sounds/hiragana-wa.mp3" },
+            { name: "wo", image: "hiraganaquiz/images/hiragana-wo.png", sound: "hiraganaquiz/sounds/hiragana-wo.mp3" },
+            { name: "n", image: "hiraganaquiz/images/hiragana-m.png", sound: "hiraganaquiz/sounds/hiragana-n.mp3" },
         ];
 
         let currentQuestion;
@@ -314,6 +346,11 @@
                 3: ['sa', 'shi', 'su', 'se', 'so'],
                 4: ['ta', 'chi', 'tsu', 'te', 'to'],
                 5: ['na', 'ni', 'nu', 'ne', 'no'],
+                6: ['ha', 'hi', 'fu', 'he', 'ho'],
+                7: ['ma', 'mi', 'mu', 'me', 'mo'],
+                8: ['ya', 'yu', 'yo'],
+                9: ['ra', 'ri', 'ru', 're', 'ro'],
+                10: ['wa', 'wo', 'n'],
             };
 
             const selectedCharacters = levelDefinitions[level] || [];
