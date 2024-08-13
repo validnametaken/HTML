@@ -59,6 +59,7 @@
             display: flex;
             justify-content: space-between;
             width: 80%;
+            height: 70%;
         }
 
         .level-column {
@@ -68,18 +69,6 @@
             justify-content: center;
             width: 40%;
         }
-
-        .level-button {
-            margin: 10px;
-            padding: 15px;
-            font-size: 18px;
-            background-color: #f93a13;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
 
         .button-77 {
             background: linear-gradient(92.83deg, #ff7426 0, #f93a13 100%);
@@ -208,11 +197,11 @@
         }
 
         .level-button {
-            margin: 3%; /* 2% of the viewport width */
-            padding: 3% 5%; /* 3% of the viewport height and 5% of the viewport width */
-            width: 95%; /* 90% of the parent container */
-            height: 15%; /* 15% of the parent container */
-            font-size: calc(1px + 2vw);
+            height: clamp(3em, 2vim, 10em);
+            width: 100%;
+            font-size: min(2.0vw, 1em);
+            padding: 1em; /* Adjust padding dynamically as well */
+            margin-bottom: 10px;
             background-color: #f93a13;
             color: white;
             border: none;
