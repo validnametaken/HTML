@@ -1,38 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SVG Clip-Path Test</title>
-    <style>
-        .svg-clipped {
-            width: 400px;
-            height: 300px;
-            background-color: #87CEEB; /* Light blue background */
-            clip-path: url(#svgClip);
-            margin: 100px auto;
-        }
-
-        body {
-            background-color: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thought Bubble with Image</title>
+  <style>
+    .svg-container {
+      width: 90%;
+      height: 700px;
+      border: 1px solid black;
+    }
+  </style>
 </head>
 <body>
+  <div class="svg-container">
+    <!-- SVG Shape -->
+    <svg viewBox="0 0 423 285" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+        <rect x="0" y="0" width="423" height="423" fill="none" stroke="red" stroke-width="2"/>
+      <defs>
+        <!-- Define clip path for the bubble -->
+        <clipPath id="svgClip">
+          <path d="
+            m250,1 c-27.103,0,-50.616,11.744,-63.768,29.088 c-12.203,-6.9299,-26.995,-11.12,-43.062,-11.12
+            c-41.35,0,-74.946,27.003,-74.946,60.239 c0,2.4423,0.564,4.7768,0.9162,7.1432 
+            c-35.711,4.5799,-63.127,29.221,-63.127,59.208 c0,29.712,26.889,54.302,62.119,59.208 
+            c-0.7138,3.336,-1.2827,6.7372,-1.2827,10.236 c0,33.236,33.596,60.165,74.946,60.165 
+            c20.253,0,38.554,-6.5026,52.041,-17.011 c13.745,13.141,34.065,21.724,57.08,21.724 
+            c32.837,0,60.442,-17.148,70.548,-40.797 c8.0886,2.4042,16.713,3.9766,25.837,3.9766 
+            c41.35,0,74.854,-27.003,74.854,-60.239 c0,-16.713,-8.4769,-31.8,-22.172,-42.712 
+            c6.9141,-9.1174,11.178,-19.699,11.178,-31.15 c0,-33.236,-33.596,-60.165,-74.946,-60.165 
+            c-4.3528,0,-8.5851,0.3837,-12.735,0.9573 c-6.6771,-27.748,-37.017,-48.751,-73.48,-48.751 Z
+          " />
+        </clipPath>
+      </defs>
 
-    <svg width="0" height="0">
-        <defs>
-            <clipPath id="svgClip" clipPathUnits="objectBoundingBox">
-                <path d="M0.5 0.2 Q 0.7 -0.1 0.9 0.2 Q 1 0.4 0.9 0.6 Q 0.7 0.8 0.5 0.6 Q 0.3 0.4 0.5 0.2 Z" />
-            </clipPath>
-        </defs>
+      <!-- Sushi image clipped inside the thought bubble -->
+      <image href="/selfintro/DenJap.PNG" x="12%" y="10%" width="80%" height="80%" clip-path="url(#svgClip)" />
+      
+      <!-- SVG Path for the thought bubble outline -->
+      <path fill="none" stroke="#000000" stroke-width="2" d="
+        m250,1 c-27.103,0,-50.616,11.744,-63.768,29.088 c-12.203,-6.9299,-26.995,-11.12,-43.062,-11.12
+        c-41.35,0,-74.946,27.003,-74.946,60.239 c0,2.4423,0.564,4.7768,0.9162,7.1432 
+        c-35.711,4.5799,-63.127,29.221,-63.127,59.208 c0,29.712,26.889,54.302,62.119,59.208 
+        c-0.7138,3.336,-1.2827,6.7372,-1.2827,10.236 c0,33.236,33.596,60.165,74.946,60.165 
+        c20.253,0,38.554,-6.5026,52.041,-17.011 c13.745,13.141,34.065,21.724,57.08,21.724 
+        c32.837,0,60.442,-17.148,70.548,-40.797 c8.0886,2.4042,16.713,3.9766,25.837,3.9766 
+        c41.35,0,74.854,-27.003,74.854,-60.239 c0,-16.713,-8.4769,-31.8,-22.172,-42.712 
+        c6.9141,-9.1174,11.178,-19.699,11.178,-31.15 c0,-33.236,-33.596,-60.165,-74.946,-60.165 
+        c-4.3528,0,-8.5851,0.3837,-12.735,0.9573 c-6.6771,-27.748,-37.017,-48.751,-73.48,-48.751 Z
+      "></path>
     </svg>
-
-    <div class="svg-clipped"></div>
-
+  </div>
+  
 </body>
 </html>
