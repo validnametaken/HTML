@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dates Tracker</title>
+    <style>
+        body {
+            text-align: center;
+            padding: 70px 50px;
+            background: #0D1A29;
+            font-family: "Helvetica Neue", "Open Sans", helvetica, arial, sans-serif;  
+        }
+
+        h1 {
+            color: white;
+            text-shadow: 0 0 10px #48C8FF;
+            font-weight: 100;
+            margin-bottom: 5px;
+        }
+
+        .timer {
+            font-size: 3em;
+            font-weight: 100;
+            color: white;
+            text-shadow: 0 0 20px #48C8FF;
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+            padding-right: 100px;
+        }
+
+        .timer div {
+            display: inline-block;
+            min-width: 90px;
+            margin: 0 5px;
+        }
+
+        .timer span {
+            color: #B1CDF1;
+            display: block;
+            font-size: .6em;
+            font-weight: 400;
+        }
+
+        .timer img {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            max-height: 50px;
+            max-width: 50px;
+            width: auto;
+            height: auto;
+        }
+
+        .separator {
+            border-top: 2px solid #48C8FF;
+            margin: 20px 0;
+        }
+
+        .past-event {
+            opacity: 0.8;
+        }   
+
+        .past-event .timer {
+            display: none;
+        }
+        .past-event p {
+            font-size: 0.6em; /* Adjust the font size as needed */
+        }
+    </style>
+</head>
+<body>
+
+    <script>
+
+function getEvents() {
+    const sheetId = '1zDvXSV67rITZXOU5pQIF-KKHuGPSTHv2HHXhHrVi2W0';
+    const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv`;
+    const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+    
+    fetch(corsProxy + sheetUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(data => {
+            console.log('Fetched data:', data);
+            const rows = data.split('\n').slice(1);
+            const events = rows.map((row, index) => {
+                const [title, date] = row.split(',');
+                return {
+                    id: index + 1,
+                    title: title.replace(/"/g, ''),
+                    date: date.replace(/"/g, '')
+                };
+            });
+            console.log('Processed events:', events);
+            createTimers(events);
+        })
+        .catch(error => {
+            console.error('Error fetching or processing data:', error);
+        });
+}
+
+
+        // Array of events with dates
+        const events = getEvents();
+    
+
+
+
+        // Function to update timer
+        function updateTimer(id, futureDate) {
+            const future = Date.parse(futureDate);
+            const now = new Date();
+            const diff = future - now;
+    
+            if (diff < 0) {
+                const daysPassed = Math.floor(-diff / (1000 * 60 * 60 * 24));
+                document.getElementById(`days${id}`).innerText = daysPassed;
+                document.getElementById(`hours${id}`).style.display = 'none';
+                document.getElementById(`minutes${id}`).style.display = 'none';
+                document.getElementById(`seconds${id}`).style.display = 'none';
+            } else {
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const secs = Math.floor((diff % (1000 * 60)) / 1000);
+    
+                document.getElementById(`days${id}`).innerText = days;
+                document.getElementById(`hours${id}`).innerText = hours;
+                document.getElementById(`minutes${id}`).innerText = mins;
+                document.getElementById(`seconds${id}`).innerText = secs;
+            }
+        }
+    
+        // Function to load images
+        function loadImage(src) {
+            return new Promise((resolve, reject) => {
+                const image = new Image();
+                image.onload = () => resolve(image);
+                image.onerror = reject;
+                image.src = src;
+            });
+        }
+    
+        // Separate events into past and future, and sort accordingly
+        function separateEvents(events) {
+            const sortedEvents = [...events].sort((a, b) => new Date(a.date) - new Date(b.date));
+            const now = Date.now();
+            const pastEvents = sortedEvents.filter(event => Date.parse(event.date) < now).reverse();
+            const futureEvents = sortedEvents.filter(event => Date.parse(event.date) >= now);
+            return { pastEvents, futureEvents };
+        }
+    
+        // Function to format date difference
+        function formatDateDifference(eventDate, currentDate) {
+            let years = currentDate.getFullYear() - eventDate.getFullYear();
+            let months = currentDate.getMonth() - eventDate.getMonth();
+            let days = currentDate.getDate() - eventDate.getDate();
+    
+            if (months < 0 || (months === 0 && days < 0)) {
+                years--;
+                months += 12;
+            }
+    
+            if (days < 0) {
+                const lastMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0);
+                days += lastMonthDate.getDate();
+                months--;
+            }
+    
+            const daysPassed = Math.floor((currentDate - eventDate) / (1000 * 60 * 60 * 24));
+            return `${years} years and ${months} months ago (${daysPassed} days).`;
+        }
+    
+        // Function to validate date input
+        function isValidDate(dateString) {
+            const date = new Date(dateString);
+            return date instanceof Date && !isNaN(date);
+        }
+    
+        // Create timers dynamically with separators
+        async function createTimers() {
+            try {
+                const { pastEvents, futureEvents } = separateEvents(events);
+                const sortedEvents = [...futureEvents, ...pastEvents];
+    
+                for (let i = 0; i < sortedEvents.length; i++) {
+                    const event = sortedEvents[i];
+                    if (!isValidDate(event.date)) {
+                        console.error(`Invalid date for event: ${event.title}`);
+                        continue;
+                    }
+    
+                    const timerDiv = document.createElement('div');
+                    timerDiv.id = `timer${event.id}`;
+                    timerDiv.className = 'timer';
+                    document.body.appendChild(timerDiv);
+    
+                    const headline = document.createElement('h1');
+                    headline.id = `headline${event.id}`;
+                    headline.innerText = event.title;
+                    timerDiv.appendChild(headline);
+    
+                    if (Date.parse(event.date) < Date.now()) {
+                        const pastMessage = document.createElement('p');
+                        pastMessage.innerText = formatDateDifference(new Date(event.date), new Date());
+                        timerDiv.appendChild(pastMessage);
+                        timerDiv.classList.add('past-event');
+                    } else {
+                        const timeElements = ['days', 'hours', 'minutes', 'seconds'];
+                        timeElements.forEach(element => {
+                            const timeElementDiv = document.createElement('div');
+                            const timeSpan = document.createElement('span');
+                            timeSpan.id = `${element}${event.id}`;
+                            timeSpan.innerText = '0';
+                            timeElementDiv.appendChild(timeSpan);
+                            timeElementDiv.innerHTML += `<span>${element}</span>`;
+                            timerDiv.appendChild(timeElementDiv);
+                        });
+                    }
+    
+                    try {
+                        const image = await loadImage(`image${event.id}.png`);
+                        image.alt = `Image ${event.id}`;
+                        timerDiv.appendChild(image);
+                    } catch (error) {
+                        console.log(`Image for event ${event.id} not found`);
+                        // Add a placeholder image
+                        const placeholderImg = document.createElement('img');
+                        placeholderImg.src = 'placeholder.png';
+                        placeholderImg.alt = `Placeholder for ${event.title}`;
+                        timerDiv.appendChild(placeholderImg);
+                    }
+    
+                    if (i < sortedEvents.length - 1) {
+                        const separator = document.createElement('div');
+                        separator.className = 'separator';
+                        document.body.appendChild(separator);
+                    }
+                }
+            } catch (error) {
+                console.error('Error creating timers:', error);
+            }
+        }
+    
+        createTimers();
+    
+        // Updates timers based on the current date and event dates
+        function updateTimers() {
+            events.forEach(event => {
+                if (Date.parse(event.date) >= Date.now()) {
+                    updateTimer(event.id, event.date);
+                }
+            });
+        }
+    
+        setInterval(updateTimers, 1000);
+
+        document.addEventListener('DOMContentLoaded', getEvents);
+    </script>
+    
+
+</body>
+</html>
