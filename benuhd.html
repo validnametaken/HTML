@@ -43,16 +43,6 @@
             font-weight: 400;
         }
 
-        .timer img {
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            max-height: 50px;
-            max-width: 50px;
-            width: auto;
-            height: auto;
-        }
 
         .separator {
             border-top: 2px solid #48C8FF;
@@ -168,15 +158,6 @@ function updateTimer(id, futureDate) {
         async function createTimers(events) {
     console.log('Creating timers with events:', events);
 
-            // Function to load images
-            function loadImage(src) {
-            return new Promise((resolve, reject) => {
-                const image = new Image();
-                image.onload = () => resolve(image);
-                image.onerror = reject;
-                image.src = src;
-            });
-        }
     
         // Separate events into past and future, and sort accordingly
         function separateEvents(events) {
@@ -254,19 +235,6 @@ function updateTimer(id, futureDate) {
                             timeElementDiv.innerHTML += `<span>${element}</span>`;
                             timerDiv.appendChild(timeElementDiv);
                         });
-                    }
-    
-                    try {
-                        const image = await loadImage(`image${event.id}.png`);
-                        image.alt = `Image ${event.id}`;
-                        timerDiv.appendChild(image);
-                    } catch (error) {
-                        console.log(`Image for event ${event.id} not found`);
-                        // Add a placeholder image
-                        const placeholderImg = document.createElement('img');
-                        placeholderImg.src = 'placeholder.png';
-                        placeholderImg.alt = `Placeholder for ${event.title}`;
-                        timerDiv.appendChild(placeholderImg);
                     }
     
                     if (i < sortedEvents.length - 1) {
