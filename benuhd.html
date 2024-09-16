@@ -76,45 +76,71 @@
     <script>
 
 function getEvents() {
-    const sheetId = '1zDvXSV67rITZXOU5pQIF-KKHuGPSTHv2HHXhHrVi2W0';
-    const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv`;
-    const corsProxy = 'https://cors-anywhere.herokuapp.com/';
-    
-    fetch(corsProxy + sheetUrl)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.text();
-        })
-        .then(data => {
-            console.log('Fetched data:', data);
-            const rows = data.split('\n').slice(1);
-            const events = rows.map((row, index) => {
-                const [title, date] = row.split(',');
-                return {
-                    id: index + 1,
-                    title: title.replace(/"/g, ''),
-                    date: date.replace(/"/g, '')
-                };
+    return new Promise((resolve, reject) => {
+        const sheetId = '1zDvXSV67rITZXOU5pQIF-KKHuGPSTHv2HHXhHrVi2W0';
+        const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv`;
+        const corsProxy = 'https://api.allorigins.win/raw?url=';
+       
+        console.log('Fetching data from:', corsProxy + encodeURIComponent(sheetUrl));
+        fetch(corsProxy + encodeURIComponent(sheetUrl))
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(data => {
+                console.log('Raw CSV data:', data);
+                const rows = data.trim().split('\n').slice(1);
+                const events = rows.map((row, index) => {
+                    const [title, date] = row.split(',');
+                    return {
+                        id: index + 1,
+                        title: title.trim(),
+                        date: date.trim()
+                    };
+                });
+                console.log('Processed events:', events);
+                resolve(events);
+            })
+            .catch(error => {
+                console.error('Error fetching or processing data:', error);
+                reject(error);
             });
-            console.log('Processed events:', events);
-            createTimers(events);
-        })
-        .catch(error => {
-            console.error('Error fetching or processing data:', error);
-        });
+    });
 }
 
+function updateTimers(events) {
+    console.log('Updating timers for all events:', events);
+    const now = new Date();
+    events.forEach(event => {
+        console.log('Checking event:', event);
+        const eventDate = new Date(event.date);
+        if (eventDate >= now) {
+            console.log('Updating timer for future event:', event);
+            updateTimer(event.id, eventDate);
+        } else {
+            console.log('Skipping past event:', event);
+        }
+    });
+}
 
-        // Array of events with dates
-        const events = getEvents();
-    
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM content loaded, fetching events...');
+    getEvents()
+        .then(events => {
+            console.log('Events fetched successfully:', events);
+            createTimers(events);
+        })
+        .catch(error => console.error('Error:', error));
+});
+
+// Function to update timer
+function updateTimer(id, futureDate) {
 
 
-
-        // Function to update timer
-        function updateTimer(id, futureDate) {
+            console.log('Updating timer:', id, futureDate);
             const future = Date.parse(futureDate);
             const now = new Date();
             const diff = future - now;
@@ -137,9 +163,13 @@ function getEvents() {
                 document.getElementById(`seconds${id}`).innerText = secs;
             }
         }
-    
-        // Function to load images
-        function loadImage(src) {
+
+
+        async function createTimers(events) {
+    console.log('Creating timers with events:', events);
+
+            // Function to load images
+            function loadImage(src) {
             return new Promise((resolve, reject) => {
                 const image = new Image();
                 image.onload = () => resolve(image);
@@ -150,6 +180,7 @@ function getEvents() {
     
         // Separate events into past and future, and sort accordingly
         function separateEvents(events) {
+            console.log('Separating events:', events);
             const sortedEvents = [...events].sort((a, b) => new Date(a.date) - new Date(b.date));
             const now = Date.now();
             const pastEvents = sortedEvents.filter(event => Date.parse(event.date) < now).reverse();
@@ -183,15 +214,15 @@ function getEvents() {
             const date = new Date(dateString);
             return date instanceof Date && !isNaN(date);
         }
-    
-        // Create timers dynamically with separators
-        async function createTimers() {
-            try {
+
+        async function createTimerElements() {
+    try {
                 const { pastEvents, futureEvents } = separateEvents(events);
                 const sortedEvents = [...futureEvents, ...pastEvents];
     
                 for (let i = 0; i < sortedEvents.length; i++) {
                     const event = sortedEvents[i];
+                    console.log('Creating timer for event:', event);
                     if (!isValidDate(event.date)) {
                         console.error(`Invalid date for event: ${event.title}`);
                         continue;
@@ -248,21 +279,15 @@ function getEvents() {
                 console.error('Error creating timers:', error);
             }
         }
-    
-        createTimers();
-    
-        // Updates timers based on the current date and event dates
-        function updateTimers() {
-            events.forEach(event => {
-                if (Date.parse(event.date) >= Date.now()) {
-                    updateTimer(event.id, event.date);
-                }
-            });
-        }
-    
-        setInterval(updateTimers, 1000);
 
-        document.addEventListener('DOMContentLoaded', getEvents);
+        async function initializeTimers() {
+        await createTimerElements();
+        setInterval(() => updateTimers(events), 1000);
+    }
+
+    initializeTimers();
+}
+
     </script>
     
 
