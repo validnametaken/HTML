@@ -63,7 +63,6 @@ class Meter:
         new_decibel = 20*np.log10(rms_flat(y)) + offset
         self.max_decibel = max(self.max_decibel, new_decibel)
         return new_decibel
-
 class GUI:
     def __init__(self, meter: Meter) -> None:
         self.meter = meter
@@ -94,7 +93,6 @@ class GUI:
         spinbox = tk.Spinbox(root, from_=-20, to=20, textvariable=self.offset, state='readonly', width=12)
         spinbox.grid(row=0, column=3, sticky=tk.SW, padx=5)
         tk.Label(root, text='Calibration (dB)').grid(row=1, column=3, sticky=tk.NW, padx=5)
-
     def close(self) -> None:
         self.app_closed = True
 
@@ -118,3 +116,4 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+
