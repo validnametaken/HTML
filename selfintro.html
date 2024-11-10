@@ -1,8 +1,8 @@
 <html>
+
 <head>
 <style>
-
-/* #region =============== Background =============== */
+        /* #region =============== Background =============== */
 
         body {
             margin: auto;
@@ -28,8 +28,11 @@
             }
         }
 
-/*#endregion*/
-/* #region =============== Slides =============== */
+        /*#endregion*/
+        /* #region =============== Slides =============== */
+        html {
+            font-size: 10px;
+        }
 
         .slideshow {
             position: relative;
@@ -45,14 +48,16 @@
             width: 100%;
             height: 100%;
             background-color: transparent;
-            display: none;
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
             transition: opacity 0.5s ease-in-out;
-
+            padding: 20px;
+            box-sizing: border-box;
+            gap: 30px;
         }
+
 
         body {
             margin: 0;
@@ -69,8 +74,16 @@
             display: flex;
         }
 
-/*#endregion*/
-/* #region =============== Waves =============== */
+        .hidden {
+            opacity: 0;
+        }
+
+        .reveal-text {
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        /*#endregion*/
+        /* #region =============== Waves =============== */
 
         .wave {
             background: rgb(255 255 255 / 25%);
@@ -120,12 +133,12 @@
             }
         }
 
-/*#endregion*/
+        /*#endregion*/
 </style>
 </head>
 
 <body>
-<!-- #region =============== Slides =============== -->
+    <!-- #region =============== Slides =============== -->
     <div class="wave"></div>
     <div class="wave"></div>
     <div class="wave"></div>
@@ -134,13 +147,16 @@
     <div class="slideshow" id="slideshow">
         <!-- Slide 1 -->
         <div class="slide" id="slide1">
-            <h1>Slide 1</h1>
-            <p>This is the first slide.</p>
+            <img src="/selfintro/Andy5yo.jpg" alt="Description of image"
+                style="flex: 1; max-width: 80%; max-height: 80%;object-fit: contain;">
+            <p class="reveal-text hidden photo-caption" style="font-size: 3rem;">This is me when I was 5 years old</p>
+
         </div>
         <!-- Slide 2 -->
         <div class="slide" id="slide2" style="display: none;">
             <h1>Slide 2</h1>
             <p>This is the second slide.</p>
+            <p class="reveal-text hidden">First line to reveal</p>
         </div>
         <!-- Slide 3 -->
         <div class="slide" id="slide3" style="display: none;">
@@ -154,67 +170,116 @@
             <p>This is the fourth slide.</p>
         </div>
     </div>
-<!-- #endregion -->
-
+    <!-- #endregion -->
 <script>
- //#region =============== Next slides =============== */
-        let currentSlide = 1;
-        let totalSlides = 4;
+        //#region =============== Scripts ===============       
+        class Slideshow {
+            constructor(totalSlides) {
+                this.currentSlide = 1;
+                this.totalSlides = totalSlides;
+                this.revealIndexes = {};
+                this.isSelecting = false;
+                this.startX = 0;
+                this.startY = 0;
 
-        function nextSlide() {
-            // Hide current slide
-            document.getElementById(`slide${currentSlide}`).style.display = 'none';
-            // Show next slide
-            currentSlide++;
-            if (currentSlide > totalSlides) {
-                currentSlide = 1;
+                this.init();
             }
-            document.getElementById(`slide${currentSlide}`).style.display = 'flex';
+
+            init() {
+                document.getElementById('slideshow').addEventListener('click', (e) => this.handleSlideClick(e));
+                document.addEventListener('keydown', (e) => this.handleKeyPress(e));
+                document.addEventListener('mousedown', (e) => this.handleMouseDown(e));
+                document.addEventListener('mouseup', (e) => this.handleMouseUp(e));
+
+                // Initialize first slide
+                document.getElementById('slide1').style.display = 'flex';
+            }
+
+            handleSlideClick(e) {
+                const currentSlideElement = document.getElementById(`slide${this.currentSlide}`);
+                const revealElements = currentSlideElement.querySelectorAll('.reveal-text');
+
+                if (!this.revealIndexes[this.currentSlide]) {
+                    this.revealIndexes[this.currentSlide] = 0;
+                }
+
+                if (revealElements.length > 0) {
+                    if (this.revealIndexes[this.currentSlide] < revealElements.length) {
+                        revealElements[this.revealIndexes[this.currentSlide]].classList.remove('hidden');
+                        this.revealIndexes[this.currentSlide]++;
+                        return;
+                    }
+                }
+
+                this.revealIndexes[this.currentSlide] = 0;
+                this.nextSlide(e);
+            }
+
+            nextSlide(e) {
+                if (!e || (e.target && e.target.classList.contains('slide') && !this.isSelecting)) {
+                    document.getElementById(`slide${this.currentSlide}`).style.display = 'none';
+                    this.currentSlide = this.currentSlide >= this.totalSlides ? 1 : this.currentSlide + 1;
+                    resetRevealState(this.currentSlide); // Add this line
+                    document.getElementById(`slide${this.currentSlide}`).style.display = 'flex';
+                }
+            }
+
+            prevSlide() {
+                document.getElementById(`slide${this.currentSlide}`).style.display = 'none';
+                this.currentSlide = this.currentSlide <= 1 ? this.totalSlides : this.currentSlide - 1;
+                resetRevealState(this.currentSlide); // Add this line
+                document.getElementById(`slide${this.currentSlide}`).style.display = 'flex';
+            }
+
+            handleKeyPress(e) {
+                if (e.key === 'ArrowRight') this.nextSlide();
+                if (e.key === 'ArrowLeft') this.prevSlide();
+            }
+
+            handleMouseDown(e) {
+                this.isSelecting = true;
+                this.startX = e.clientX;
+                this.startY = e.clientY;
+            }
+
+            handleMouseUp(e) {
+                const moveX = Math.abs(e.clientX - this.startX);
+                const moveY = Math.abs(e.clientY - this.startY);
+
+                if (moveX < 5 && moveY < 5) {
+                    this.isSelecting = false;
+                } else {
+                    setTimeout(() => {
+                        this.isSelecting = false;
+                    }, 100);
+                }
+            }
         }
 
-        // Add event listener to slideshow container
-        document.getElementById('slideshow').addEventListener('click', nextSlide);
-
-        // Initialize slideshow
-        document.getElementById('slide1').style.display = 'flex';
+        // Initialize the slideshow
+        const slideshow = new Slideshow(4);
 
         // Add event listener to button
         document.getElementById('goto-slide1').addEventListener('click', (e) => {
             e.stopPropagation(); // Prevent the nextSlide function from being called
             // Hide current slide
-            document.getElementById(`slide${currentSlide}`).style.display = 'none';
+            document.getElementById(`slide${slideshow.currentSlide}`).style.display = 'none';
             // Show slide 1
-            currentSlide = 1;
-            document.getElementById(`slide${currentSlide}`).style.display = 'flex';
-        });
-//#endregion
-
-        
-//#region =============== Keyboard navigation =============== */
-
-        // Add event listener to document for keydown events
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight') {
-                nextSlide();
-            } else if (e.key === 'ArrowLeft') {
-                prevSlide();
-            }
+            slideshow.currentSlide = 1;
+            document.getElementById(`slide${slideshow.currentSlide}`).style.display = 'flex';
         });
 
-        // Function to go to previous slide
-        function prevSlide() {
-            // Hide current slide
-            document.getElementById(`slide${currentSlide}`).style.display = 'none';
-            // Show previous slide
-            currentSlide--;
-            if (currentSlide < 1) {
-                currentSlide = totalSlides;
-            }
-            document.getElementById(`slide${currentSlide}`).style.display = 'flex';
+        function resetRevealState(slideNumber) {
+            const slideElement = document.getElementById(`slide${slideNumber}`);
+            const revealElements = slideElement.querySelectorAll('.reveal-text');
+            revealElements.forEach(element => {
+                element.classList.add('hidden');
+            });
+            slideshow.revealIndexes[slideNumber] = 0;
         }
 
-//#endregion
-
+        //#endregion
 </script>
 </body>
+
 </html>
