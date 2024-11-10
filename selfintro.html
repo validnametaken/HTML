@@ -8,7 +8,7 @@
             margin: auto;
             font-family: -apple-system, BlinkMacSystemFont, sans-serif;
             overflow: auto;
-            background: linear-gradient(315deg, rgba(101, 0, 94, 1) 3%, rgba(60, 132, 206, 1) 38%, rgba(48, 238, 226, 1) 68%, rgba(255, 25, 25, 1) 98%);
+            background: linear-gradient(315deg, rgba(101, 0, 94, 1) 3%, rgb(13, 28, 43) 38%, rgb(11, 53, 50) 68%, rgb(70, 8, 8) 98%);
             animation: gradient 200s ease infinite;
             background-size: 400% 400%;
             background-attachment: fixed;
@@ -32,6 +32,7 @@
         /* #region =============== Slides =============== */
         html {
             font-size: 10px;
+            color: #ffffff;
         }
 
         h1 {
@@ -106,7 +107,7 @@
         /* #region =============== Waves =============== */
 
         .wave {
-            background: rgb(255 255 255 / 25%);
+            background: rgb(255 255 255 / 5%);
             border-radius: 1000% 1000% 0 0;
             position: fixed;
             width: 200%;
@@ -168,29 +169,64 @@
     <div class="slideshow" id="slideshow">
         <!-- Slide 1 -->
         <div class="slide" id="slide1" style="padding-top: 15px; justify-content: flex-start;">
-            <img src="selfintro/Andy5yo.jpg" alt="Description of image"
+            <img src="selfintro/Andy5yo.jpg" alt="Andy at the age of 5" 
                 style="flex: 1; max-width: 80%; max-height: 80%;object-fit: contain;">
-            <p class="reveal-text hidden photo-caption" style="font-size: 3rem;">This is me when I was 5 years old</p>
+            <p class="reveal-text hidden photo-caption" style="font-size: 3rem;">5 years old</p>
+        </div>
 
-        </div>
         <!-- Slide 2 -->
-        <div class="slide" id="slide2" style="display: none;">
-            <h1>Slide 2</h1>
-            <p>This is the second slide.</p>
-            <p class="reveal-text hidden">First line to reveal</p>
+        <div class="slide" id="slide2" style="display: none; padding-top: 15px; justify-content: flex-start;">
+            <img data-src="selfintro/Toy Story.jpg" alt="Toy Story 3" 
+                style="flex: 1; max-width: 80%; max-height: 80%;object-fit: contain;">
         </div>
+
         <!-- Slide 3 -->
-        <div class="slide" id="slide3" style="display: none;">
-            <h1>Slide 3</h1>
-            <p>This is the third slide.</p>
-            <button id="goto-slide1">Go to Slide 1</button>
+        <div class="slide" id="slide3" style="display: none; padding-top: 15px; justify-content: flex-start;">
+            <img data-src="selfintro/toyandy.jpg" alt="Andy from Toy Story 3" 
+                style="flex: 1; max-width: 80%; max-height: 80%;object-fit: contain;">
+                <p class="reveal-text hidden photo-caption" style="font-size: 3rem;">↑&nbsp;&nbsp;&nbsp;&nbsp;Andy&nbsp;&nbsp;&nbsp;&nbsp;↑</p>
         </div>
+
         <!-- Slide 4 -->
-        <div class="slide" id="slide4" style="display: none;">
-            <h1>Slide 4</h1>
+        <div class="slide" id="slide4" style="display: none; padding-top: 15px; justify-content: flex-start;">
+            <img data-src="selfintro/Andy.JPG" alt="How old is Andy now?" 
+                style="flex: 1; max-width: 80%; max-height: 80%;object-fit: contain;">
+        </div>
+
+            <!-- Slide 5 -->
+            <div class="slide" id="slide5" style="display: none; padding-top: 15px; justify-content: flex-start;">
+                <div style="display: flex; gap: 20px;">
+                    <img data-src="selfintro/ice-cream-cone.png" data-alt="Baskin Robbins?" 
+                        style="max-width: 80%; max-height: 80%; object-fit: contain;">
+                    <!-- <span data-content="+12" style="font-size: 8rem; font-weight: bold;"></span> -->
+                </div>
+                <p data-content="↑&nbsp;&nbsp;&nbsp;&nbsp;Hint&nbsp;&nbsp;&nbsp;&nbsp;↑" style="font-size: 3rem;"></p>
+            </div>
+            
+            
+
+                <!-- Slide 6 -->
+                <div class="slide" id="slide6" style="display: none;">
+                    <h1>Slide 6</h1>
+                    <p>This is the fourth slide.</p>
+                </div>
+
+
+                    <!-- Slide 7 -->
+        <div class="slide" id="slide7" style="display: none;">
+            <h1>Slide 7</h1>
             <p>This is the fourth slide.</p>
         </div>
-    </div>
+ 
+            <!-- Slide 8 -->
+            <div class="slide" id="slide8" style="display: none;">
+                <h1>Slide 8</h1>
+                <p>This is the fourth slide.</p>
+            </div>
+
+
+
+        </div>
     <!-- #endregion -->
 
     <script>
@@ -239,13 +275,29 @@
             }
 
             nextSlide(e) {
-                if (!e || (e.target && e.target.classList.contains('slide') && !this.isSelecting)) {
-                    document.getElementById(`slide${this.currentSlide}`).style.display = 'none';
-                    this.currentSlide = this.currentSlide >= this.totalSlides ? 1 : this.currentSlide + 1;
-                    resetRevealState(this.currentSlide); // Add this line
-                    document.getElementById(`slide${this.currentSlide}`).style.display = 'flex';
-                }
-            }
+    if (!e || (e.target && e.target.classList.contains('slide') && !this.isSelecting)) {
+        document.getElementById(`slide${this.currentSlide}`).style.display = 'none';
+        this.currentSlide = this.currentSlide >= this.totalSlides ? 1 : this.currentSlide + 1;
+        resetRevealState(this.currentSlide);
+        const nextSlide = document.getElementById(`slide${this.currentSlide}`);
+        nextSlide.style.display = 'flex';
+        
+        // Load images
+        const images = nextSlide.querySelectorAll('img[data-src]');
+        images.forEach(img => {
+            img.src = img.dataset.src;
+            img.removeAttribute('data-src');
+        });
+
+        // Load text
+        const textElements = nextSlide.querySelectorAll('[data-content]');
+        textElements.forEach(element => {
+            element.textContent = element.dataset.content;
+            element.removeAttribute('data-content');
+        });
+    }
+}
+
 
             prevSlide() {
                 document.getElementById(`slide${this.currentSlide}`).style.display = 'none';
@@ -255,9 +307,25 @@
             }
 
             handleKeyPress(e) {
-                if (e.key === 'ArrowRight') this.nextSlide();
-                if (e.key === 'ArrowLeft') this.prevSlide();
+    if (e.key === 'ArrowRight') {
+        const currentSlideElement = document.getElementById(`slide${this.currentSlide}`);
+        const revealElements = currentSlideElement.querySelectorAll('.reveal-text');
+
+        if (!this.revealIndexes[this.currentSlide]) {
+            this.revealIndexes[this.currentSlide] = 0;
+        }
+
+        if (revealElements.length > 0) {
+            if (this.revealIndexes[this.currentSlide] < revealElements.length) {
+                revealElements[this.revealIndexes[this.currentSlide]].classList.remove('hidden');
+                this.revealIndexes[this.currentSlide]++;
+                return;
             }
+        }
+        this.nextSlide();
+    }
+    if (e.key === 'ArrowLeft') this.prevSlide();
+}
 
             handleMouseDown(e) {
                 this.isSelecting = true;
@@ -280,7 +348,7 @@
         }
 
         // Initialize the slideshow
-        const slideshow = new Slideshow(4);
+        const slideshow = new Slideshow(8);
 
         // Add event listener to button
         document.getElementById('goto-slide1').addEventListener('click', (e) => {
