@@ -169,64 +169,78 @@
     <div class="slideshow" id="slideshow">
         <!-- Slide 1 -->
         <div class="slide" id="slide1" style="padding-top: 15px; justify-content: flex-start;">
-            <img src="selfintro/Andy5yo.jpg" alt="Andy at the age of 5" 
+            <img src="selfintro/Andy5yo.jpg" alt="Andy at the age of 5"
                 style="flex: 1; max-width: 80%; max-height: 80%;object-fit: contain;">
             <p class="reveal-text hidden photo-caption" style="font-size: 3rem;">5 years old</p>
         </div>
 
         <!-- Slide 2 -->
         <div class="slide" id="slide2" style="display: none; padding-top: 15px; justify-content: flex-start;">
-            <img data-src="selfintro/Toy Story.jpg" alt="Toy Story 3" 
+            <img data-src="selfintro/Toy Story.jpg" alt="Toy Story 3"
                 style="flex: 1; max-width: 80%; max-height: 80%;object-fit: contain;">
         </div>
 
         <!-- Slide 3 -->
         <div class="slide" id="slide3" style="display: none; padding-top: 15px; justify-content: flex-start;">
-            <img data-src="selfintro/toyandy.jpg" alt="Andy from Toy Story 3" 
+            <img data-src="selfintro/toyandy.jpg" alt="Andy from Toy Story 3"
                 style="flex: 1; max-width: 80%; max-height: 80%;object-fit: contain;">
-                <p class="reveal-text hidden photo-caption" style="font-size: 3rem;">↑&nbsp;&nbsp;&nbsp;&nbsp;Andy&nbsp;&nbsp;&nbsp;&nbsp;↑</p>
+            <p class="reveal-text hidden photo-caption" style="font-size: 3rem;">
+                ↑&nbsp;&nbsp;&nbsp;&nbsp;Andy&nbsp;&nbsp;&nbsp;&nbsp;↑</p>
         </div>
 
         <!-- Slide 4 -->
         <div class="slide" id="slide4" style="display: none; padding-top: 15px; justify-content: flex-start;">
-            <img data-src="selfintro/Andy.JPG" alt="How old is Andy now?" 
+            <img data-src="selfintro/Andy.JPG" alt="How old is Andy now?"
                 style="flex: 1; max-width: 80%; max-height: 80%;object-fit: contain;">
         </div>
 
-            <!-- Slide 5 -->
-            <div class="slide" id="slide5" style="display: none; padding-top: 15px; justify-content: flex-start;">
-                <div style="display: flex; gap: 20px;">
-                    <img data-src="selfintro/ice-cream-cone.png" data-alt="Baskin Robbins?" 
-                        style="max-width: 80%; max-height: 80%; object-fit: contain;">
-                    <!-- <span data-content="+12" style="font-size: 8rem; font-weight: bold;"></span> -->
-                </div>
-                <p data-content="↑&nbsp;&nbsp;&nbsp;&nbsp;Hint&nbsp;&nbsp;&nbsp;&nbsp;↑" style="font-size: 3rem;"></p>
+        <!-- Slide 5 -->
+        <div class="slide" id="slide5"
+            style="display: none; padding-top: 15px; justify-content: flex-start; height: 100vh;">
+            <div style="display: flex; align-items: center; gap: 20px; max-width: 99%; height: 80%;">
+                <img data-src="selfintro/ice-cream-cone.png" data-alt="Baskin Robbins?"
+                    style="max-width: 80%; max-height: 80%; object-fit: contain;">
+                <span class="age-calculator" data-birthdate="1981-08-10" data-offset="31" data-prefix="+"
+                    style="font-size: 10rem; font-weight: bold;">
+                </span>
             </div>
-            
-            
+            <p data-content="↑&nbsp;&nbsp;&nbsp;&nbsp;Hint&nbsp;&nbsp;&nbsp;&nbsp;↑" style="font-size: 3rem;"></p>
+        </div>
 
-                <!-- Slide 6 -->
-                <div class="slide" id="slide6" style="display: none;">
-                    <h1>Slide 6</h1>
-                    <p>This is the fourth slide.</p>
+
+
+        <!-- Slide 6 -->
+        <div class="slide" id="slide6"
+            style="display: none; padding-top: 15px; justify-content: flex-start; height: 100vh;">
+            <div style="display: flex; align-items: center; gap: 20px; max-width: 99%; height: 80%;">
+                <img data-src="selfintro/noah.jpg" data-alt="Baskin Robbins?"
+                    style="max-width: 90%; max-height: 90%; object-fit: contain;">
+                <div style="display: flex; flex-direction: column; gap: 2rem;">
+                    <p style="font-size: 10rem; font-weight: bold;">This is Noah.</p>
+                    <span class="age-calculator" data-birthdate="2014-11-25" data-offset="0" data-prefix="He is "
+                        data-suffix="." style="font-size: 10rem; font-weight: bold;">
+                    </span>
                 </div>
+            </div>
+        </div>
 
 
-                    <!-- Slide 7 -->
+
+        <!-- Slide 7 -->
         <div class="slide" id="slide7" style="display: none;">
             <h1>Slide 7</h1>
             <p>This is the fourth slide.</p>
         </div>
- 
-            <!-- Slide 8 -->
-            <div class="slide" id="slide8" style="display: none;">
-                <h1>Slide 8</h1>
-                <p>This is the fourth slide.</p>
-            </div>
 
-
-
+        <!-- Slide 8 -->
+        <div class="slide" id="slide8" style="display: none;">
+            <h1>Slide 8</h1>
+            <p>This is the fourth slide.</p>
         </div>
+
+
+
+    </div>
     <!-- #endregion -->
 
     <script>
@@ -275,28 +289,31 @@
             }
 
             nextSlide(e) {
-    if (!e || (e.target && e.target.classList.contains('slide') && !this.isSelecting)) {
-        document.getElementById(`slide${this.currentSlide}`).style.display = 'none';
-        this.currentSlide = this.currentSlide >= this.totalSlides ? 1 : this.currentSlide + 1;
-        resetRevealState(this.currentSlide);
-        const nextSlide = document.getElementById(`slide${this.currentSlide}`);
-        nextSlide.style.display = 'flex';
-        
-        // Load images
-        const images = nextSlide.querySelectorAll('img[data-src]');
-        images.forEach(img => {
-            img.src = img.dataset.src;
-            img.removeAttribute('data-src');
-        });
+                if (!e || (e.target && e.target.classList.contains('slide') && !this.isSelecting)) {
+                    document.getElementById(`slide${this.currentSlide}`).style.display = 'none';
+                    this.currentSlide = this.currentSlide >= this.totalSlides ? 1 : this.currentSlide + 1;
+                    resetRevealState(this.currentSlide);
+                    const nextSlide = document.getElementById(`slide${this.currentSlide}`);
+                    nextSlide.style.display = 'flex';
 
-        // Load text
-        const textElements = nextSlide.querySelectorAll('[data-content]');
-        textElements.forEach(element => {
-            element.textContent = element.dataset.content;
-            element.removeAttribute('data-content');
-        });
-    }
-}
+                    // Load images
+                    const images = nextSlide.querySelectorAll('img[data-src]');
+                    images.forEach(img => {
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                    });
+
+                    // Load text
+                    const textElements = nextSlide.querySelectorAll('[data-content]');
+                    textElements.forEach(element => {
+                        element.textContent = element.dataset.content;
+                        element.removeAttribute('data-content');
+                    });
+
+                    // Load age calculators
+                    updateAgeCalculators();
+                }
+            }
 
 
             prevSlide() {
@@ -307,25 +324,25 @@
             }
 
             handleKeyPress(e) {
-    if (e.key === 'ArrowRight') {
-        const currentSlideElement = document.getElementById(`slide${this.currentSlide}`);
-        const revealElements = currentSlideElement.querySelectorAll('.reveal-text');
+                if (e.key === 'ArrowRight') {
+                    const currentSlideElement = document.getElementById(`slide${this.currentSlide}`);
+                    const revealElements = currentSlideElement.querySelectorAll('.reveal-text');
 
-        if (!this.revealIndexes[this.currentSlide]) {
-            this.revealIndexes[this.currentSlide] = 0;
-        }
+                    if (!this.revealIndexes[this.currentSlide]) {
+                        this.revealIndexes[this.currentSlide] = 0;
+                    }
 
-        if (revealElements.length > 0) {
-            if (this.revealIndexes[this.currentSlide] < revealElements.length) {
-                revealElements[this.revealIndexes[this.currentSlide]].classList.remove('hidden');
-                this.revealIndexes[this.currentSlide]++;
-                return;
+                    if (revealElements.length > 0) {
+                        if (this.revealIndexes[this.currentSlide] < revealElements.length) {
+                            revealElements[this.revealIndexes[this.currentSlide]].classList.remove('hidden');
+                            this.revealIndexes[this.currentSlide]++;
+                            return;
+                        }
+                    }
+                    this.nextSlide();
+                }
+                if (e.key === 'ArrowLeft') this.prevSlide();
             }
-        }
-        this.nextSlide();
-    }
-    if (e.key === 'ArrowLeft') this.prevSlide();
-}
 
             handleMouseDown(e) {
                 this.isSelecting = true;
@@ -368,6 +385,28 @@
             });
             slideshow.revealIndexes[slideNumber] = 0;
         }
+
+        // Update the age when the slide is shown
+        document.addEventListener('DOMContentLoaded', () => {
+            const ageElement = document.getElementById('age-difference');
+            if (ageElement) {
+                ageElement.textContent = getAgeDifference();
+            }
+        });
+
+        function updateAgeCalculators() {
+            document.querySelectorAll('.age-calculator').forEach(element => {
+                const birthDate = new Date(element.dataset.birthdate);
+                const offset = parseInt(element.dataset.offset);
+                const prefix = element.dataset.prefix || '';  // Use empty string if no prefix
+                const suffix = element.dataset.suffix || '';
+                const now = new Date();
+                const diff = now - birthDate;
+                const age = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25)) - offset;
+                element.textContent = prefix + age + suffix;
+            });
+        }
+
 
         //#endregion
 
