@@ -124,6 +124,8 @@ span {
   </div>
   <div class="db" id="db">Current dB: -</div>
 
+  <button id="startButton" style="padding: 10px 20px; margin: 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">Start Monitoring</button>
+
   <div class="controls">
     <div>
       <label>Red Alert Threshold: </label>
@@ -217,6 +219,14 @@ redThreshold.addEventListener('input', function() {
 
 orangeThreshold.addEventListener('input', function() {
   document.getElementById('orangeValue').textContent = this.value + ' dB';
+});
+
+// Add this to initialize audio context on user interaction
+document.getElementById('startButton').addEventListener('click', () => {
+    audioCtx.resume();
+    alarmAudio.play().then(() => {
+        alarmAudio.pause(); // Immediately pause it
+    });
 });
   </script>
 </body>
