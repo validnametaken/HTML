@@ -155,107 +155,116 @@
         }
 
         /*#endregion*/
-
         /* #region =============== Comparison =============== */
 
         .comparison-container {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 3rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    min-height: 400px; /* Provides stable vertical space */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            min-height: 400px;
+            /* Provides stable vertical space */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
 
-.comparison-question {
-    font-size: 4rem;
-    margin-bottom: 5rem;
-    color: #ffffff;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
+        .comparison-question {
+            font-size: 4rem;
+            margin-bottom: 5rem;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
 
-.country-comparison {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4rem;
-}
+        .country-comparison {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4rem;
+        }
 
-.country-card {
-    height: 200px; /* Reduced from 250px */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem; /* Added smaller gap between elements */
-}
-
-
-.country-name {
-    height: 80px; /* Fixed height container for the animated text */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.country-flag {
-    width: 200px;
-    height: 120px;
-    object-fit: cover;
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-}
-
-.vs-badge {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.2);
-    padding: 1rem 2rem;
-    border-radius: 50%;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-}
+        .country-card {
+            height: 200px;
+            /* Reduced from 250px */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            /* Added smaller gap between elements */
+        }
 
 
-.highlight {
-    display: inline-block;
-    transition: font-size 0.5s ease;
-}
+        .country-name {
+            height: 80px;
+            /* Fixed height container for the animated text */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-.country-card:nth-child(1) .highlight {
-    animation: grow 4s infinite;
-}
+        .country-flag {
+            width: 200px;
+            height: 120px;
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
 
-.country-card:nth-child(3) .highlight {
-    animation: shrink 4s infinite;
-}
+        .vs-badge {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 1rem 2rem;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
 
-@keyframes grow {
-    0%, 100% {
-        font-size: 3rem;
-        opacity: 0.7;
-    }
-    50% {
-        font-size: 5rem;
-        opacity: 1;
-    }
-}
 
-@keyframes shrink {
-    0%, 100% {
-        font-size: 5rem;
-        opacity: 1;
-    }
-    50% {
-        font-size: 3rem;
-        opacity: 0.7;
-    }
-}
+        .highlight {
+            display: inline-block;
+            transition: font-size 0.5s ease;
+        }
+
+        .country-card:nth-child(1) .highlight {
+            animation: grow 4s infinite;
+        }
+
+        .country-card:nth-child(3) .highlight {
+            animation: shrink 4s infinite;
+        }
+
+        @keyframes grow {
+
+            0%,
+            100% {
+                font-size: 3rem;
+                opacity: 0.7;
+            }
+
+            50% {
+                font-size: 5rem;
+                opacity: 1;
+            }
+        }
+
+        @keyframes shrink {
+
+            0%,
+            100% {
+                font-size: 5rem;
+                opacity: 1;
+            }
+
+            50% {
+                font-size: 3rem;
+                opacity: 0.7;
+            }
+        }
+
         /*#endregion*/
-
     </style>
 </head>
 
@@ -375,7 +384,8 @@
         </div>
 
         <!-- Slide 11 -->
-        <div class="slide comparison" id="slide11" style="display: none; padding-top: 15px; justify-content: center; align-items: center; text-align: center;">
+        <div class="slide comparison" id="slide11"
+            style="display: none; padding-top: 15px; justify-content: center; align-items: center; text-align: center;">
             <div class="comparison-container">
                 <h2 class="comparison-question">Which country is bigger?</h2>
                 <div class="country-comparison">
@@ -383,9 +393,9 @@
                         <span class="country-name highlight">Japan</span>
                         <img src="selfintro/jp.png" alt="Japan Flag" class="country-flag">
                     </div>
-                    
+
                     <div class="vs-badge">VS</div>
-                    
+
                     <div class="country-card">
                         <span class="country-name highlight">Denmark</span>
                         <img src="selfintro/dk.png" alt="Denmark Flag" class="country-flag">
@@ -393,6 +403,44 @@
                 </div>
             </div>
         </div>
+
+        <!-- Slide 12 -->
+        <div class="slide" id="slide12" style="display: none; padding-top: 15px; justify-content: flex-start;">
+            <img data-src="selfintro/DenJap.png" alt="How old is Andy now?"
+                style="flex: 1; max-width: 80%; max-height: 80%; object-fit: contain; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); border-radius: 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); padding: 20px;">
+        </div>
+        
+
+        <!-- Slide 13 -->
+        <div class="slide" id="slide13" style="display: none; padding-top: 15px; justify-content: flex-start;">
+            <p>This is slide 13</p>
+        </div>
+
+        <!-- Slide 14 -->
+        <div class="slide" id="slide14" style="display: none; padding-top: 15px; justify-content: flex-start;">
+            <p>This is slide 14</p>
+        </div>
+
+        <!-- Slide 15 -->
+        <div class="slide" id="slide15" style="display: none; padding-top: 15px; justify-content: flex-start;">
+            <p>This is slide 14</p>
+        </div>
+
+        <!-- Slide 16 -->
+        <div class="slide" id="slide16" style="display: none; padding-top: 15px; justify-content: flex-start;">
+            <p>This is slide 14</p>
+        </div>
+
+        <!-- Slide 17 -->
+        <div class="slide" id="slide17" style="display: none; padding-top: 15px; justify-content: flex-start;">
+            <p>This is slide 14</p>
+        </div>
+
+        <!-- Slide 18 -->
+        <div class="slide" id="slide18" style="display: none; padding-top: 15px; justify-content: flex-start;">
+            <p>This is slide 14</p>
+        </div>
+
 
     </div>
     <!-- #endregion -->
@@ -519,9 +567,9 @@
         }
 
         // Initialize the slideshow
-        const slideshow = new Slideshow(15);
+        const slideshow = new Slideshow(18);
 
-        
+
 
         // Add event listener to button
         document.getElementById('goto-slide11').addEventListener('click', (e) => {
