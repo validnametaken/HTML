@@ -128,6 +128,10 @@ const sounds = {
     yellow: new Audio('simonSounds/simonSound3.mp3'),
     blue: new Audio('simonSounds/simonSound4.mp3')
 };
+Object.values(sounds).forEach(sound => {
+    sound.load();
+    sound.preload = 'auto';
+});
 
 let sequence = [];
 let playerSequence = [];
@@ -155,21 +159,18 @@ function updateGameSpeed() {
 }
 
 // Modify the playSequence function to use gameSpeed
-function playSequence() {
+async function playSequence() {
     document.body.style.backgroundColor = '#1a0033';
-    let i = 0;
-    const interval = setInterval(() => {
-        activateButton(sequence[i]);
-        i++;
-        if (i >= sequence.length) {
-            clearInterval(interval);
-            setTimeout(() => {
-                enablePlayerInput();
-                document.body.style.backgroundColor = 'black';
-            }, gameSpeed/10);
-        }
-    }, gameSpeed/2);
+    for(let i = 0; i < sequence.length; i++) {
+        await new Promise(resolve => {
+            activateButton(sequence[i]);
+            setTimeout(resolve, gameSpeed);
+        });
+    }
+    document.body.style.backgroundColor = 'black';
+    enablePlayerInput();
 }
+
 // Add this to the startGame function at the beginning
 function startGame() {
     document.body.style.backgroundColor = '#black';
@@ -196,15 +197,22 @@ function addToSequence() {
     playSequence();
 }
 
-function activateButton(color) {
+async function activateButton(color) {
     const button = document.querySelector(`[data-color="${color}"]`);
     button.classList.add('active');
-    sounds[color].currentTime = 0; // Reset audio to start
-    sounds[color].play();
+    
+    // Stop any currently playing sound
+    sounds[color].pause();
+    sounds[color].currentTime = 0;
+    
+    // Play and wait for completion
+    await sounds[color].play();
+    
     setTimeout(() => {
         button.classList.remove('active');
     }, gameSpeed/4);
 }
+
 
 function enablePlayerInput() {
     buttons.forEach(button => {
