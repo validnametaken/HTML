@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Simon Says Game</title>
     <style>
 
@@ -13,6 +13,10 @@ body {
     padding: 20px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: white;
+    overscroll-behavior: contain;
+    position: fixed;
+    width: 100%;
+    height: 100%;
 }
 
 .game-container {
@@ -32,6 +36,10 @@ body {
     transition: all 0.2s ease;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     border: 3px solid rgba(255, 255, 255, 0.1);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .button:hover {
@@ -101,7 +109,7 @@ body {
 </head>
 <body>
     <div id="score">Score: 0</div>
-    <div id="score">Ver: 1</div>
+    <div id="score">Ver: 2</div>
     <div class="speed-settings">
         <label for="game-speed">Game Speed:</label>
         <select id="game-speed">
@@ -205,11 +213,30 @@ function debouncePlayerInput(fn, delay) {
         timeoutId = setTimeout(() => fn(...args), delay);
     };
 }
+function unlockAudioContext() {
+    const silentBuffer = audioContext.createBuffer(1, 1, 22050);
+    const source = audioContext.createBufferSource();
+    source.buffer = silentBuffer;
+    source.connect(audioContext.destination);
+    source.start(0);
+}
+
+document.addEventListener('touchstart', function() {
+    if (audioContext.state === 'suspended') {
+        unlockAudioContext();
+    }
+}, {once: true});
+
 
 speedSelector.addEventListener('change', updateGameSpeed);
 startButton.addEventListener('click', startGame);
 buttons.forEach(button => {
-    button.addEventListener('click', () => debouncePlayerInput(() => playerTurn(button), 200)());
+    const handleInput = debouncePlayerInput(() => playerTurn(button), 200);
+    button.addEventListener('click', handleInput);
+    button.addEventListener('touchstart', (e) => {
+        e.preventDefault(); // Prevents double-firing on iOS
+        handleInput();
+    });
 });
 
 function updateGameSpeed() {
