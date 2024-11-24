@@ -121,20 +121,70 @@ body {
     <button id="start-btn">Start Game</button>
 
     <script>
+ const GAME_CONSTANTS = {
+    COLORS: ['green', 'red', 'yellow', 'blue'],
+    SPEEDS: {
+        SLOW: 2000,
+        NORMAL: 1000,
+        FAST: 500,
+        BLAZING: 100
+    }
+};
+
+const GameStates = {
+    LOADING: 'loading',
+    READY: 'ready',
+    PLAYING: 'playing',
+    GAME_OVER: 'gameOver'
+};
+
+const gameState = {
+    sequence: [],
+    playerSequence: [],
+    score: 0,
+    gameSpeed: GAME_CONSTANTS.SPEEDS.NORMAL,
+    currentState: GameStates.LOADING
+};
 
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const buffers = {};
+const soundCache = new Map();
 
-async function loadSounds() {
-    const colors = ['green', 'red', 'yellow', 'blue'];
-    for (const color of colors) {
-        const response = await fetch(`simonSounds/simonSound${colors.indexOf(color) + 1}.mp3`);
-        const arrayBuffer = await response.arrayBuffer();
-        buffers[color] = await audioContext.decodeAudioData(arrayBuffer);
+const prewarmAudio = (buffer) => {
+    const source = audioContext.createBufferSource();
+    source.buffer = buffer;
+    source.connect(audioContext.destination);
+    source.start(0);
+    source.stop(0.001);
+};
+
+async function loadSounds(retries = 3) {
+    while (retries > 0) {
+        try {
+            for (const color of GAME_CONSTANTS.COLORS) {
+                const response = await fetch(`simonSounds/simonSound${GAME_CONSTANTS.COLORS.indexOf(color) + 1}.mp3`);
+                if (!response.ok) throw new Error(`Failed to load sound for ${color}`);
+                const arrayBuffer = await response.arrayBuffer();
+                buffers[color] = await audioContext.decodeAudioData(arrayBuffer);
+                // Prewarm the audio buffer
+                prewarmAudio(buffers[color]);
+                soundCache.set(color, true);
+            }
+            return true;
+        } catch (error) {
+            retries--;
+            if (retries === 0) {
+                console.error('Sound loading failed:', error);
+                alert('Failed to load game sounds. Please refresh the page.');
+                return false;
+            }
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
     }
 }
 
 function playSound(color) {
+    if (!soundCache.has(color)) return;
     const source = audioContext.createBufferSource();
     source.buffer = buffers[color];
     source.connect(audioContext.destination);
@@ -142,38 +192,43 @@ function playSound(color) {
     return source;
 }
 
-let sequence = [];
-let playerSequence = [];
-let score = 0;
-let gameSpeed = 1000;
-
 const buttons = document.querySelectorAll('.button');
 const startButton = document.getElementById('start-btn');
 const scoreDisplay = document.getElementById('score');
 const speedSelector = document.getElementById('game-speed');
 
+function debouncePlayerInput(fn, delay) {
+    let timeoutId;
+    return (...args) => {
+        if (timeoutId) clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => fn(...args), delay);
+    };
+}
+
 speedSelector.addEventListener('change', updateGameSpeed);
 startButton.addEventListener('click', startGame);
 buttons.forEach(button => {
-    button.addEventListener('click', () => playerTurn(button));
+    button.addEventListener('click', () => debouncePlayerInput(() => playerTurn(button), 200)());
 });
 
 function updateGameSpeed() {
-    gameSpeed = parseInt(speedSelector.value);
+    gameState.gameSpeed = parseInt(speedSelector.value);
 }
 
 async function playSequence() {
+    gameState.currentState = GameStates.PLAYING;
     document.body.style.backgroundColor = '#1a0033';
-    for (let i = 0; i < sequence.length; i++) {
-        const color = sequence[i];
+    for (let i = 0; i < gameState.sequence.length; i++) {
+        const color = gameState.sequence[i];
         const button = document.querySelector(`[data-color="${color}"]`);
         button.classList.add('active');
         playSound(color);
-        await new Promise(resolve => setTimeout(resolve, gameSpeed/2));
+        await new Promise(resolve => setTimeout(resolve, gameState.gameSpeed/2));
         button.classList.remove('active');
-        await new Promise(resolve => setTimeout(resolve, gameSpeed/4));
+        await new Promise(resolve => setTimeout(resolve, gameState.gameSpeed/4));
     }
     document.body.style.backgroundColor = 'black';
+    gameState.currentState = GameStates.READY;
     enablePlayerInput();
 }
 
@@ -183,24 +238,26 @@ function startGame() {
     }
     document.body.style.backgroundColor = 'black';
     updateGameSpeed();
-    sequence = [];
-    playerSequence = [];
-    score = 0;
-    scoreDisplay.textContent = `Score: ${score}`;
+    gameState.sequence = [];
+    gameState.playerSequence = [];
+    gameState.score = 0;
+    gameState.currentState = GameStates.READY;
+    scoreDisplay.textContent = `Score: ${gameState.score}`;
     addToSequence();
 }
 
 function addToSequence() {
-    const colors = ['green', 'red', 'yellow', 'blue'];
-    const random = colors[Math.floor(Math.random() * colors.length)];
-    sequence.push(random);
+    const random = GAME_CONSTANTS.COLORS[Math.floor(Math.random() * GAME_CONSTANTS.COLORS.length)];
+    gameState.sequence.push(random);
     playSequence();
 }
 
 function enablePlayerInput() {
-    buttons.forEach(button => {
-        button.style.pointerEvents = 'auto';
-    });
+    if (gameState.currentState === GameStates.READY) {
+        buttons.forEach(button => {
+            button.style.pointerEvents = 'auto';
+        });
+    }
 }
 
 function disablePlayerInput() {
@@ -210,23 +267,26 @@ function disablePlayerInput() {
 }
 
 function playerTurn(button) {
+    if (gameState.currentState !== GameStates.READY) return;
+    
     const color = button.dataset.color;
     button.classList.add('active');
     playSound(color);
-    setTimeout(() => button.classList.remove('active'), gameSpeed/4);
+    setTimeout(() => button.classList.remove('active'), gameState.gameSpeed/4);
     
-    playerSequence.push(color);
+    gameState.playerSequence.push(color);
 
-    if (playerSequence[playerSequence.length - 1] !== sequence[playerSequence.length - 1]) {
+    if (gameState.playerSequence[gameState.playerSequence.length - 1] !== gameState.sequence[gameState.playerSequence.length - 1]) {
+        gameState.currentState = GameStates.GAME_OVER;
         alert('Game Over! Click Start to play again.');
         return;
     }
 
-    if (playerSequence.length === sequence.length) {
+    if (gameState.playerSequence.length === gameState.sequence.length) {
         disablePlayerInput();
-        playerSequence = [];
-        score++;
-        scoreDisplay.textContent = `Score: ${score}`;
+        gameState.playerSequence = [];
+        gameState.score++;
+        scoreDisplay.textContent = `Score: ${gameState.score}`;
         setTimeout(() => {
             addToSequence();
         }, 1000);
@@ -234,10 +294,15 @@ function playerTurn(button) {
 }
 
 // Initialize sounds when page loads
-loadSounds().then(() => {
-    startButton.disabled = false;
+startButton.textContent = 'Loading...';
+gameState.currentState = GameStates.LOADING;
+loadSounds().then((success) => {
+    if (success) {
+        startButton.disabled = false;
+        startButton.textContent = 'Start Game';
+        gameState.currentState = GameStates.READY;
+    }
 });
-
 
     </script>
 </body>
