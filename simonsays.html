@@ -301,7 +301,20 @@ body {
 </button>
 <!-- partial -->
   <script>
-const assetUrl = 'https://assets.codepen.io/225363/';
+const GAME_CONSTANTS = {
+  MIN_SPEED: 250,
+  INITIAL_SPEED: 500,
+  SPEED_DECREASE_FACTOR: 3,
+  ASSET_URL: 'https://assets.codepen.io/225363/'
+};
+
+const gameState = {
+  sequence: [],
+  step: 0,
+  speed: GAME_CONSTANTS.INITIAL_SPEED,
+  isAudioMuted: false
+};
+
 const btnStart = document.querySelector(".start-game");
 const btnSound = document.querySelector(".sound-control");
 const padsContainer = document.querySelector(".pads-container");
@@ -311,13 +324,14 @@ const infoContainer = document.querySelector(".info-container");
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 const audioCtx = new AudioContext();
 
-const sounds = {
-  pad1: new Audio(`${assetUrl}pad1.mp3`).preload = 'auto',
-  pad2: new Audio(`${assetUrl}pad2.mp3`).preload = 'auto',
-  pad3: new Audio(`${assetUrl}pad3.mp3`).preload = 'auto',
-  pad4: new Audio(`${assetUrl}pad4.mp3`).preload = 'auto',
-  miss: new Audio(`${assetUrl}miss.mp3`)
-}
+const sounds = {};
+const loadAudio = async () => {
+  const audioFiles = ['pad1', 'pad2', 'pad3', 'pad4', 'miss'];
+  await Promise.all(audioFiles.map(async (name) => {
+    sounds[name] = new Audio(`${GAME_CONSTANTS.ASSET_URL}${name}.mp3`);
+    await sounds[name].load();
+  }));
+};
 
 const cls = {
   active: "active",
@@ -326,28 +340,23 @@ const cls = {
   mute: "mute"
 };
 
-let sequence = [];
-let isAudioMuted = false;
-let step, speed;
-
-
 const addSequenceStep = () => {
-  sequence.push(colors[Math.floor(Math.random() * colors.length)]);
+  gameState.sequence.push(colors[Math.floor(Math.random() * colors.length)]);
 };
 
 const handlePadClick = (e) => {
-  if (e.target.dataset.pad === sequence[step]) {
-    !isAudioMuted && handlePadSound(e.target.dataset.sound);
-    step++;
+  if (e.target.dataset.pad === gameState.sequence[gameState.step]) {
+    !gameState.isAudioMuted && handlePadSound(e.target.dataset.sound);
+    gameState.step++;
   } else {
-    !isAudioMuted && handlePadSound('miss');
+    !gameState.isAudioMuted && handlePadSound('miss');
     endGame();
   }
 
-  if (step === sequence.length) {
+  if (gameState.step === gameState.sequence.length) {
     waitPlayerTurn(true);
-    updateInfoText(`Level ${sequence.length + 1}`);
-    setTimeout(() => startLevel(), speed);
+    updateInfoText(`Level ${gameState.sequence.length + 1}`);
+    setTimeout(() => startLevel(), gameState.speed);
   }
 };
 
@@ -357,46 +366,45 @@ const handlePadSound = (sound) => {
     sounds[sound].currentTime = 0;
   }
   sounds[sound].play();
-}
+};
 
 const endGame = () => {
   waitPlayerTurn(true);
-  updateInfoText(`Game over at level ${sequence.length}`);
+  updateInfoText(`Game over at level ${gameState.sequence.length}`);
   padsContainer.classList.remove(cls.play);
   btnStart.disabled = false;
 };
 
 const animatePad = (name) => {
   const pad = document.querySelector(`[data-pad="${name}"]`);
-
   pad.classList.add(cls.active);
-  !isAudioMuted && handlePadSound(pad.dataset.sound);
-  setTimeout(() => pad.classList.remove(cls.active), speed / 2);
+  !gameState.isAudioMuted && handlePadSound(pad.dataset.sound);
+  setTimeout(() => pad.classList.remove(cls.active), gameState.speed / 2);
 };
 
 const runSequence = () => {
-  sequence.forEach((step, i) => {
-    setTimeout(() => animatePad(step), (i + 1) * speed);
+  gameState.sequence.forEach((step, i) => {
+    setTimeout(() => animatePad(step), (i + 1) * gameState.speed);
   });
 };
 
 const startLevel = () => {
-  if (speed > 250) {
-    speed -= sequence.length * 3;
+  if (gameState.speed > GAME_CONSTANTS.MIN_SPEED) {
+    gameState.speed -= gameState.sequence.length * GAME_CONSTANTS.SPEED_DECREASE_FACTOR;
   }
   
-  step = 0;
+  gameState.step = 0;
   addSequenceStep();
   runSequence();
-  setTimeout(() => waitPlayerTurn(false), (sequence.length + 1) * speed);
+  setTimeout(() => waitPlayerTurn(false), (gameState.sequence.length + 1) * gameState.speed);
 };
 
 const startNewGame = () => {
   btnStart.disabled = true;
-  sequence = [];
-  speed = 500;
+  gameState.sequence = [];
+  gameState.speed = GAME_CONSTANTS.INITIAL_SPEED;
   padsContainer.classList.add(cls.play);
-  padsContainer.style.setProperty("--speed", speed + "ms");
+  padsContainer.style.setProperty("--speed", `${gameState.speed}ms`);
   waitPlayerTurn(true);
   updateInfoText('Level 1');
   startLevel();
@@ -404,33 +412,37 @@ const startNewGame = () => {
 
 const updateInfoText = (text) => {
   infoContainer.textContent = text;
+  infoContainer.setAttribute('aria-label', text);
   infoContainer.classList.add(cls.active);
-  setTimeout(() => infoContainer.classList.remove(cls.active), speed);
-}
-
-const waitPlayerTurn = (waiting) => {
-  waiting
-    ? [...pads].forEach(pad => pad.disabled = true)
-    : [...pads].forEach(pad => pad.disabled = false);
+  setTimeout(() => infoContainer.classList.remove(cls.active), gameState.speed);
 };
 
+const waitPlayerTurn = (waiting) => {
+  [...pads].forEach(pad => pad.disabled = waiting);
+};
+
+const handlePadInteraction = (e) => {
+  if (!e.target.matches('.pad')) return;
+  handlePadClick(e);
+};
+
+// Event Listeners
 btnStart.addEventListener("click", startNewGame);
 
 btnSound.addEventListener("click", () => {
   if (btnSound.classList.contains('mute')) {
     btnSound.classList.remove(cls.mute);
-    isAudioMuted = false;
+    gameState.isAudioMuted = false;
   } else {
     btnSound.classList.add(cls.mute);
-    isAudioMuted = true;
+    gameState.isAudioMuted = true;
   }  
 });
 
-padsContainer.addEventListener("click", (e) => {
-  if (e.target.classList.contains("pad")) {
-    handlePadClick(e);
-  }
-});
+padsContainer.addEventListener("click", handlePadInteraction);
+
+// Initialize audio
+loadAudio();
 
   </script>
 
