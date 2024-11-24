@@ -318,12 +318,23 @@ const CONFIG = {
   AUDIO_FILES: ['pad1', 'pad2', 'pad3', 'pad4', 'miss']
 };
 
-// Debounce utility
 const debounce = (fn, delay) => {
   let timeoutId;
+  let lastExecTime = 0;
+  
   return (...args) => {
+    const now = Date.now();
     clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => fn(...args), delay);
+    
+    if (now - lastExecTime >= delay) {
+      fn.apply(this, args);
+      lastExecTime = now;
+    } else {
+      timeoutId = setTimeout(() => {
+        fn.apply(this, args);
+        lastExecTime = Date.now();
+      }, delay);
+    }
   };
 };
 
@@ -346,11 +357,21 @@ const audioCtx = new AudioContext();
 
 const sounds = {};
 const loadAudio = async () => {
+  const audioPromises = CONFIG.AUDIO_FILES.map(name => {
+    return new Promise((resolve, reject) => {
+      const audio = new Audio();
+      audio.preload = 'auto';
+      audio.src = `${CONFIG.GAME.ASSET_URL}${name}.mp3`;
+      audio.oncanplaythrough = () => {
+        sounds[name] = audio;
+        resolve();
+      };
+      audio.onerror = reject;
+    });
+  });
+
   try {
-    await Promise.all(CONFIG.AUDIO_FILES.map(async (name) => {
-      sounds[name] = new Audio(`${CONFIG.GAME.ASSET_URL}${name}.mp3`);
-      await sounds[name].load();
-    }));
+    await Promise.all(audioPromises);
   } catch (error) {
     console.error('Audio loading failed:', error);
     gameState.isAudioMuted = true;
@@ -406,13 +427,18 @@ const endGame = () => {
 
 const animatePad = (name) => {
   const pad = document.querySelector(`[data-pad="${name}"]`);
-  pad.classList.add(CONFIG.CSS_CLASSES.active);
-  pad.setAttribute('aria-pressed', 'true');
-  !gameState.isAudioMuted && handlePadSound(pad.dataset.sound);
-  setTimeout(() => {
-    pad.classList.remove(CONFIG.CSS_CLASSES.active);
-    pad.setAttribute('aria-pressed', 'false');
-  }, gameState.speed / 2);
+  requestAnimationFrame(() => {
+    pad.classList.add(CONFIG.CSS_CLASSES.active);
+    pad.setAttribute('aria-pressed', 'true');
+    !gameState.isAudioMuted && handlePadSound(pad.dataset.sound);
+    
+    setTimeout(() => {
+      requestAnimationFrame(() => {
+        pad.classList.remove(CONFIG.CSS_CLASSES.active);
+        pad.setAttribute('aria-pressed', 'false');
+      });
+    }, gameState.speed / 2);
+  });
 };
 
 const runSequence = () => {
@@ -444,10 +470,12 @@ const startNewGame = () => {
 };
 
 const updateInfoText = (text) => {
-  infoContainer.textContent = text;
-  infoContainer.setAttribute('aria-label', text);
-  infoContainer.classList.add(CONFIG.CSS_CLASSES.active);
-  setTimeout(() => infoContainer.classList.remove(CONFIG.CSS_CLASSES.active), gameState.speed);
+  requestAnimationFrame(() => {
+    infoContainer.textContent = text;
+    infoContainer.setAttribute('aria-label', text);
+    infoContainer.classList.add(CONFIG.CSS_CLASSES.active);
+    setTimeout(() => infoContainer.classList.remove(CONFIG.CSS_CLASSES.active), gameState.speed);
+  });
 };
 
 const waitPlayerTurn = (waiting) => {
@@ -479,7 +507,6 @@ padsContainer.addEventListener("click", handlePadInteraction);
 
 // Initialize
 loadAudio();
-
 
   </script>
 
