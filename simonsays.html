@@ -122,67 +122,67 @@ body {
 
     <script>
 
-const sounds = {
-    green: new Audio('simonSounds/simonSound1.mp3'),
-    red: new Audio('simonSounds/simonSound2.mp3'),
-    yellow: new Audio('simonSounds/simonSound3.mp3'),
-    blue: new Audio('simonSounds/simonSound4.mp3')
-};
-Object.values(sounds).forEach(sound => {
-    sound.load();
-    sound.preload = 'auto';
-});
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+const buffers = {};
+
+async function loadSounds() {
+    const colors = ['green', 'red', 'yellow', 'blue'];
+    for (const color of colors) {
+        const response = await fetch(`simonSounds/simonSound${colors.indexOf(color) + 1}.mp3`);
+        const arrayBuffer = await response.arrayBuffer();
+        buffers[color] = await audioContext.decodeAudioData(arrayBuffer);
+    }
+}
+
+function playSound(color) {
+    const source = audioContext.createBufferSource();
+    source.buffer = buffers[color];
+    source.connect(audioContext.destination);
+    source.start(0);
+    return source;
+}
 
 let sequence = [];
 let playerSequence = [];
 let score = 0;
+let gameSpeed = 1000;
 
 const buttons = document.querySelectorAll('.button');
 const startButton = document.getElementById('start-btn');
 const scoreDisplay = document.getElementById('score');
-
 const speedSelector = document.getElementById('game-speed');
+
 speedSelector.addEventListener('change', updateGameSpeed);
-
 startButton.addEventListener('click', startGame);
-
 buttons.forEach(button => {
     button.addEventListener('click', () => playerTurn(button));
 });
-// Add at the top with other variables
-let gameSpeed = 1000; // Default speed
 
-// Add this new function
 function updateGameSpeed() {
-    const speedSelector = document.getElementById('game-speed');
     gameSpeed = parseInt(speedSelector.value);
 }
 
-// Modify the playSequence function to use gameSpeed
 async function playSequence() {
     document.body.style.backgroundColor = '#1a0033';
-    for(let i = 0; i < sequence.length; i++) {
-        await new Promise(resolve => {
-            activateButton(sequence[i]);
-            setTimeout(resolve, gameSpeed);
-        });
+    for (let i = 0; i < sequence.length; i++) {
+        const color = sequence[i];
+        const button = document.querySelector(`[data-color="${color}"]`);
+        button.classList.add('active');
+        playSound(color);
+        await new Promise(resolve => setTimeout(resolve, gameSpeed/2));
+        button.classList.remove('active');
+        await new Promise(resolve => setTimeout(resolve, gameSpeed/4));
     }
     document.body.style.backgroundColor = 'black';
     enablePlayerInput();
 }
 
-// Add this to the startGame function at the beginning
 function startGame() {
-    document.body.style.backgroundColor = '#black';
+    if (audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
+    document.body.style.backgroundColor = 'black';
     updateGameSpeed();
-    sequence = [];
-    playerSequence = [];
-    score = 0;
-    scoreDisplay.textContent = `Score: ${score}`;
-    addToSequence();
-}
-
-function startGame() {
     sequence = [];
     playerSequence = [];
     score = 0;
@@ -196,23 +196,6 @@ function addToSequence() {
     sequence.push(random);
     playSequence();
 }
-
-async function activateButton(color) {
-    const button = document.querySelector(`[data-color="${color}"]`);
-    button.classList.add('active');
-    
-    // Stop any currently playing sound
-    sounds[color].pause();
-    sounds[color].currentTime = 0;
-    
-    // Play and wait for completion
-    await sounds[color].play();
-    
-    setTimeout(() => {
-        button.classList.remove('active');
-    }, gameSpeed/4);
-}
-
 
 function enablePlayerInput() {
     buttons.forEach(button => {
@@ -228,7 +211,10 @@ function disablePlayerInput() {
 
 function playerTurn(button) {
     const color = button.dataset.color;
-    activateButton(color);
+    button.classList.add('active');
+    playSound(color);
+    setTimeout(() => button.classList.remove('active'), gameSpeed/4);
+    
     playerSequence.push(color);
 
     if (playerSequence[playerSequence.length - 1] !== sequence[playerSequence.length - 1]) {
@@ -246,6 +232,11 @@ function playerTurn(button) {
         }, 1000);
     }
 }
+
+// Initialize sounds when page loads
+loadSounds().then(() => {
+    startButton.disabled = false;
+});
 
 
     </script>
