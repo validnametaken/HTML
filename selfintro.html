@@ -1,12 +1,20 @@
 <html>
 
 <head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alata&display=swap">
     <style>
         /* #region =============== Background =============== */
 
+        @font-face {
+    font-family: 'Alata';
+    src: url('selfintro/Alata-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
         body {
             margin: auto;
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: "Alata", -apple-system, BlinkMacSystemFont, sans-serif;
             overflow: auto;
             background: linear-gradient(315deg, rgba(101, 0, 94, 1) 3%, rgb(13, 28, 43) 38%, rgb(11, 53, 50) 68%, rgb(70, 8, 8) 98%);
             animation: gradient 200s ease infinite;
@@ -392,9 +400,76 @@
             /* White outline */
             stroke-width: 2;
         }
-
-
         /*#endregion*/
+                /* #region =============== Questions effect =============== */
+/* Selection styling */
+::-moz-selection {
+    background: #009688;
+    color: #000;
+}
+
+::selection {
+    background: #009688;
+    color: #000;
+}
+
+/* Questions animation styling */
+span.questions {
+    display: inline-block;
+    color: #00796B;
+    font-size: 4em;
+    transform-origin: 50% 70%;
+}
+
+span.questions:nth-child(2n) {
+    color: #009688;
+}
+
+/* Animation timing for each letter */
+span.questions:nth-child(1) { animation: flipUp 1s cubic-bezier(0.68, -0.55, 0.26, 1.55) .2s both; }
+span.questions:nth-child(2) { animation: flipUp 1s cubic-bezier(0.68, -0.55, 0.26, 1.55) .4s both; }
+span.questions:nth-child(3) { animation: flipUp 1s cubic-bezier(0.68, -0.55, 0.26, 1.55) .6s both; }
+span.questions:nth-child(4) { animation: flipUp 1s cubic-bezier(0.68, -0.55, 0.26, 1.55) .8s both; }
+span.questions:nth-child(5) { 
+    animation: flipUp 1s cubic-bezier(0.68, -0.55, 0.26, 1.55) 1s both;
+    padding: 0 20px;
+}
+span.questions:nth-child(6) { animation: flipUp 1s cubic-bezier(0.68, -0.55, 0.26, 1.55) 1.2s both; }
+span.questions:nth-child(7) { animation: flipUp 1s cubic-bezier(0.68, -0.55, 0.26, 1.55) 1.4s both; }
+span.questions:nth-child(8) { animation: flipUp 1s cubic-bezier(0.68, -0.55, 0.26, 1.55) 1.6s both; }
+span.questions:nth-child(9) { animation: flipUp 1s cubic-bezier(0.68, -0.55, 0.26, 1.55) 1.8s both; }
+span.questions:nth-child(10) { animation: flipUp 1s cubic-bezier(0.68, -0.55, 0.26, 1.55) 2.0s both; }
+span.questions:nth-child(11) { animation: flipUp 1s cubic-bezier(0.68, -0.55, 0.26, 1.55) 2.2s both; }
+span.questions:nth-child(12) { animation: flipUp 1s cubic-bezier(0.68, -0.55, 0.26, 1.55) 2.4s both; }
+span.questions:nth-child(13) { animation: flipUp 1s cubic-bezier(0.68, -0.55, 0.26, 1.55) 2.6s both; }
+span.questions:nth-child(14) { animation: flipUp 1s cubic-bezier(0.68, -0.55, 0.26, 1.55) 2.8s both; }
+span.questions:nth-child(15) { animation: flipUp 1s cubic-bezier(0.68, -0.55, 0.26, 1.55) 3.0s both; }
+
+@keyframes flipUp {
+    from { transform: rotateX(90deg); }
+    to { transform: rotateX(0deg); }
+}
+
+/* Responsive design */
+@media screen and (min-width: 400px) {
+    span.questions {
+        font-size: 4em;
+    }
+}
+
+@media screen and (min-width: 600px) {
+    span.questions {
+        font-size: 5em;
+    }
+}
+
+@media screen and (min-width: 916px) {
+    span.questions {
+        font-size: 6.2em;
+    }
+}
+
+                  /*#endregion*/
     </style>
 </head>
 
@@ -709,7 +784,7 @@
                 <img data-src="selfintro/sports.png" data-alt="sports"
                     style="max-width: 90%; max-height: 90%; object-fit: contain;">
                 <div style="display: flex; flex-direction: column; gap: 2rem;">
-                    <p style="font-size: 10rem; font-weight: bold;">What sport do you like?</p>
+                    <p style="font-size: 10rem; font-weight: regular;">What sport do you like?</p>
                 </div>
             </div>
         </div>
@@ -742,7 +817,23 @@
 
         <!-- Slide 23 -->
         <div class="slide" id="slide23" style="display: none; padding-top: 15px; justify-content: flex-start;">
-            <p>This is slide 23</p>
+            <div>
+                <span class="questions">A</span>
+                <span class="questions">N</span>
+                <span class="questions">Y</span>
+                <span class="questions"> </span>
+                <span class="questions"> </span>
+                <span class="questions">Q</span>
+                <span class="questions">U</span>
+                <span class="questions">E</span>
+                <span class="questions">S</span>
+                <span class="questions">T</span>
+                <span class="questions">I</span>
+                <span class="questions">O</span>
+                <span class="questions">N</span>
+                <span class="questions">S</span>
+                <span class="questions">?</span>
+            </div>
         </div>
 
 
