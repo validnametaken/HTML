@@ -23,10 +23,19 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
-    width: min(50vh, 800px);  /* Using min() for simplicity */
-    height: min(50vh, 800px); 
+    width: min(60vh, 800px);
+    height: min(60vh, 800px);
     margin: 20px auto;
     gap: min(20px, 3vw);
+    background-color: pink;
+}
+
+@media screen and (max-width: 480px) {
+    .game-container {
+        width: min(90vw, 300px);
+        height: min(90vw, 300px);
+        gap: 10px;
+    }
 }
 
 .button {
