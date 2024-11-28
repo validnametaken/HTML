@@ -274,7 +274,9 @@ async function playSequence() {
         playSound(color);
         await new Promise(resolve => setTimeout(resolve, gameState.gameSpeed/4));
         button.classList.remove('active');
-        await new Promise(resolve => setTimeout(resolve, gameState.gameSpeed/4));
+        if (i < gameState.sequence.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, gameState.gameSpeed/4));
+        }
     }
     document.body.style.backgroundColor = 'black';
     gameState.currentState = GameStates.READY;
