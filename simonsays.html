@@ -63,11 +63,6 @@ body {
 }
 
 
-
-.button:hover {
-    transform: scale(1.05);
-}
-
 #green { background-color: #00c853; }
 #red { background-color: #ff1744; }
 #yellow { background-color: #ffd600; }
@@ -131,7 +126,7 @@ body {
     </style>
 </head>
 <body>
-    <div id="score">Scoree: 0</div>
+    <div id="score">Score: 0</div>
     <div class="speed-settings">
         <label for="game-speed">Game Speed:</label>
         <select id="game-speed">
@@ -323,12 +318,8 @@ function playerTurn(button) {
     
     const color = button.dataset.color;
     button.classList.add('active');
-    button.style.transform = 'scale(1)';  // Reset scale immediately
     playSound(color);
-    setTimeout(() => {
-        button.classList.remove('active');
-        button.style.transform = '';  // Remove inline style to allow hover effects
-    }, gameState.gameSpeed/4);
+    setTimeout(() => button.classList.remove('active'), gameState.gameSpeed/4);
     
     gameState.playerSequence.push(color);
 
@@ -348,7 +339,6 @@ function playerTurn(button) {
         }, 1000);
     }
 }
-
 
 // Initialize sounds when page loads
 startButton.textContent = 'Loading...';
