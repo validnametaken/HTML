@@ -36,7 +36,6 @@ body {
 }
 
 #score, .speed-settings, #start-btn {
-    width: 100%;
     max-width: min(60vh, 800px);
     margin: 20px auto;
 }
@@ -131,7 +130,7 @@ body {
     </style>
 </head>
 <body>
-    <div id="score">Score: 0</div>
+    <div id="score">Scoree: 0</div>
     <div class="speed-settings">
         <label for="game-speed">Game Speed:</label>
         <select id="game-speed">
@@ -273,7 +272,7 @@ async function playSequence() {
         const button = document.querySelector(`[data-color="${color}"]`);
         button.classList.add('active');
         playSound(color);
-        await new Promise(resolve => setTimeout(resolve, gameState.gameSpeed/2));
+        await new Promise(resolve => setTimeout(resolve, gameState.gameSpeed/4));
         button.classList.remove('active');
         await new Promise(resolve => setTimeout(resolve, gameState.gameSpeed/4));
     }
