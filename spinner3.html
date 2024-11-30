@@ -266,7 +266,7 @@
 <body>
     <div id="loader">
         <div class="loader-content">
-            <h1>Welcome to Andy's Wheel of Fortune</h1>
+            <h1>Welcome to Andy's Wheel of Fortunee</h1>
             <select id="modeSelect">
                 <option value="">Select Mode</option>
                 <option value="number">Number Mode</option>
@@ -305,7 +305,7 @@
                 container.classList.remove('active');
             });
 
-            const selectedMode = this.value;
+            var selectedMode = this.value;
             if (selectedMode) {
                 document.getElementById(selectedMode + 'Mode').classList.add('active');
             }
@@ -366,15 +366,15 @@
                 .style("max-width", "100%")
                 .style("height", "auto");
 
-            const container = svg.append("g")
+            var container = svg.append("g")
                 .attr("class", "chartholder")
                 .attr("transform", "translate(" + (w / 2 + padding.left) + "," + (h / 2 + padding.top) + ")");
 
-            const vis = container.append("g");
+            var vis = container.append("g");
 
             // 3. Create wheel segments
-            const pie = d3.layout.pie().sort(null).value(function (d) { return 1; });
-            const arc = d3.svg.arc().outerRadius(r);
+            var pie = d3.layout.pie().sort(null).value(function (d) { return 1; });
+            var arc = d3.svg.arc().outerRadius(r);
 
             let arcs;
             if (mode === 'number') {
@@ -410,14 +410,14 @@
             // 4. Define spin function
             function spin() {
                 container.on("click", null);
-                const totalSlices = mode === 'number' ? input : input.length;
+                var totalSlices = mode === 'number' ? input : input.length;
                 if (oldpick.length == totalSlices) {
                     console.log("done");
                     container.on("click", null);
                     return;
                 }
 
-                const ps = 360 / totalSlices,
+                var ps = 360 / totalSlices,
                     pieslice = Math.round(1440 / totalSlices),
                     rng = Math.floor((Math.random() * 1440) + 360);
 
