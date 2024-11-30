@@ -252,7 +252,7 @@
 <body>
     <div id="loader">
         <div class="loader-content">
-            <h1>Welcome to Andy's Wheel of Fortunee</h1>
+            <h1>Welcome to Andy's Wheel of Fortune</h1>
             <select id="modeSelect">
                 <option value="">Select Mode</option>
                 <option value="number">Number Mode</option>
@@ -282,7 +282,8 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
     <script>
 
         document.getElementById('modeSelect').addEventListener('change', function () {
@@ -347,7 +348,9 @@
                 .attr("width", "100%")
                 .attr("height", "100%")
                 .attr("viewBox", `0 0 ${w + padding.left + padding.right} ${h + padding.top + padding.bottom}`)
-                .attr("preserveAspectRatio", "xMidYMid meet");
+                .attr("preserveAspectRatio", "xMidYMid meet")
+                .style("max-width", "100%")
+                .style("height", "auto");
 
             const container = svg.append("g")
                 .attr("class", "chartholder")
@@ -431,6 +434,10 @@
 
                         oldrotation = rotation;
                         container.on("click", spin);
+                        container.on("touchstart", function(e) {
+    e.preventDefault();  // Prevent scrolling
+    spin.call(this);
+});
                     });
             }
 
