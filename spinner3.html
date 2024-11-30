@@ -5,13 +5,12 @@
     <meta charset="utf-8" />
     <title>Andy's Wheel of Fortune</title>
     <style type="text/css">
-
-@font-face {
+        @font-face {
             font-family: 'Alata';
-            src: url('selfintro/Alata-Regular.ttf') format('truetype');
-            font-weight: 400;
-            font-style: normal;
+            src: local('Alata'),
+                url('selfintro/Alata-Regular.ttf') format('truetype');
             font-display: swap;
+            font-weight: 400;
         }
 
         body {
@@ -77,10 +76,24 @@
             gap: 10px;
             align-items: center;
             padding: 20px;
+            transition: all 0.3s ease-in-out;
+            transform-origin: center;
+            transform: scale(0.95);
         }
 
         .mode-container.active {
             display: flex;
+            transform: scale(1);
+        }
+
+        #grid-container {
+            display: grid;
+            grid-template-columns: 60% 40%;
+            gap: 20px;
+            padding: 20px;
+            height: 100vh;
+            box-sizing: border-box;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e3eeff 100%);
         }
 
         button,
@@ -99,25 +112,130 @@
         .loader-content {
             text-align: center;
             color: white;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
+
         .back-button {
             display: none;
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    padding: 10px 20px;
-    font-size: 1.5vw;
-    cursor: pointer;
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
-    border: 2px solid white;
-    border-radius: 5px;
-    z-index: 1000;
-}
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            font-size: 1.5vw;
+            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: 2px solid white;
+            border-radius: 5px;
+            z-index: 1000;
+        }
 
-.back-button:hover {
-    background-color: rgba(0, 0, 0, 0.9);
-}
+        .back-button:hover {
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        #chart path {
+            transition: fill 0.3s ease;
+        }
+
+        #chart path:hover {
+            filter: brightness(1.1);
+        }
+
+
+        #modeSelect,
+        #startNumberMode,
+        #startFileMode,
+        .back-button {
+            background: white;
+            color: #6c5ce7;
+            border: 2px solid #6c5ce7;
+            border-radius: 15px;
+            padding: 12px 25px;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            outline: none;
+            font-size: 1.5vw;
+        }
+
+        #modeSelect:hover,
+        #startNumberMode:hover,
+        #startFileMode:hover,
+        .back-button:hover {
+            background: linear-gradient(135deg, #6c5ce7, #a363d9);
+            color: rgb(231, 231, 231);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
+        }
+
+        #modeSelect {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236c5ce7%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 0.65rem auto;
+            padding-right: 2.5rem;
+        }
+
+        #modeSelect option {
+            background: white;
+            color: #6c5ce7;
+            padding: 10px;
+        }
+
+        #modeSelect option:hover,
+        #modeSelect option:focus {
+            background: #6c5ce7;
+            color: white;
+        }
+
+        #modeSelect option:checked {
+            background: linear-gradient(135deg, #6c5ce7, #a363d9);
+            color: rgb(201, 201, 201);
+        }
+
+        .loader-content h1 {
+            color: #6c5ce7;
+            text-shadow: 2px 2px 4px rgba(108, 92, 231, 0.3);
+            padding: 15px;
+            border: 2px solid #6c5ce7;
+            border-radius: 15px;
+            background: rgb(231, 231, 231);
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        #csvFileInput {
+            display: none;
+        }
+
+        .file-upload-label {
+            display: inline-block;
+            background: white;
+            color: #6c5ce7;
+            border: 2px solid #6c5ce7;
+            border-radius: 15px;
+            padding: 12px 25px;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 1.5vw;
+        }
+
+        .file-upload-label:hover {
+            background: linear-gradient(135deg, #6c5ce7, #a363d9);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
+        }
     </style>
 </head>
 
@@ -137,7 +255,10 @@
             </div>
 
             <div id="fileMode" class="mode-container">
-                <input type="file" id="csvFileInput" accept=".csv">
+                <label class="file-upload-label">
+                    Choose File
+                    <input type="file" id="csvFileInput" accept=".csv">
+                </label>
                 <button id="startFileMode">Start File Mode</button>
             </div>
         </div>
@@ -165,15 +286,25 @@
             }
         });
 
-        document.getElementById('startNumberMode').addEventListener("click", function () {
-            var number = document.getElementById("inputNumber").value;
-            if (number < 1 || number > 200) {
-                alert("Please enter a number between 1 and 200.");
-                return;
+        document.addEventListener('click', function (e) {
+            if (e.target.matches('#startNumberMode')) {
+                var number = document.getElementById("inputNumber").value;
+                if (number < 1 || number > 200) {
+                    alert("Please enter a number between 1 and 200.");
+                    return;
+                }
+                document.getElementById("loader").style.display = "none";
+                document.querySelector('.back-button').style.display = 'block'; // Show back button
+                startSpinner('number', number);
+            } else if (e.target.matches('#startFileMode')) {
+                if (!csvData.length) {
+                    alert("Please upload a CSV file first.");
+                    return;
+                }
+                document.getElementById("loader").style.display = "none";
+                document.querySelector('.back-button').style.display = 'block'; // Show back button
+                startSpinner('file', csvData);
             }
-            document.getElementById("loader").style.display = "none";
-            document.querySelector('.back-button').style.display = 'block'; // Show back button
-            startSpinner('number', number);
         });
 
         let csvData = [];
@@ -185,16 +316,6 @@
                     console.log("CSV Data loaded:", csvData);
                 }
             });
-        });
-
-        document.getElementById('startFileMode').addEventListener("click", function () {
-            if (!csvData.length) {
-                alert("Please upload a CSV file first.");
-                return;
-            }
-            document.getElementById("loader").style.display = "none";
-            document.querySelector('.back-button').style.display = 'block'; // Show back button
-            startSpinner('file', csvData);
         });
 
 
