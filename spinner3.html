@@ -256,7 +256,7 @@
 <body>
     <div id="loader">
         <div class="loader-content">
-            <h1>Welcome to Andy's Wheel of Fortuneee</h1>
+            <h1>Welcome to Andy's Wheel of Fortune</h1>
             <select id="modeSelect">
                 <option value="">Select Mode</option>
                 <option value="number">Number Mode</option>
@@ -347,7 +347,7 @@
                 color = d3.scale.category20();
 
             // 2. Create base elements
-            const svg = d3.select('#chart')
+            var svg = d3.select('#chart')
                 .append("svg")
                 .attr("width", "100%")
                 .attr("height", "100%")
