@@ -24,13 +24,14 @@
         }
 
 
-        html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    position: fixed;
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: fixed;
             font-family: "Alata", -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
@@ -65,13 +66,15 @@
 
 
         #question {
-    position: relative;
-    top: min(calc(27vw), 300px); /* Uses 27% of viewport width but won't exceed 250px */    width: 100%;
-    height: auto;
-    display: flex;
-    justify-content: center;
-    overflow: hidden;
-}
+            position: relative;
+            top: min(calc(27vw), 300px);
+            /* Uses 27% of viewport width but won't exceed 250px */
+            width: 100%;
+            height: auto;
+            display: flex;
+            justify-content: center;
+            overflow: hidden;
+        }
 
 
         #question h1 {
@@ -89,9 +92,11 @@
             background-color: rgba(0, 0, 0, 0.7);
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
+            padding-top: 20vh;
             z-index: 2;
         }
+
 
         .mode-select {
             display: flex;
@@ -272,7 +277,7 @@
 <body>
     <div id="loader">
         <div class="loader-content">
-            <h1>Welcome to Andy's Wheel of Fortunee</h1>
+            <h1>Welcome to Andy's Wheel of Fortune</h1>
             <select id="modeSelect">
                 <option value="">Select Mode</option>
                 <option value="number">Number Mode</option>
@@ -366,12 +371,12 @@
 
             var svg = d3.select('#chart')
             var svg = d3.select('#chart')
-    .append("svg")
-    .data([data])
-    .attr("width", "100%")
-    .attr("height", "100%")
-    .attr("viewBox", `0 0 ${w + padding.left + padding.right} ${h + padding.top + padding.bottom}`)
-    .attr("preserveAspectRatio", "xMidYMid meet");
+                .append("svg")
+                .data([data])
+                .attr("width", "100%")
+                .attr("height", "100%")
+                .attr("viewBox", `0 0 ${w + padding.left + padding.right} ${h + padding.top + padding.bottom}`)
+                .attr("preserveAspectRatio", "xMidYMid meet");
 
 
 
