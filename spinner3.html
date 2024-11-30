@@ -2,7 +2,8 @@
 <html>
 
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Andy's Wheel of Fortune</title>
     <style type="text/css">
         @font-face {
@@ -33,40 +34,38 @@
             grid-template-columns: 60% 40%;
             gap: 20px;
             padding: 20px;
-            height: 100vh;
+            min-height: 100vh;
             box-sizing: border-box;
         }
 
-        #chart,
-        #question {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        #chart {
+            top: 20;
+            left: 20;
+            position: relative;
             width: 100%;
-            height: 100%;
-            overflow: hidden;
-            -webkit-transform: translateZ(0);
-            transform: translateZ(0);
-            -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+            justify-content: center;
+            max-height: 95vh;
+
         }
 
         #chart svg {
-            max-width: 100%;
-            max-height: 100%;
+            width: 100%;
             height: auto;
-            width: auto;
-            -webkit-transform: translateZ(0);
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-            transform: translateZ(0);
+            position: relative;
+            overflow: hidden;
+            max-height: 95vh;
         }
+
+
+        #question {
+    position: relative;
+    top: calc(27vw); /* This uses 30% of the viewport width to match the wheel's center */
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+}
+
 
         #question h1 {
             font-size: 2vw;
@@ -266,7 +265,7 @@
 <body>
     <div id="loader">
         <div class="loader-content">
-            <h1>Welcome to Andy's Wheel of Fortunee</h1>
+            <h1>Welcome to Andy's Wheel of Fortuneee</h1>
             <select id="modeSelect">
                 <option value="">Select Mode</option>
                 <option value="number">Number Mode</option>
@@ -344,134 +343,135 @@
         });
 
         function startSpinner(mode, input) {
-    var padding = { top: 20, right: 40, bottom: 0, left: 0 },
-        w = 500 - padding.left - padding.right,
-        h = 500 - padding.top - padding.bottom,
-        r = Math.min(w, h) / 2,
-        rotation = 0,
-        oldrotation = 0,
-        picked = 100000,
-        oldpick = [],
-        color = d3.scale.category20();
+            var padding = { top: 20, right: 40, bottom: 0, left: 0 },
+                w = 500 - padding.left - padding.right,
+                h = 500 - padding.top - padding.bottom,
+                r = Math.min(w, h) / 2,
+                rotation = 0,
+                oldrotation = 0,
+                picked = 100000,
+                oldpick = [],
+                color = d3.scale.category20();
 
-    var data = mode === 'number' ? 
-        d3.range(parseInt(input)).map(i => ({label: i + 1})) : 
-        input;
+            var data = mode === 'number' ?
+                d3.range(parseInt(input)).map(i => ({ label: i + 1 })) :
+                input;
 
-        var svg = d3.select('#chart')
+            var svg = d3.select('#chart')
+            var svg = d3.select('#chart')
     .append("svg")
     .data([data])
     .attr("width", "100%")
     .attr("height", "100%")
-    .style("max-width", "500px")    // Set a larger max-width
-    .style("max-height", "500px")   // Set a larger max-height
-    .style("display", "block")      // Ensure proper display
-    .style("margin", "auto");       // Center the SVG
+    .attr("viewBox", `0 0 ${w + padding.left + padding.right} ${h + padding.top + padding.bottom}`)
+    .attr("preserveAspectRatio", "xMidYMid meet");
 
 
 
-    var container = svg.append("g")
-        .attr("class", "chartholder")
-        .attr("transform", "translate(" + (w / 2 + padding.left) + "," + (h / 2 + padding.top) + ")");
 
-    var vis = container.append("g");
+            var container = svg.append("g")
+                .attr("class", "chartholder")
+                .attr("transform", "translate(" + (w / 2) + "," + (r) + ")");
 
-    var pie = d3.layout.pie().sort(null).value(function(d) { return 1; });
-    var arc = d3.svg.arc().outerRadius(r);
 
-    var arcs = vis.selectAll("g.slice")
-        .data(pie)
-        .enter()
-        .append("g")
-        .attr("class", "slice");
+            var vis = container.append("g");
 
-    arcs.append("path")
-        .attr("fill", function(d, i) { return color(i); })
-        .attr("d", function(d) { return arc(d); });
+            var pie = d3.layout.pie().sort(null).value(function (d) { return 1; });
+            var arc = d3.svg.arc().outerRadius(r);
 
-    arcs.append("text")
-        .attr("transform", function(d) {
-            d.innerRadius = 0;
-            d.outerRadius = r;
-            d.angle = (d.startAngle + d.endAngle) / 2;
-            return "rotate(" + ((d.angle * 180 / Math.PI - 90)) + ")translate(" + (d.outerRadius - 10) + ")";
-        })
-        .attr("text-anchor", "end")
-        .text(function(d, i) {
-            return mode === 'number' ? (i + 1) : data[i].label;
-        });
+            var arcs = vis.selectAll("g.slice")
+                .data(pie)
+                .enter()
+                .append("g")
+                .attr("class", "slice");
 
-    container.on("click", spin);
+            arcs.append("path")
+                .attr("fill", function (d, i) { return color(i); })
+                .attr("d", function (d) { return arc(d); });
 
-    function spin() {
-        container.on("click", null);
+            arcs.append("text")
+                .attr("transform", function (d) {
+                    d.innerRadius = 0;
+                    d.outerRadius = r;
+                    d.angle = (d.startAngle + d.endAngle) / 2;
+                    return "rotate(" + ((d.angle * 180 / Math.PI - 90)) + ")translate(" + (d.outerRadius - 10) + ")";
+                })
+                .attr("text-anchor", "end")
+                .text(function (d, i) {
+                    return mode === 'number' ? (i + 1) : data[i].label;
+                });
 
-        if (oldpick.length == data.length) {
-            console.log("done");
-            container.on("click", null);
-            return;
+            container.on("click", spin);
+
+            function spin() {
+                container.on("click", null);
+
+                if (oldpick.length == data.length) {
+                    console.log("done");
+                    container.on("click", null);
+                    return;
+                }
+
+                var ps = 360 / data.length,
+                    pieslice = Math.round(1440 / data.length),
+                    rng = Math.floor((Math.random() * 1440) + 360);
+
+                rotation = (Math.round(rng / ps) * ps);
+                picked = Math.round(data.length - (rotation % 360) / ps);
+                picked = picked >= data.length ? (picked % data.length) : picked;
+
+                if (oldpick.indexOf(picked) !== -1) {
+                    d3.select(this).call(spin);
+                    return;
+                } else {
+                    oldpick.push(picked);
+                }
+
+                rotation += 90 - Math.round(ps / 2);
+
+                vis.transition()
+                    .duration(3000)
+                    .attrTween("transform", rotTween)
+                    .each("end", function () {
+                        d3.select(".slice:nth-child(" + (picked + 1) + ") path")
+                            .attr("fill", "#111");
+
+                        d3.select("#question h1")
+                            .text(mode === 'number' ?
+                                "Selected number: " + (picked + 1) :
+                                data[picked].question);
+
+                        oldrotation = rotation;
+                        container.on("click", spin);
+                    });
+            }
+
+            function rotTween(to) {
+                var i = d3.interpolate(oldrotation % 360, rotation);
+                return function (t) {
+                    return "rotate(" + i(t) + ")";
+                };
+            }
+
+            svg.append("g")
+                .attr("transform", "translate(" + (w + padding.left + padding.right) + "," + (h / 2 + padding.top) + ")")
+                .append("path")
+                .attr("d", "M-" + (r * .15) + ",0L0," + (r * .05) + "L0,-" + (r * .05) + "Z")
+                .style({ "fill": "black" });
+
+            container.append("circle")
+                .attr("cx", 0)
+                .attr("cy", 0)
+                .attr("r", 60)
+                .style({ "fill": "white", "cursor": "pointer" });
+
+            container.append("text")
+                .attr("x", 0)
+                .attr("y", 15)
+                .attr("text-anchor", "middle")
+                .text("SPIN")
+                .style({ "font-weight": "bold", "font-size": "30px" });
         }
-
-        var ps = 360 / data.length,
-            pieslice = Math.round(1440 / data.length),
-            rng = Math.floor((Math.random() * 1440) + 360);
-
-        rotation = (Math.round(rng / ps) * ps);
-        picked = Math.round(data.length - (rotation % 360) / ps);
-        picked = picked >= data.length ? (picked % data.length) : picked;
-
-        if (oldpick.indexOf(picked) !== -1) {
-            d3.select(this).call(spin);
-            return;
-        } else {
-            oldpick.push(picked);
-        }
-
-        rotation += 90 - Math.round(ps / 2);
-
-        vis.transition()
-            .duration(3000)
-            .attrTween("transform", rotTween)
-            .each("end", function() {
-                d3.select(".slice:nth-child(" + (picked + 1) + ") path")
-                    .attr("fill", "#111");
-
-                d3.select("#question h1")
-                    .text(mode === 'number' ? 
-                        "Selected number: " + (picked + 1) : 
-                        data[picked].question);
-
-                oldrotation = rotation;
-                container.on("click", spin);
-            });
-    }
-
-    function rotTween(to) {
-        var i = d3.interpolate(oldrotation % 360, rotation);
-        return function(t) {
-            return "rotate(" + i(t) + ")";
-        };
-    }
-
-    svg.append("g")
-        .attr("transform", "translate(" + (w + padding.left + padding.right) + "," + (h / 2 + padding.top) + ")")
-        .append("path")
-        .attr("d", "M-" + (r * .15) + ",0L0," + (r * .05) + "L0,-" + (r * .05) + "Z")
-        .style({ "fill": "black" });
-
-    container.append("circle")
-        .attr("cx", 0)
-        .attr("cy", 0)
-        .attr("r", 60)
-        .style({ "fill": "white", "cursor": "pointer" });
-
-    container.append("text")
-        .attr("x", 0)
-        .attr("y", 15)
-        .attr("text-anchor", "middle")
-        .text("SPIN")
-        .style({ "font-weight": "bold", "font-size": "30px" });
-}
 
     </script>
     <button class="back-button" onclick="window.location.reload()">Back to Selection</button>
