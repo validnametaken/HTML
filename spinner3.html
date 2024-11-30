@@ -266,7 +266,7 @@
 <body>
     <div id="loader">
         <div class="loader-content">
-            <h1>Welcome to Andy's Wheel of Fortune</h1>
+            <h1>Welcome to Andy's Wheel of Fortunee</h1>
             <select id="modeSelect">
                 <option value="">Select Mode</option>
                 <option value="number">Number Mode</option>
@@ -358,14 +358,16 @@
         d3.range(parseInt(input)).map(i => ({label: i + 1})) : 
         input;
 
-    var svg = d3.select('#chart')
-    var svg = d3.select('#chart')
+        var svg = d3.select('#chart')
     .append("svg")
     .data([data])
     .attr("width", "100%")
     .attr("height", "100%")
-    .style("max-width", w + padding.left + padding.right)
-    .style("max-height", h + padding.top + padding.bottom);
+    .style("max-width", "500px")    // Set a larger max-width
+    .style("max-height", "500px")   // Set a larger max-height
+    .style("display", "block")      // Ensure proper display
+    .style("margin", "auto");       // Center the SVG
+
 
 
     var container = svg.append("g")
