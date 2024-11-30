@@ -266,7 +266,7 @@
 <body>
     <div id="loader">
         <div class="loader-content">
-            <h1>Welcome to Andy's Wheel of Fortuneee</h1>
+            <h1>Welcome to Andy's Wheel of Fortune</h1>
             <select id="modeSelect">
                 <option value="">Select Mode</option>
                 <option value="number">Number Mode</option>
@@ -359,10 +359,14 @@
         input;
 
     var svg = d3.select('#chart')
-        .append("svg")
-        .data([data])
-        .attr("width", w + padding.left + padding.right)
-        .attr("height", h + padding.top + padding.bottom);
+    var svg = d3.select('#chart')
+    .append("svg")
+    .data([data])
+    .attr("width", "100%")
+    .attr("height", "100%")
+    .style("max-width", w + padding.left + padding.right)
+    .style("max-height", h + padding.top + padding.bottom);
+
 
     var container = svg.append("g")
         .attr("class", "chartholder")
