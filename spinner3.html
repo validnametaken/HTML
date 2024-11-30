@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Andy's Wheel of Fortune</title>
+    <style type="text/css">
+
+@font-face {
+            font-family: 'Alata';
+            src: url('selfintro/Alata-Regular.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Alata", -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        #grid-container {
+            display: grid;
+            grid-template-columns: 60% 40%;
+            gap: 20px;
+            padding: 20px;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        #chart,
+        #question {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #chart svg {
+            max-width: 100%;
+            max-height: 100%;
+            height: auto;
+            width: auto;
+        }
+
+        #question h1 {
+            font-size: 2vw;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .mode-select {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .mode-container {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .mode-container.active {
+            display: flex;
+        }
+
+        button,
+        select {
+            padding: 10px 20px;
+            font-size: 1.5vw;
+            cursor: pointer;
+        }
+
+        #inputNumber,
+        #csvFileInput {
+            width: 60%;
+            padding: 10px;
+        }
+
+        .loader-content {
+            text-align: center;
+            color: white;
+        }
+        .back-button {
+            display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    font-size: 1.5vw;
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: 2px solid white;
+    border-radius: 5px;
+    z-index: 1000;
+}
+
+.back-button:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+}
+    </style>
+</head>
+
+<body>
+    <div id="loader">
+        <div class="loader-content">
+            <h1>Welcome to Andy's Wheel of Fortune</h1>
+            <select id="modeSelect">
+                <option value="">Select Mode</option>
+                <option value="number">Number Mode</option>
+                <option value="file">File Mode</option>
+            </select>
+
+            <div id="numberMode" class="mode-container">
+                <input type="number" id="inputNumber" min="1" max="200" placeholder="Enter a number (1-200)">
+                <button id="startNumberMode">Start Number Mode</button>
+            </div>
+
+            <div id="fileMode" class="mode-container">
+                <input type="file" id="csvFileInput" accept=".csv">
+                <button id="startFileMode">Start File Mode</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="grid-container">
+        <div id="chart"></div>
+        <div id="question">
+            <h1></h1>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script>
+
+        document.getElementById('modeSelect').addEventListener('change', function () {
+            document.querySelectorAll('.mode-container').forEach(container => {
+                container.classList.remove('active');
+            });
+
+            const selectedMode = this.value;
+            if (selectedMode) {
+                document.getElementById(selectedMode + 'Mode').classList.add('active');
+            }
+        });
+
+        document.getElementById('startNumberMode').addEventListener("click", function () {
+            var number = document.getElementById("inputNumber").value;
+            if (number < 1 || number > 200) {
+                alert("Please enter a number between 1 and 200.");
+                return;
+            }
+            document.getElementById("loader").style.display = "none";
+            document.querySelector('.back-button').style.display = 'block'; // Show back button
+            startSpinner('number', number);
+        });
+
+        let csvData = [];
+        document.getElementById('csvFileInput').addEventListener('change', function () {
+            Papa.parse(this.files[0], {
+                header: true,
+                complete: function (results) {
+                    csvData = results.data;
+                    console.log("CSV Data loaded:", csvData);
+                }
+            });
+        });
+
+        document.getElementById('startFileMode').addEventListener("click", function () {
+            if (!csvData.length) {
+                alert("Please upload a CSV file first.");
+                return;
+            }
+            document.getElementById("loader").style.display = "none";
+            document.querySelector('.back-button').style.display = 'block'; // Show back button
+            startSpinner('file', csvData);
+        });
+
+
+        function startSpinner(mode, input) {
+            // 1. Setup variables and create SVG
+            var padding = { top: 20, right: 40, bottom: 0, left: 0 },
+                w = 500 - padding.left - padding.right,
+                h = 500 - padding.top - padding.bottom,
+                r = Math.min(w, h) / 2,
+                rotation = 0,
+                oldrotation = 0,
+                picked = 100000,
+                oldpick = [],
+                color = d3.scale.category20();
+
+            // 2. Create base elements
+            const svg = d3.select('#chart')
+                .append("svg")
+                .attr("width", "100%")
+                .attr("height", "100%")
+                .attr("viewBox", `0 0 ${w + padding.left + padding.right} ${h + padding.top + padding.bottom}`)
+                .attr("preserveAspectRatio", "xMidYMid meet");
+
+            const container = svg.append("g")
+                .attr("class", "chartholder")
+                .attr("transform", "translate(" + (w / 2 + padding.left) + "," + (h / 2 + padding.top) + ")");
+
+            const vis = container.append("g");
+
+            // 3. Create wheel segments
+            const pie = d3.layout.pie().sort(null).value(function (d) { return 1; });
+            const arc = d3.svg.arc().outerRadius(r);
+
+            let arcs;
+            if (mode === 'number') {
+                arcs = vis.selectAll("g.slice")
+                    .data(pie(d3.range(parseInt(input))))
+                    .enter()
+                    .append("g")
+                    .attr("class", "slice");
+            } else {
+                arcs = vis.selectAll("g.slice")
+                    .data(pie(input))
+                    .enter()
+                    .append("g")
+                    .attr("class", "slice");
+            }
+
+            arcs.append("path")
+                .attr("fill", function (d, i) { return color(i); })
+                .attr("d", function (d) { return arc(d); });
+
+            arcs.append("text")
+                .attr("transform", function (d) {
+                    d.innerRadius = 0;
+                    d.outerRadius = r;
+                    d.angle = (d.startAngle + d.endAngle) / 2;
+                    return "rotate(" + ((d.angle * 180 / Math.PI - 90)) + ")translate(" + (d.outerRadius - 10) + ")";
+                })
+                .attr("text-anchor", "end")
+                .text(function (d, i) {
+                    return mode === 'number' ? (i + 1) : input[i].label;
+                });
+
+            // 4. Define spin function
+            function spin() {
+                container.on("click", null);
+                const totalSlices = mode === 'number' ? input : input.length;
+                if (oldpick.length == totalSlices) {
+                    console.log("done");
+                    container.on("click", null);
+                    return;
+                }
+
+                const ps = 360 / totalSlices,
+                    pieslice = Math.round(1440 / totalSlices),
+                    rng = Math.floor((Math.random() * 1440) + 360);
+
+                rotation = (Math.round(rng / ps) * ps);
+                picked = Math.round(totalSlices - (rotation % 360) / ps);
+                picked = picked >= totalSlices ? (picked % totalSlices) : picked;
+
+                if (oldpick.indexOf(picked) !== -1) {
+                    d3.select(this).call(spin);
+                    return;
+                } else {
+                    oldpick.push(picked);
+                }
+
+                rotation += 90 - Math.round(ps / 2);
+
+                vis.transition()
+                    .duration(3000)
+                    .attrTween("transform", rotTween)
+                    .each("end", function () {
+                        d3.select(".slice:nth-child(" + (picked + 1) + ") path")
+                            .attr("fill", "#111");
+
+                        d3.select("#question h1")
+                            .text(mode === 'number' ?
+                                "Selected number: " + (picked + 1) :
+                                input[picked].question);
+
+                        oldrotation = rotation;
+                        container.on("click", spin);
+                    });
+            }
+
+            function rotTween(to) {
+                var i = d3.interpolate(oldrotation % 360, rotation);
+                return function (t) {
+                    return "rotate(" + i(t) + ")";
+                };
+            }
+
+            // 5. Bind click event
+            container.on("click", spin);
+
+            // 6. Create arrow
+            svg.append("g")
+                .attr("transform", "translate(" + (w + padding.left + padding.right) + "," + (h / 2 + padding.top) + ")")
+                .append("path")
+                .attr("d", "M-" + (r * .15) + ",0L0," + (r * .05) + "L0,-" + (r * .05) + "Z")
+                .style({ "fill": "black" });
+
+            // 7. Create spin button
+            container.append("circle")
+                .attr("cx", 0)
+                .attr("cy", 0)
+                .attr("r", 60)
+                .style({ "fill": "white", "cursor": "pointer" });
+
+            container.append("text")
+                .attr("x", 0)
+                .attr("y", 15)
+                .attr("text-anchor", "middle")
+                .text("SPIN")
+                .style({ "font-weight": "bold", "font-size": "30px" });
+        }
+
+
+    </script>
+    <button class="back-button" onclick="window.location.reload()">Back to Selection</button>
+
+</body>
+
+</html>
