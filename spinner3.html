@@ -36,6 +36,7 @@
             padding: 20px;
             min-height: 100vh;
             box-sizing: border-box;
+            overflow: hidden;
         }
 
         #chart {
@@ -59,11 +60,11 @@
 
         #question {
     position: relative;
-    top: calc(27vw); /* This uses 30% of the viewport width to match the wheel's center */
-    width: 100%;
+    top: min(calc(27vw), 300px); /* Uses 27% of viewport width but won't exceed 250px */    width: 100%;
     height: auto;
     display: flex;
     justify-content: center;
+    overflow: hidden;
 }
 
 
@@ -265,7 +266,7 @@
 <body>
     <div id="loader">
         <div class="loader-content">
-            <h1>Welcome to Andy's Wheel of Fortuneee</h1>
+            <h1>Welcome to Andy's Wheel of Fortune</h1>
             <select id="modeSelect">
                 <option value="">Select Mode</option>
                 <option value="number">Number Mode</option>
