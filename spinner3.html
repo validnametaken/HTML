@@ -24,8 +24,13 @@
         }
 
 
-        body {
-            margin: 0;
+        html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: fixed;
             font-family: "Alata", -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
@@ -37,6 +42,7 @@
             min-height: 100vh;
             box-sizing: border-box;
             overflow: hidden;
+            -webkit-overflow-scrolling: none;
         }
 
         #chart {
@@ -266,7 +272,7 @@
 <body>
     <div id="loader">
         <div class="loader-content">
-            <h1>Welcome to Andy's Wheel of Fortune</h1>
+            <h1>Welcome to Andy's Wheel of Fortunee</h1>
             <select id="modeSelect">
                 <option value="">Select Mode</option>
                 <option value="number">Number Mode</option>
