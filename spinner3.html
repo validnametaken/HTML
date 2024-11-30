@@ -2,7 +2,7 @@
 <html>
 
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Andy's Wheel of Fortune</title>
     <style type="text/css">
         @font-face {
@@ -47,6 +47,14 @@
             overflow: hidden;
             -webkit-transform: translateZ(0);
             transform: translateZ(0);
+            -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
         }
 
         #chart svg {
@@ -55,6 +63,8 @@
             height: auto;
             width: auto;
             -webkit-transform: translateZ(0);
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
             transform: translateZ(0);
         }
 
@@ -440,6 +450,7 @@
                         container.on("click", spin);
                         container.on("touchstart", function(e) {
     e.preventDefault();  // Prevent scrolling
+    e.stopPropagation(); // Stop event bubbling
     spin.call(this);
 });
                     });
