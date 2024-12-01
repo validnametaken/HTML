@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Alphabet Attack - Typing Game</title>
+    <style>
+        @font-face {
+            font-family: 'Alata';
+            src: local('Alata'),
+                url('selfintro/Alata-Regular.ttf') format('truetype');
+            font-display: swap;
+            font-weight: 400;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: fixed;
+            font-family: "Alata", -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        #gameArea {
+            width: 800px;
+            height: 600px;
+            border: 2px solid black;
+            position: relative;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
+
+        .letter {
+            position: absolute;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        #goalLine {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 2px;
+            background-color: red;
+        }
+
+        #score {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+        }
+
+        #timer {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 20px;
+        }
+
+        .stars {
+            text-align: center;
+            font-size: 30px;
+            color: gold;
+        }
+
+        #gameOver {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            color: red;
+        }
+
+        .letter {
+            position: absolute;
+            font-size: 24px;
+            font-weight: bold;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .right-index {
+            background-color: #1a237e;
+            /* Dark blue for right index finger */
+        }
+
+        .left-index {
+            background-color: #42a5f5;
+            /* Light blue for left index finger */
+        }
+    </style>
+</head>
+
+<body>
+    <div id="gameArea">
+        <div id="goalLine"></div>
+        <div id="score">Score: 20</div>
+        <div id="timer">Time: 120</div>
+        <div id="gameOver">GAME OVER</div>
+    </div>
+    <div class="stars"></div>
+
+    <script>
+        let score = 20;
+        let timeLeft = 100;
+        let gameSpeed = 2000;
+        let letters = ['f', 'j'];
+        let activeLetters = [];
+        let gameActive = true;
+        let letterInterval;
+
+        function createLetter() {
+            if (!gameActive) return;
+
+            const letter = document.createElement('div');
+            letter.className = 'letter';
+            letter.textContent = letters[Math.floor(Math.random() * letters.length)];
+
+            // Add color coding based on which finger should press the key
+            const rightIndexLetters = ['j', 'h', 'y', 'u', 'n'];
+            const leftIndexLetters = ['f'];
+
+            if (rightIndexLetters.includes(letter.textContent)) {
+                letter.classList.add('right-index');
+            } else if (leftIndexLetters.includes(letter.textContent)) {
+                letter.classList.add('left-index');
+            }
+
+            letter.style.left = Math.random() * 750 + 'px';
+            letter.style.top = '0px';
+            gameArea.appendChild(letter);
+            activeLetters.push(letter);
+        }
+
+        function updateGame() {
+            if (!gameActive) return;
+
+            activeLetters.forEach(letter => {
+                let top = parseInt(letter.style.top) + 1;
+                letter.style.top = top + 'px';
+
+                if (top > 550) {
+                    letter.remove();
+                    activeLetters = activeLetters.filter(l => l !== letter);
+                    score--;
+                    updateScore();
+                }
+            });
+        }
+
+        function updateTimer() {
+            document.getElementById('timer').textContent = `Time: ${timeLeft}`;
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = `Score: ${score}`;
+            if (score <= 0) {
+                gameOver();
+            }
+        }
+
+        function gameOver() {
+            gameActive = false;
+            document.getElementById('gameOver').style.display = 'block';
+            clearInterval(letterInterval);
+            clearInterval(gameInterval);
+            clearInterval(timer);
+        }
+
+        document.addEventListener('keypress', (e) => {
+            if (!gameActive) return;
+
+            const key = e.key.toLowerCase();
+            const matchingLetter = activeLetters.find(letter => letter.textContent === key);
+
+            if (matchingLetter) {
+                matchingLetter.remove();
+                activeLetters = activeLetters.filter(l => l !== matchingLetter);
+                score++;
+            } else {
+                // Any keypress that doesn't hit a falling letter will reduce score
+                score--;
+            }
+
+            updateScore();
+        });
+
+        function updateGameSpeed() {
+            clearInterval(letterInterval);
+            letterInterval = setInterval(createLetter, gameSpeed);
+        }
+
+        letterInterval = setInterval(createLetter, gameSpeed);
+        const gameInterval = setInterval(updateGame, 16);
+
+        const timer = setInterval(() => {
+            if (!gameActive) return;
+
+            timeLeft--;
+            updateTimer();
+
+            if (timeLeft <= 0) {
+                const stars = Math.min(5, Math.floor((score - 20) / 10));
+                document.querySelector('.stars').textContent = '⭐'.repeat(Math.max(0, stars));
+                gameOver();
+            }
+
+            if (timeLeft % 10 === 0 && gameSpeed > 200) {
+                gameSpeed -= 200;
+                updateGameSpeed();
+            }
+        }, 1000);
+    </script>
+</body>
+</body>
+
+</html>
