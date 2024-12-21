@@ -98,11 +98,50 @@
             background-color: #42a5f5;
             /* Light blue for left index finger */
         }
+
+        .right-middle {
+            background-color: #1d6114;
+            /* Dark blue for right index finger */
+        }
+
+        .left-middle {
+            background-color: #3beb7e;
+            /* Light blue for left index finger */
+        }
+
+        #menuScreen {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+        }
+
+        #levelButtons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        #levelButtons button {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
 <body>
-    <div id="gameArea">
+    <div id="menuScreen">
+        <h1>Alphabet Attack</h1>
+        <h2>Select a Level</h2>
+        <div id="levelButtons"></div>
+    </div>
+    <div id="gameArea" style="display: none;">
         <div id="goalLine"></div>
         <div id="score">Score: 20</div>
         <div id="timer">Time: 120</div>
@@ -111,13 +150,31 @@
     <div class="stars"></div>
 
     <script>
+        // Level definitions
+        const levels = [
+            { duration: 60, initialSpeed: 2000, speedIncrease: 200, letters: ['f', 'j'] },
+            { duration: 60, initialSpeed: 3000, speedIncrease: 200, letters: ['f', 'j', 'd', 'k'] },
+            { duration: 50, initialSpeed: 1600, speedIncrease: 200, letters: ['f', 'j', 'd', 'k', 's', 'l'] },
+            // ... add more levels as needed
+        ];
+
+        let currentLevel = 0;
         let score = 20;
-        let timeLeft = 100;
-        let gameSpeed = 2000;
-        let letters = ['f', 'j'];
+        let timeLeft;
+        let gameSpeed;
+        let letters;
         let activeLetters = [];
         let gameActive = true;
         let letterInterval;
+
+        function initLevel() {
+            const level = levels[currentLevel];
+            timeLeft = level.duration;
+            gameSpeed = level.initialSpeed;
+            letters = level.letters;
+            updateTimer();
+            updateGameSpeed();
+        }
 
         function createLetter() {
             if (!gameActive) return;
@@ -129,11 +186,17 @@
             // Add color coding based on which finger should press the key
             const rightIndexLetters = ['j', 'h', 'y', 'u', 'n'];
             const leftIndexLetters = ['f'];
+            const rightMiddleLetters = ['k'];
+            const leftMiddleLetters = ['d'];
 
             if (rightIndexLetters.includes(letter.textContent)) {
                 letter.classList.add('right-index');
             } else if (leftIndexLetters.includes(letter.textContent)) {
                 letter.classList.add('left-index');
+            } else if (rightMiddleLetters.includes(letter.textContent)) {
+                letter.classList.add('right-middle');
+            } else if (leftMiddleLetters.includes(letter.textContent)) {
+                letter.classList.add('left-middle');
             }
 
             letter.style.left = Math.random() * 750 + 'px';
@@ -144,11 +207,9 @@
 
         function updateGame() {
             if (!gameActive) return;
-
             activeLetters.forEach(letter => {
                 let top = parseInt(letter.style.top) + 1;
                 letter.style.top = top + 'px';
-
                 if (top > 550) {
                     letter.remove();
                     activeLetters = activeLetters.filter(l => l !== letter);
@@ -170,12 +231,42 @@
         }
 
         function gameOver() {
-            gameActive = false;
-            document.getElementById('gameOver').style.display = 'block';
-            clearInterval(letterInterval);
-            clearInterval(gameInterval);
-            clearInterval(timer);
+            gameActive = false; // Stop the game
+            clearInterval(letterInterval); // Stop creating new letters
+            clearInterval(gameInterval); // Stop updating the game
+            clearInterval(timer); // Stop the timer
+
+            // Clear active letters from the game area
+            const activeLetters = document.querySelectorAll('.letter'); // Select all letter elements
+            activeLetters.forEach(letter => letter.remove()); // Remove each letter from the game area
+
+            // Reset game variables
+            score = 0; // Reset score
+            timeLeft = levels[currentLevel].duration; // Reset timer to the initial value for the current level
+            updateScore(); // Update the score display
+            updateTimer(); // Update the timer display
+
+            // Show game over message
+            const gameOverDiv = document.getElementById('gameOver');
+            gameOverDiv.textContent = 'GAME OVER'; // Set the game over message
+            gameOverDiv.style.display = 'block'; // Make sure the game over div is visible
+
+            // Clear any existing buttons before adding a new one
+            while (gameOverDiv.firstChild) {
+                gameOverDiv.removeChild(gameOverDiv.firstChild);
+            }
+
+            // Add a button to return to menu
+            const menuButton = document.createElement('button');
+            menuButton.textContent = 'Return to Menu';
+            menuButton.onclick = returnToMenu; // Function to handle returning to the menu
+            gameOverDiv.appendChild(menuButton); // Add the button to the game over div
+
+            console.log(gameOverDiv); // Check the element
+            console.log(gameOverDiv.style.display); // Check the display style
         }
+
+
 
         document.addEventListener('keypress', (e) => {
             if (!gameActive) return;
@@ -199,7 +290,6 @@
             clearInterval(letterInterval);
             letterInterval = setInterval(createLetter, gameSpeed);
         }
-
         letterInterval = setInterval(createLetter, gameSpeed);
         const gameInterval = setInterval(updateGame, 16);
 
@@ -215,11 +305,74 @@
                 gameOver();
             }
 
+            const currentLevelConfig = levels[currentLevel];
             if (timeLeft % 10 === 0 && gameSpeed > 200) {
-                gameSpeed -= 200;
+                gameSpeed -= currentLevelConfig.speedIncrease;
                 updateGameSpeed();
             }
         }, 1000);
+
+        function createLevelButtons() {
+            const levelButtons = document.getElementById('levelButtons');
+            levels.forEach((level, index) => {
+                const button = document.createElement('button');
+                button.textContent = `Level ${index + 1}`;
+                button.onclick = () => startLevel(index);
+                levelButtons.appendChild(button);
+            });
+        }
+
+        function startLevel(levelIndex) {
+            currentLevel = levelIndex;
+            document.getElementById('menuScreen').style.display = 'none';
+            document.getElementById('gameArea').style.display = 'block';
+            initLevel();
+            startGame();
+        }
+
+        function startGame() {
+            gameActive = true; // Start the game
+            score = 20; // Set initial score
+            timeLeft = levels[currentLevel].duration; // Set time left based on the current level
+            activeLetters = []; // Clear any active letters
+            updateScore(); // Update the score display
+            updateTimer(); // Update the timer display
+            letterInterval = setInterval(createLetter, gameSpeed); // Start creating letters
+            gameInterval = setInterval(updateGame, 16); // Start the game update loop
+            timer = setInterval(updateGameTimer, 1000); // Start the timer
+        }
+
+        function updateGameTimer() {
+            if (!gameActive) return;
+
+            timeLeft--;
+            updateTimer();
+
+            if (timeLeft <= 0 && gameActive) {
+                const stars = Math.min(5, Math.floor((score - 20) / 10));
+                document.querySelector('.stars').textContent = '⭐'.repeat(Math.max(0, stars));
+                gameOver();
+            }
+
+            const currentLevelConfig = levels[currentLevel];
+            if (timeLeft % 10 === 0 && gameSpeed > 200) {
+                gameSpeed -= currentLevelConfig.speedIncrease;
+                updateGameSpeed();
+            }
+        }
+
+
+        function returnToMenu() {
+            document.getElementById('gameArea').style.display = 'none';
+            document.getElementById('menuScreen').style.display = 'block';
+            document.getElementById('gameOver').style.display = 'none';
+            document.querySelector('.stars').textContent = '';
+        }
+
+
+        // Call this function when the page loads to create level buttons
+        createLevelButtons();
+
     </script>
 </body>
 </body>
