@@ -195,34 +195,48 @@
             audioContext = new AudioContext();
 
 
+                        const source = audioContext.createMediaStreamSource(stream);
+                        const analyser = audioContext.createAnalyser();
+                        processor = audioContext.createScriptProcessor(2048, 1, 1);
 
-            const source = audioContext.createMediaStreamSource(stream);
-            const analyser = audioContext.createAnalyser();
-            processor = audioContext.createScriptProcessor(2048, 1, 1);
+                        analyser.smoothingTimeConstant = 0.8;
+                        analyser.fftSize = 256;
 
-            analyser.smoothingTimeConstant = 0.8;
-            analyser.fftSize = 256;
+                        const bandpass = audioContext.createBiquadFilter();
+                        bandpass.type = "bandpass";
+                        bandpass.frequency.value = 170; // Center frequency for human voice
+                        bandpass.Q.value = 0.5; // Bandwidth control
 
-            source.connect(analyser);
-            analyser.connect(processor);
-            processor.connect(audioContext.destination);
+                        // Update the connection chain
+                        source.connect(bandpass);
+                        bandpass.connect(analyser);
+                        analyser.connect(processor);
+                        processor.connect(audioContext.destination);
 
-            const bufferLength = analyser.frequencyBinCount;
-            const dataArray = new Uint8Array(bufferLength);
+                        const bufferLength = analyser.frequencyBinCount;
+                        const dataArray = new Uint8Array(bufferLength);
 
-            processor.onaudioprocess = () => {
-              analyser.getByteFrequencyData(dataArray);
-              let values = 0;
+                        processor.onaudioprocess = () => {
+                          analyser.getByteFrequencyData(dataArray);
+                          let values = 0;
+              
+                          // Even more focused range for voice frequencies
+                          // Target the most prominent speech frequencies
+                          for (let i = 5; i < 10; i++) {
+                            // Apply weighted importance to voice frequencies
+                            values += dataArray[i] * 1.5;
+                          }
 
-              for (let i = 0; i < dataArray.length; i++) {
-                values += dataArray[i];
-              }
-
-              const offset = 28;
-              const average = 20 * Math.log10(values / dataArray.length) + offset;
-              localDbValues.push(average);
-            };
-
+                          const offset = 25; // Adjusted offset
+                          const average = 20 * Math.log10((values / 5) || 1) + offset;
+              
+                          // Smoothing to reduce sudden spikes
+                          const smoothingFactor = 0.7;
+                          const smoothedValue = average * smoothingFactor + 
+                            (localDbValues.length ? localDbValues[localDbValues.length - 1] * (1 - smoothingFactor) : average);
+              
+                          localDbValues.push(smoothedValue);
+                        };
             function updateVolume() {
               const dB = Math.round(localDbValues.reduce((a, b) => a + b, 0) / localDbValues.length) || 0;
               localDbValues = [];
