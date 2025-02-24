@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Type, man, type!</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" condent="width=device-width, initial-scale=1">
+    <title>Type, man, type!</title>
+    <style>
+
+html{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+h1{
+    margin: 0.5rem;
+    padding: 20px;
+}
+#heading{
+    border: 1px solid darkblue;
+    background-color: skyblue;
+    font-size: 1.5rem;
+    padding: 0.5rem;
+    width: 80vw;
+    text-align: center;
+    margin: 0.5rem;
+}
+#texttotype, #youtyped{
+    display: block;
+    border: 1px solid darkblue;
+    background-color:whitesmoke;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 80vw;
+    font-size: 1.2rem;
+    height: 5rem;
+    padding: 0.5rem;
+    margin: 0.5rem;
+    overflow-wrap: normal;
+}
+.stats{
+    display: block;
+    float: left;
+    border: 1px solid black;
+    border-top: 0px;
+    background-color: lightgoldenrodyellow;
+    width: 10vw;
+    height: 3rem;
+    font-size: 2rem;
+    font-weight: bolder;
+    text-align: right;
+    margin: 0.5rem;
+    padding: 0.5rem;
+    margin-top: 0px;
+}
+.statslabel{
+    display: block;
+    float: left;
+    border: 1px solid black;
+    border-bottom: 0px;
+    background-color: lavender;
+    width: 10vw;
+    font-size: 1rem;
+    margin: 0.5rem;
+    margin-bottom: 0px;
+    padding: 0.1rem 0.5rem 0.1rem 0.5rem;
+}
+#speedCurrent{
+    clear: left;
+}
+    </style>
+</head>
+
+<body>
+
+    <h1 id="title">Type, man, type!</h1>
+
+    <div id="heading">
+        So, you think you are a fast typer? We'll see about that! Type the following text
+        as fast as you can. Press <q>ENTER</q> to start!
+    </div>
+
+    <div id="texttotype"></div>
+
+    <textarea id="youtyped" type="text"></textarea>
+
+    <div class="statslabel">Current Speed:</div>
+    <div class="statslabel">Current Level:</div>
+    <div class="statslabel">Required Speed:</div>
+    <div class="statslabel">Time Left (s):</div>
+    <div id="lastlabel" class="statslabel">Top Speed:</div>
+
+    <div id="speedCurrent" class="stats"></div>
+    <div id="level" class="stats"></div>
+    <div id="speedMin" class="stats"></div>
+    <div id="TimeLeft" class="stats"></div>
+    <div id="speedMax" class="stats"></div>
+
+    <footer>
+        <script src="js/scripts.js"></script>
+    </footer>
+
+</body>
+
+</html>
+<!-- partial -->
+  <script>
+
+// My "init" function - starts waiting for the user to hit "ENTER".
+window.onload = init();
+function init()
+{
+    console.log("Initialised on Load!");
+    document.addEventListener("keyup", beginGame);
+    youtyped.value = "";
+}
+
+// Sets the game in motion for the first time.
+function beginGame()
+{
+    const keyName = event.keyCode;
+    if (keyName === 13)
+    {
+        console.log("Game Started");
+        document.removeEventListener("keyup", beginGame);
+        document.getElementById("heading").innerHTML = "Type! Type as fast as you can!";
+        loadquote();
+    }
+}
+
+// Set up some global variables.
+var myTimer = setInterval(false, 1000);
+lost = false;
+level = 1;
+timegiven = 0;
+
+// Loads a new quote - this is done both at the start and when a player gets a quote right.
+function loadquote()
+{
+    clearInterval(myTimer);
+    n = Math.ceil(Math.random()*quotes.length);
+    console.log("Quote Chosen = " + n);
+    document.getElementById("texttotype").innerHTML = quotes[n-1];
+    document.addEventListener("keyup", typing);
+    document.getElementById("youtyped").disabled = false;
+    youtyped.value = "";
+    document.getElementById("youtyped").select();
+    if (level < 10)
+    // For time formula calculations.
+    // First increase wpm in steps of 5, then 4, then 2.
+    {
+        var base = 0;
+        var adj = 0;
+        var mult = 5;
+    }
+    else if (level < 15)
+    {
+        var base = 50;
+        var adj = 10;
+        var mult = 4;
+    }
+    else
+    {
+        var base = 70;
+        var adj = 15;
+        var mult = 2;
+    }
+    document.getElementById("youtyped").style.backgroundColor = "";
+    document.getElementById("level").innerHTML = level;
+    timegiven = (quotes[n-1].length*12)/(base + mult*(level++ - adj)).toFixed(1);
+    document.getElementById("TimeLeft").innerHTML = timegiven;
+    document.getElementById("speedMin").innerHTML = (quotes[n-1].length*12 / timegiven).toFixed(0) + " wpm";
+    myTimer = setInterval(timing, 100);
+    lost = false;
+}
+
+// This checks whether the user has finished typing a quote and loads a new one if necessary.
+// It also checks whether what the user is typing so far and changes the color of input box accordingly.
+function typing()
+{
+    var quote = document.getElementById("texttotype").innerHTML;
+    var typed = youtyped.value;
+    console.log(timegiven);
+    if (quote === typed)
+    {
+        console.log("Matched!");
+        loadquote();
+    }
+    // Check if user input so far is correct - this will help the user spot mistakes instantly.
+    if (quote.slice(0,typed.length) !== typed)
+    {
+        document.getElementById("youtyped").style.backgroundColor = "MistyRose";
+    }
+    else
+    {
+        document.getElementById("youtyped").style.backgroundColor = "";
+    }
+}
+
+// Implements the timer and keeps recalculating words per minute and adjusting the max.
+function timing()
+{
+    // Some preliminary calculations of stuff used in the function:
+    timeleft = document.getElementById("TimeLeft").innerHTML;
+    cmax = document.getElementById("speedMax").innerHTML;
+    cmax = cmax.slice(0,-4);
+    charstyped = youtyped.value;
+    charstyped = charstyped.length;
+    wpm = (charstyped * 12)/(timegiven-timeleft);
+
+    // Actions to take in case the time runs out:
+    if (timeleft <= 0 && timeleft !== "END!")
+    {
+        document.removeEventListener("keyup", typing);
+        document.addEventListener("keydown", beginGame);
+        document.getElementById("TimeLeft").innerHTML = "END!";
+        document.getElementById("heading").innerHTML = "Game Over! You reached <b>LEVEL " + (level-1) + ". </b>Press ENTER to begin again.";
+        document.getElementById("youtyped").style.backgroundColor = "MistyRose";
+        document.getElementById("youtyped").disabled = true;
+        clearInterval(myTimer);
+        level = 1;
+        lost = true;
+    }
+    else if (!lost)
+    {
+        document.getElementById("TimeLeft").innerHTML = (timeleft - 0.1).toFixed(1);
+        document.getElementById("speedCurrent").innerHTML = wpm.toFixed(0) + " wpm";
+
+        // Fix top speed going to infinity:
+        if (cmax === "Infinity")
+        {
+            document.getElementById("speedMax").innerHTML = "0 wpm"
+        }
+
+        // Update Maximum Speed:
+        if (wpm > cmax || cmax === null)
+        {
+            document.getElementById("speedMax").innerHTML = wpm.toFixed(0) + " wpm";
+        }
+    }
+}
+
+// These are the quotes - they are mostly from "BrainyQuote".
+var quotes = ["To be or not to be, that is the question! - Hamlet", 
+"In the Soviet Army, it takes more courage to retreat than to advance! - Joseph Stalin",
+"I know words, I have the best words! - Donald Trump", 
+"This is not my sandwich! - Catherine Tate",
+"I love you the more in that I believe you had liked me for my own sake and for nothing else. - John Keats",
+"But man is not made for defeat. A man can be destroyed but not defeated. - Ernest Hemingway",
+"When you reach the end of your rope, tie a knot in it and hang on. - Franklin D. Roosevelt",
+"There is nothing permanent except change. - Heraclitus",
+"You cannot shake hands with a clenched fist. - Indira Gandhi",
+"Let us sacrifice our today so that our children can have a better tomorrow. - A. P. J. Abdul Kalam",
+"The most difficult thing is the decision to act, the rest is merely tenacity. The fears are paper tigers. You can do anything you decide to do. You can act to change and control your life; and the procedure, the process is its own reward. - Amelia Earhart",
+"Do not mind anything that anyone tells you about anyone else. Judge everyone and everything for yourself. - Henry James",
+"Learning never exhausts the mind. - Leonardo da Vinci",
+"There is no charm equal to tenderness of heart. - Jane Austen", 
+"All that we see or seem is but a dream within a dream. - Edgar Allan Poe",
+"Lord, make me an instrument of thy peace. Where there is hatred, let me sow love. - Francis of Assisi",
+"If you cannot do great things, do small things in a great way. - Napoleon Hill",
+"Permanence, perseverance and persistence in spite of all obstacles, discouragements, and impossibilities: It is this, that in all things distinguishes the strong soul from the weak. - Thomas Carlyle",
+"The supreme art of war is to subdue the enemy without fighting. - Sun Tzu",
+"Keep your face always toward the sunshine - and shadows will fall behind you. - Walt Whitman",
+"Love has no age, no limit; and no death. - John Galsworthy",
+"There is only one corner of the universe you can be certain of improving, and that's your own self. - Aldous Huxley",
+"You can't blame gravity for falling in love. - Albert Einstein",
+"The journey of a thousand miles begins with one step. - Lao Tzu",
+"I have not failed. I've just found 10,000 ways that won't work. - Thomas A. Edison",
+"Tell me and I forget. Teach me and I remember. Involve me and I learn. - Benjamin Franklin",
+"There is nothing on this earth more to be prized than true friendship. - Thomas Aquinas",
+"A leader is one who knows the way, goes the way, and shows the way. - John C. Maxwell",
+"Very little is needed to make a happy life; it is all within yourself, in your way of thinking. - Marcus Aurelius",
+"Let us be grateful to people who make us happy, they are the charming gardeners who make our souls blossom. - Marcel Proust",
+"Always remember that you are absolutely unique. Just like everyone else. - Margaret Mead",
+"Rhe World is my country, all mankind are my brethren, and to do good is my religion. - Thomas Paine",
+"Wise men speak because they have something to say; Fools because they have to say something. - Plato",
+"A single rose can be my garden... a single friend, my world. - Leo Buscaglia",
+"Friends show their love in times of trouble, not in happiness. - Euripides",
+"You don't choose your family. They are God's gift to you, as you are to them. - Desmond Tutu",
+"Life is not a problem to be solved, but a reality to be experienced. - Soren Kierkegaard",
+"The only true wisdom is in knowing you know nothing. - Socrates",
+"A kiss is a lovely trick designed by nature to stop speech when words become superfluous. - Ingrid Bergman",
+"Today you are you! That is truer than true! There is no one alive who is you-er than you! - Dr. Seuss",
+"Education is the most powerful weapon which you can use to change the world. - Nelson Mandela",
+"Change your thoughts and you change your world. - Norman Vincent Peale",
+"In three words I can sum up everything I've learned about life: it goes on. - Robert Frost",
+"Love isn't something you find. Love is something that finds you. - Loretta Young",
+"Don't walk behind me; I may not lead. Don't walk in front of me; I may not follow. Just walk beside me and be my friend. - Albert Camus",
+"Success is not final, failure is not fatal: it is the courage to continue that counts. - Winston Churchill",
+"Do not go where the path may lead, go instead where there is no path and leave a trail. - Ralph Waldo Emerson",
+"The only thing necessary for the triumph of evil is for good men to do nothing. - Edmund Burke",
+"Do not dwell in the past, do not dream of the future, concentrate the mind on the present moment. - Buddha",
+"Don't judge each day by the harvest you reap but by the seeds that you plant. - Robert Louis Stevenson",
+"Nothing is impossible, the word itself says 'I'm possible'! - Audrey Hepburn",
+"Find a place inside where there's joy, and the joy will burn out the pain. - Joseph Campbell",
+"It is during our darkest moments that we must focus to see the light. - Aristotle",
+"Keep love in your heart. A life without it is like a sunless garden when the flowers are dead. - Oscar Wilde",
+"The best and most beautiful things in the world cannot be seen or even touched - they must be felt with the heart. - Helen Keller"]
+
+  </script>
+
+</body>
+</html>
