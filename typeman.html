@@ -1,19 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" >
 <head>
-  <meta charset="UTF-8">
-  <title>Type, man, type!</title>
-  <link rel="stylesheet" href="./style.css">
-
-</head>
-<body>
-<!-- partial:index.partial.html -->
-<!DOCTYPE html>
-
-<html lang="en">
-<head>
     <meta charset="utf-8">
     <meta name="viewport" condent="width=device-width, initial-scale=1">
+    <script type="module" src="script.js"></script>
     <title>Type, man, type!</title>
     <style>
 
@@ -75,6 +65,35 @@ h1{
 #speedCurrent{
     clear: left;
 }
+
+
+#level-selection-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  display: none;
+}
+
+#menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  text-align: center;
+}
+
+#menu li {
+  display: inline-block;
+  margin-right: 20px;
+  cursor: pointer;
+}
+
+#menu li:hover {
+  background-color: #ccc;
+}
     </style>
 </head>
 
@@ -95,44 +114,36 @@ h1{
     <div class="statslabel">Current Level:</div>
     <div class="statslabel">Required Speed:</div>
     <div class="statslabel">Time Left (s):</div>
+    <div class="statslabel">Accuracy:</div>
     <div id="lastlabel" class="statslabel">Top Speed:</div>
 
     <div id="speedCurrent" class="stats"></div>
     <div id="level" class="stats"></div>
     <div id="speedMin" class="stats"></div>
     <div id="TimeLeft" class="stats"></div>
+    <div class="stats" id="accuracy"></div>
     <div id="speedMax" class="stats"></div>
 
-    <footer>
-        <script src="js/scripts.js"></script>
-    </footer>
+    <div id="level-selection-screen">
+      <div id="menu"></div>
+    </div>
 
-</body>
+<script type="text/javascript">
 
-</html>
-<!-- partial -->
-  <script>
-
-// My "init" function - starts waiting for the user to hit "ENTER".
-window.onload = init();
-function init()
-{
-    console.log("Initialised on Load!");
-    document.addEventListener("keyup", beginGame);
-    youtyped.value = "";
-}
+window.onload = function() {
+  console.log("Initialised on Load!");
+  document.addEventListener("keyup", beginGame);
+  youtyped.value = "";
+};
 
 // Sets the game in motion for the first time.
-function beginGame()
-{
-    const keyName = event.keyCode;
-    if (keyName === 13)
-    {
-        console.log("Game Started");
-        document.removeEventListener("keyup", beginGame);
-        document.getElementById("heading").innerHTML = "Type! Type as fast as you can!";
-        loadquote();
-    }
+function beginGame() {
+  var keyName = event.keyCode;
+  if (keyName === 13) {
+    console.log("Game Started");
+    document.removeEventListener("keyup", beginGame);
+    document.getElementById("heading").innerHTML = "Select a level to start!";
+  }
 }
 
 // Set up some global variables.
@@ -140,68 +151,169 @@ var myTimer = setInterval(false, 1000);
 lost = false;
 level = 1;
 timegiven = 0;
+let currentGameLevel = 1;
+let lastLength = 0;
+let correctStrokes = 0;
+let totalStrokes = 0;
+let totalMistakes = 0;
+let totalCharacters = 0;
 
-// Loads a new quote - this is done both at the start and when a player gets a quote right.
-function loadquote()
-{
-    clearInterval(myTimer);
-    n = Math.ceil(Math.random()*quotes.length);
-    console.log("Quote Chosen = " + n);
-    document.getElementById("texttotype").innerHTML = quotes[n-1];
-    document.addEventListener("keyup", typing);
-    document.getElementById("youtyped").disabled = false;
-    youtyped.value = "";
-    document.getElementById("youtyped").select();
-    if (level < 10)
-    // For time formula calculations.
-    // First increase wpm in steps of 5, then 4, then 2.
-    {
-        var base = 0;
-        var adj = 0;
-        var mult = 5;
-    }
-    else if (level < 15)
-    {
-        var base = 50;
-        var adj = 10;
-        var mult = 4;
-    }
-    else
-    {
-        var base = 70;
-        var adj = 15;
-        var mult = 2;
-    }
-    document.getElementById("youtyped").style.backgroundColor = "";
-    document.getElementById("level").innerHTML = level;
-    timegiven = (quotes[n-1].length*12)/(base + mult*(level++ - adj)).toFixed(1);
-    document.getElementById("TimeLeft").innerHTML = timegiven;
-    document.getElementById("speedMin").innerHTML = (quotes[n-1].length*12 / timegiven).toFixed(0) + " wpm";
-    myTimer = setInterval(timing, 100);
-    lost = false;
-}
+
+
 
 // This checks whether the user has finished typing a quote and loads a new one if necessary.
 // It also checks whether what the user is typing so far and changes the color of input box accordingly.
-function typing()
-{
+var mistakes = 0;
+
+function typing() {
     var quote = document.getElementById("texttotype").innerHTML;
     var typed = youtyped.value;
-    console.log(timegiven);
-    if (quote === typed)
-    {
-        console.log("Matched!");
-        loadquote();
+    
+    // Don't process backspace
+    if (event.keyCode === 8) {
+        return;
     }
-    // Check if user input so far is correct - this will help the user spot mistakes instantly.
-    if (quote.slice(0,typed.length) !== typed)
-    {
-        document.getElementById("youtyped").style.backgroundColor = "MistyRose";
+    
+    // Count total characters typed correctly
+    totalCharacters = typed.length;
+    
+    // Check if current character is wrong
+    if (quote.slice(0, typed.length) !== typed) {
+        totalMistakes++;
     }
-    else
-    {
-        document.getElementById("youtyped").style.backgroundColor = "";
+    
+    // Calculate accuracy considering both correct chars and mistakes
+    let accuracy = Math.max(0, ((totalCharacters - totalMistakes) / totalCharacters) * 100);
+    document.getElementById("accuracy").innerHTML = accuracy.toFixed(1) + "%";
+
+    lastLength = typed.length;
+  
+  const successButtons = `
+      <div style="margin-top: 20px; background-color: lightgreen; padding: 20px; border-radius: 5px">
+          <button style="padding: 10px 20px; margin: 0 10px; font-size: 16px; cursor: pointer; background-color: skyblue; border: 1px solid darkblue; border-radius: 5px" onclick="retryCurrentLevel()">Try Again</button>
+          <button style="padding: 10px 20px; margin: 0 10px; font-size: 16px; cursor: pointer; background-color: skyblue; border: 1px solid darkblue; border-radius: 5px" onclick="showLevelSelection()">Level Selection</button>
+      </div>
+  `;
+
+  const failButtons = `
+      <div style="margin-top: 20px; background-color: mistyrose; padding: 20px; border-radius: 5px">
+          <button style="padding: 10px 20px; margin: 0 10px; font-size: 16px; cursor: pointer; background-color: skyblue; border: 1px solid darkblue; border-radius: 5px" onclick="retryCurrentLevel()">Try Again</button>
+          <button style="padding: 10px 20px; margin: 0 10px; font-size: 16px; cursor: pointer; background-color: skyblue; border: 1px solid darkblue; border-radius: 5px" onclick="showLevelSelection()">Level Selection</button>
+      </div>
+  `;
+
+  if (quote.slice(0,typed.length) !== typed) {
+    mistakes++;
+    document.getElementById("youtyped").style.backgroundColor = "MistyRose";
+  } else {
+    document.getElementById("youtyped").style.backgroundColor = "";
+  }
+  
+  document.getElementById("accuracy").innerHTML = calculateAccuracy(mistakes, typed.length).toFixed(1) + "%";
+  
+  if (quote === typed) {
+    var currentWPM = parseInt(document.getElementById("speedCurrent").innerHTML);
+    var requiredWPM = parseInt(document.getElementById("speedMin").innerHTML);
+    var currentAccuracy = parseFloat(document.getElementById("accuracy").innerHTML);
+    var requiredAccuracy = 100;
+    
+    if (missions[level - 1].goal.accuracy) {
+      requiredAccuracy = missions[level - 1].goal.accuracy;
     }
+    
+    if (currentWPM >= requiredWPM && currentAccuracy >= requiredAccuracy) {
+      document.getElementById("speedCurrent").innerHTML = document.getElementById("speedCurrent").innerHTML;
+      document.getElementById("TimeLeft").innerHTML = document.getElementById("TimeLeft").innerHTML;
+      document.getElementById("heading").innerHTML = "Mission Complete!" + successButtons;
+    } else {
+      document.getElementById("heading").innerHTML = "Mission Failed!" + failButtons;
+    }
+    document.getElementById("youtyped").disabled = true;
+    clearInterval(myTimer);
+  }
+}
+function initializeGameTimer(missionTime, missionSpeed) {
+    document.getElementById("youtyped").addEventListener("keydown", function startOnFirstKey(e) {
+        this.removeEventListener("keydown", startOnFirstKey);
+        myTimer = setInterval(timing, 100);
+        timegiven = missionTime * 10;
+        document.getElementById("TimeLeft").innerHTML = timegiven.toFixed(1);
+        document.getElementById("speedMin").innerHTML = missionSpeed + " wpm";
+        document.addEventListener("keyup", typing);
+    }, { once: true });
+}
+
+function retryCurrentLevel() {
+    console.log("1. Starting retry process");
+    console.log("2. Current level:", currentGameLevel);
+    
+
+        // Add this line to reset mistakes counter
+        mistakes = 0;
+
+    clearInterval(myTimer);
+    document.removeEventListener("keyup", typing);
+    document.removeEventListener("keydown", beginGame);
+    console.log("3. Cleared timers and event listeners");
+    
+    lost = false;
+    timegiven = 0;
+    
+    document.getElementById("youtyped").value = '';
+    document.getElementById("speedCurrent").innerHTML = '';
+    document.getElementById("speedMax").innerHTML = '';
+    document.getElementById("accuracy").innerHTML = '';
+    document.getElementById("TimeLeft").innerHTML = "";
+    document.getElementById("speedMin").innerHTML = "";
+    console.log("4. Reset all displays");
+    
+    console.log("5. About to start level");
+    startLevel(currentGameLevel);
+    console.log("6. Level started");
+    
+    console.log("7. Attempting to enable textarea");
+    document.getElementById("youtyped").disabled = false;
+    document.getElementById("youtyped").focus();
+    console.log("8. Process complete - textarea state:", document.getElementById("youtyped").disabled);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+function showLevelSelection() {
+    // Clear existing timers and states
+    clearInterval(myTimer);
+    lost = false;
+    level = 1;
+    timegiven = 0;
+    
+    // Reset all displays
+    document.getElementById("youtyped").value = '';
+    document.getElementById("speedCurrent").innerHTML = '';
+    document.getElementById("speedMax").innerHTML = '';
+    document.getElementById("accuracy").innerHTML = '';
+    document.getElementById("TimeLeft").innerHTML = "";
+    document.getElementById("speedMin").innerHTML = "";
+    
+    // Show level selection
+    document.getElementById("level-selection-screen").style.display = 'block';
+}
+
+
+function calculateAccuracy(mistakes, totalChars) {
+    if (totalChars === 0) {
+        return 100; // Avoid division by zero
+    }
+    mistakes = Math.min(mistakes, totalChars); // Cap mistakes at totalChars
+    return (1 - (mistakes / totalChars)) * 100;
 }
 
 // Implements the timer and keeps recalculating words per minute and adjusting the max.
@@ -247,62 +359,78 @@ function timing()
     }
 }
 
-// These are the quotes - they are mostly from "BrainyQuote".
-var quotes = ["To be or not to be, that is the question! - Hamlet", 
-"In the Soviet Army, it takes more courage to retreat than to advance! - Joseph Stalin",
-"I know words, I have the best words! - Donald Trump", 
-"This is not my sandwich! - Catherine Tate",
-"I love you the more in that I believe you had liked me for my own sake and for nothing else. - John Keats",
-"But man is not made for defeat. A man can be destroyed but not defeated. - Ernest Hemingway",
-"When you reach the end of your rope, tie a knot in it and hang on. - Franklin D. Roosevelt",
-"There is nothing permanent except change. - Heraclitus",
-"You cannot shake hands with a clenched fist. - Indira Gandhi",
-"Let us sacrifice our today so that our children can have a better tomorrow. - A. P. J. Abdul Kalam",
-"The most difficult thing is the decision to act, the rest is merely tenacity. The fears are paper tigers. You can do anything you decide to do. You can act to change and control your life; and the procedure, the process is its own reward. - Amelia Earhart",
-"Do not mind anything that anyone tells you about anyone else. Judge everyone and everything for yourself. - Henry James",
-"Learning never exhausts the mind. - Leonardo da Vinci",
-"There is no charm equal to tenderness of heart. - Jane Austen", 
-"All that we see or seem is but a dream within a dream. - Edgar Allan Poe",
-"Lord, make me an instrument of thy peace. Where there is hatred, let me sow love. - Francis of Assisi",
-"If you cannot do great things, do small things in a great way. - Napoleon Hill",
-"Permanence, perseverance and persistence in spite of all obstacles, discouragements, and impossibilities: It is this, that in all things distinguishes the strong soul from the weak. - Thomas Carlyle",
-"The supreme art of war is to subdue the enemy without fighting. - Sun Tzu",
-"Keep your face always toward the sunshine - and shadows will fall behind you. - Walt Whitman",
-"Love has no age, no limit; and no death. - John Galsworthy",
-"There is only one corner of the universe you can be certain of improving, and that's your own self. - Aldous Huxley",
-"You can't blame gravity for falling in love. - Albert Einstein",
-"The journey of a thousand miles begins with one step. - Lao Tzu",
-"I have not failed. I've just found 10,000 ways that won't work. - Thomas A. Edison",
-"Tell me and I forget. Teach me and I remember. Involve me and I learn. - Benjamin Franklin",
-"There is nothing on this earth more to be prized than true friendship. - Thomas Aquinas",
-"A leader is one who knows the way, goes the way, and shows the way. - John C. Maxwell",
-"Very little is needed to make a happy life; it is all within yourself, in your way of thinking. - Marcus Aurelius",
-"Let us be grateful to people who make us happy, they are the charming gardeners who make our souls blossom. - Marcel Proust",
-"Always remember that you are absolutely unique. Just like everyone else. - Margaret Mead",
-"Rhe World is my country, all mankind are my brethren, and to do good is my religion. - Thomas Paine",
-"Wise men speak because they have something to say; Fools because they have to say something. - Plato",
-"A single rose can be my garden... a single friend, my world. - Leo Buscaglia",
-"Friends show their love in times of trouble, not in happiness. - Euripides",
-"You don't choose your family. They are God's gift to you, as you are to them. - Desmond Tutu",
-"Life is not a problem to be solved, but a reality to be experienced. - Soren Kierkegaard",
-"The only true wisdom is in knowing you know nothing. - Socrates",
-"A kiss is a lovely trick designed by nature to stop speech when words become superfluous. - Ingrid Bergman",
-"Today you are you! That is truer than true! There is no one alive who is you-er than you! - Dr. Seuss",
-"Education is the most powerful weapon which you can use to change the world. - Nelson Mandela",
-"Change your thoughts and you change your world. - Norman Vincent Peale",
-"In three words I can sum up everything I've learned about life: it goes on. - Robert Frost",
-"Love isn't something you find. Love is something that finds you. - Loretta Young",
-"Don't walk behind me; I may not lead. Don't walk in front of me; I may not follow. Just walk beside me and be my friend. - Albert Camus",
-"Success is not final, failure is not fatal: it is the courage to continue that counts. - Winston Churchill",
-"Do not go where the path may lead, go instead where there is no path and leave a trail. - Ralph Waldo Emerson",
-"The only thing necessary for the triumph of evil is for good men to do nothing. - Edmund Burke",
-"Do not dwell in the past, do not dream of the future, concentrate the mind on the present moment. - Buddha",
-"Don't judge each day by the harvest you reap but by the seeds that you plant. - Robert Louis Stevenson",
-"Nothing is impossible, the word itself says 'I'm possible'! - Audrey Hepburn",
-"Find a place inside where there's joy, and the joy will burn out the pain. - Joseph Campbell",
-"It is during our darkest moments that we must focus to see the light. - Aristotle",
-"Keep love in your heart. A life without it is like a sunless garden when the flowers are dead. - Oscar Wilde",
-"The best and most beautiful things in the world cannot be seen or even touched - they must be felt with the heart. - Helen Keller"]
+
+
+// Menu system
+var menu = document.getElementById('menu');
+for (var i = 1; i <= 100; i++) {
+  var menuItem = document.createElement('li');
+  menuItem.textContent = 'Level ' + i;
+  (function(level) {
+    menuItem.addEventListener('click', function() {
+      startLevel(level);
+      document.getElementById("level-selection-screen").style.display = 'none';
+    });
+  })(i);
+  menu.appendChild(menuItem);
+}
+
+// Show level selection screen
+document.getElementById('level-selection-screen').style.display = 'block';
+
+// Predefined missions
+var missions = [
+  {
+    level: 1,
+    mission: 'Type a single word with 100% accuracy and 30 wpm',
+    goal: {
+      text: 'hello',
+      time: 10,
+      speed: 2,
+      accuracy: 100
+    }
+  },
+  {
+    level: 2,
+    mission: 'Type a single word with 100% accuracy and 30 wpm',
+    goal: {
+      text: 'How are you?',
+      time: 10,
+      speed: 2,
+      accuracy: 100
+    }
+  },
+  {
+    level: 3,
+    mission: 'Type a single word with 100% accuracy and 30 wpm',
+    goal: {
+      text: '元気ですか？',
+      time: 10,
+      speed: 2,
+      accuracy: 100
+    }
+  },
+  // ...
+];
+
+// Start level function
+function startLevel(level) {
+  currentGameLevel = level;
+    console.log('Starting level ' + level);
+    var missionText = missions[level - 1].goal.text;
+    var missionTime = missions[level - 1].goal.time;
+    var missionSpeed = missions[level - 1].goal.speed;
+    
+    document.getElementById("texttotype").innerHTML = missionText;
+    document.getElementById("youtyped").disabled = false;
+    document.getElementById("level-selection-screen").style.display = 'none';
+    document.getElementById("heading").innerHTML = missions[level - 1].mission;
+    document.getElementById("speedMax").innerHTML = "";
+    
+    initializeGameTimer(missionTime, missionSpeed);
+    document.getElementById("youtyped").select();
+}
+
 
   </script>
 
