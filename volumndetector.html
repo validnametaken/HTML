@@ -27,62 +27,169 @@
       font-family: Arial, sans-serif;
       font-size: 19px;
     }
+    
+    .controls {
+      margin-top: 20px;
+      font-family: Arial, sans-serif;
+      width: 220px;
+    }
+    
+    .control-group {
+      margin-bottom: 10px;
+    }
+    
+    label {
+      display: inline-block;
+      width: 150px;
+    }
+    
+    input[type="range"] {
+      width: 100%;
+    }
+    
+    .value-display {
+      display: inline-block;
+      width: 50px;
+      text-align: right;
+    }
   </style>
 </head>
 <body>
-  <audio id="audioClip" src="alarm.mp3"></audio>
+  <audio id="audioClip" src="alarm.mp3" loop></audio>
   <div class="meter">
     <div class="volume" id="volume"></div>
   </div>
   <div class="db" id="db">Current dB: -</div>
+  
+  <div class="controls">
+    <div class="control-group">
+      <label for="baseline">Sensitivity (baseline):</label>
+      <span id="baselineValue" class="value-display">1</span>
+      <input type="range" id="baseline" min="0.1" max="10" step="0.1" value="1">
+    </div>
+    
+    <div class="control-group">
+      <label for="warningThreshold">Warning Threshold (dB):</label>
+      <span id="warningThresholdValue" class="value-display">20</span>
+      <input type="range" id="warningThreshold" min="0" max="50" step="1" value="20">
+    </div>
+    
+    <div class="control-group">
+      <label for="alarmThreshold">Alarm Threshold (dB):</label>
+      <span id="alarmThresholdValue" class="value-display">30</span>
+      <input type="range" id="alarmThreshold" min="0" max="50" step="1" value="30">
+    </div>
+    
+    <div class="control-group">
+      <label for="muteAlarm">Mute Alarm:</label>
+      <input type="checkbox" id="muteAlarm">
+    </div>
+    
+    <div class="control-group">
+      <label for="pauseMonitoring">Pause Monitoring:</label>
+      <input type="checkbox" id="pauseMonitoring">
+    </div>
+  </div>
 
   <script>
 window.onload = function () {
   const volumeElem = document.getElementById('volume');
   const dbElem = document.getElementById('db');
-  let baseline = 1; // Manually set the baseline to 100 (or any other value you prefer)
-  let alarmAudio = new Audio('alarm.mp3');
+  const baselineInput = document.getElementById('baseline');
+  const baselineValueElem = document.getElementById('baselineValue');
+  const warningThresholdInput = document.getElementById('warningThreshold');
+  const warningThresholdValueElem = document.getElementById('warningThresholdValue');
+  const alarmThresholdInput = document.getElementById('alarmThreshold');
+  const alarmThresholdValueElem = document.getElementById('alarmThresholdValue');
+  const muteAlarmCheckbox = document.getElementById('muteAlarm');
+  const pauseMonitoringCheckbox = document.getElementById('pauseMonitoring');
+  
+  let baseline = parseFloat(baselineInput.value);
+  let warningThreshold = parseInt(warningThresholdInput.value);
+  let alarmThreshold = parseInt(alarmThresholdInput.value);
+  let isMuted = muteAlarmCheckbox.checked;
+  let isPaused = pauseMonitoringCheckbox.checked;
+  
+  const alarmAudio = document.getElementById('audioClip');
+  
+  // Update values when controls change
+  baselineInput.addEventListener('input', function() {
+    baseline = parseFloat(this.value);
+    baselineValueElem.textContent = baseline;
+  });
+  
+  warningThresholdInput.addEventListener('input', function() {
+    warningThreshold = parseInt(this.value);
+    warningThresholdValueElem.textContent = warningThreshold;
+  });
+  
+  alarmThresholdInput.addEventListener('input', function() {
+    alarmThreshold = parseInt(this.value);
+    alarmThresholdValueElem.textContent = alarmThreshold;
+  });
+  
+  muteAlarmCheckbox.addEventListener('change', function() {
+    isMuted = this.checked;
+    if (isMuted) {
+      alarmAudio.pause();
+    }
+  });
+  
+  pauseMonitoringCheckbox.addEventListener('change', function() {
+    isPaused = this.checked;
+  });
+
+  let audioCtx;
+  let source;
+  let analyser;
+  let stream;
 
   navigator.mediaDevices.getUserMedia({ audio: true })
-    .then(function (stream) {
-      const audioCtx = new AudioContext();
-      const source = audioCtx.createMediaStreamSource(stream);
-      const analyser = audioCtx.createAnalyser();
+    .then(function (mediaStream) {
+      stream = mediaStream;
+      audioCtx = new AudioContext();
+      source = audioCtx.createMediaStreamSource(stream);
+      analyser = audioCtx.createAnalyser();
       source.connect(analyser);
 
       const bufferLength = analyser.frequencyBinCount;
       const dataArray = new Uint8Array(bufferLength);
 
       function updateVolume() {
-        analyser.getByteFrequencyData(dataArray);
-        const volume = dataArray.reduce((acc, val) => acc + val, 0) / bufferLength;
+        if (!isPaused) {
+          analyser.getByteFrequencyData(dataArray);
+          const volume = dataArray.reduce((acc, val) => acc + val, 0) / bufferLength;
 
-        let dB = 0;
+          let dB = 0;
 
-        if (volume !== 0 && baseline !== 0) {
-          dB = 20 * Math.log10(volume / baseline);
+          if (volume !== 0 && baseline !== 0) {
+            dB = 20 * Math.log10(volume / baseline);
+          }
+
+          const scaledVolume = Math.min((volume / 255) * 2000, 200);
+
+          volumeElem.style.height = `${scaledVolume}px`;
+
+          if (dB > alarmThreshold) {
+            volumeElem.style.backgroundColor = "#FF0000"; // Red
+            if (!isMuted) {
+              alarmAudio.play();
+            }
+          } else if (dB > warningThreshold) {
+            volumeElem.style.backgroundColor = "#FFA500"; // Orange
+            alarmAudio.pause();
+          } else {
+            volumeElem.style.backgroundColor = "#4CAF50"; // Green
+            alarmAudio.pause();
+          }
+
+          if (!isNaN(dB) && isFinite(dB)) {
+            dbElem.textContent = `Current dB: ${dB.toFixed(2)} dB`;
+          } else {
+            dbElem.textContent = "Current dB: Too low to calculate";
+          }
         }
-
-        const scaledVolume = Math.min((volume / 255) * 2000, 200);
-
-        volumeElem.style.height = `${scaledVolume}px`;
-
-        if (dB > 30) {
-          volumeElem.style.backgroundColor = "#FF0000"; // Red
-          alarmAudio.play();
-        } else if (dB > 20) {
-          volumeElem.style.backgroundColor = "#FFA500"; // Orange
-        } else {
-          volumeElem.style.backgroundColor = "#4CAF50"; // Green
-          alarmAudio.pause();
-        }
-
-        if (!isNaN(dB) && isFinite(dB)) {
-          dbElem.textContent = `Current dB: ${dB.toFixed(2)} dB`;
-        } else {
-          dbElem.textContent = "Current dB: Too low to calculate";
-        }
-
+        
         requestAnimationFrame(updateVolume);
       }
 
@@ -90,7 +197,17 @@ window.onload = function () {
     })
     .catch(function (err) {
       console.error('Error accessing the microphone:', err);
+      dbElem.textContent = "Error: Microphone access denied";
+      dbElem.style.color = "red";
     });
+    
+  // Clean up resources when page is closed
+  window.addEventListener('beforeunload', () => {
+    if (audioCtx) audioCtx.close();
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+    }
+  });
 };
   </script>
 </body>
