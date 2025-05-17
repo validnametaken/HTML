@@ -112,6 +112,7 @@ window.onload = function () {
   
   const alarmAudio = document.getElementById('audioClip');
   let audioInitialized = false;
+  let alarmStopTimer = null; // Timer for delayed alarm stopping
   
   // Add a user interaction handler to initialize audio
   document.body.addEventListener('click', function() {
@@ -153,11 +154,23 @@ window.onload = function () {
     isMuted = this.checked;
     if (isMuted) {
       alarmAudio.pause();
+      if (alarmStopTimer) {
+        clearTimeout(alarmStopTimer);
+        alarmStopTimer = null;
+      }
     }
   });
   
   pauseMonitoringCheckbox.addEventListener('change', function() {
     isPaused = this.checked;
+    if (isPaused) {
+      // If monitoring is paused, stop the alarm
+      alarmAudio.pause();
+      if (alarmStopTimer) {
+        clearTimeout(alarmStopTimer);
+        alarmStopTimer = null;
+      }
+    }
   });
 
   let audioCtx;
@@ -179,6 +192,7 @@ window.onload = function () {
           const dataArray = new Uint8Array(bufferLength);
           let lastUpdateTime = 0;
           const UPDATE_INTERVAL = 100; // ms
+          const ALARM_STOP_DELAY = 400; // 2 seconds delay before stopping alarm
 
           function updateVolume(timestamp) {
             if (!isPaused && (!lastUpdateTime || timestamp - lastUpdateTime > UPDATE_INTERVAL)) {
@@ -197,6 +211,12 @@ window.onload = function () {
 
               if (dB > alarmThreshold) {
                 volumeElem.style.backgroundColor = "#FF0000"; // Red
+                // Cancel any pending alarm stop
+                if (alarmStopTimer) {
+                  clearTimeout(alarmStopTimer);
+                  alarmStopTimer = null;
+                }
+                
                 if (!isMuted && audioInitialized) {
                   // For iOS, we need to check if the audio is already playing
                   if (alarmAudio.paused) {
@@ -207,10 +227,22 @@ window.onload = function () {
                 }
               } else if (dB > warningThreshold) {
                 volumeElem.style.backgroundColor = "#FFA500"; // Orange
-                alarmAudio.pause();
+                // If we're below alarm threshold but above warning, schedule alarm stop
+                if (!alarmAudio.paused && !alarmStopTimer) {
+                  alarmStopTimer = setTimeout(() => {
+                    alarmAudio.pause();
+                    alarmStopTimer = null;
+                  }, ALARM_STOP_DELAY);
+                }
               } else {
                 volumeElem.style.backgroundColor = "#4CAF50"; // Green
-                alarmAudio.pause();
+                // If we're below warning threshold, schedule alarm stop
+                if (!alarmAudio.paused && !alarmStopTimer) {
+                  alarmStopTimer = setTimeout(() => {
+                    alarmAudio.pause();
+                    alarmStopTimer = null;
+                  }, ALARM_STOP_DELAY);
+                }
               }
 
               if (!isNaN(dB) && isFinite(dB)) {
@@ -290,6 +322,7 @@ window.onload = function () {
     }
   });
 };
+
 
   </script>
 </body>
