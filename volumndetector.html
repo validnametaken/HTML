@@ -111,6 +111,27 @@ window.onload = function () {
   let isPaused = pauseMonitoringCheckbox.checked;
   
   const alarmAudio = document.getElementById('audioClip');
+  let audioInitialized = false;
+  
+  // Add a user interaction handler to initialize audio
+  document.body.addEventListener('click', function() {
+    if (!audioInitialized) {
+      // Initialize audio
+      alarmAudio.load();
+      // Try to play and immediately pause to "unlock" audio
+      alarmAudio.play().then(() => {
+        alarmAudio.pause();
+        audioInitialized = true;
+      }).catch(err => {
+        console.error("Could not initialize audio:", err);
+      });
+    }
+    
+    // Also try to resume AudioContext if it exists and is suspended
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+  }, {once: false});
   
   // Update values when controls change
   baselineInput.addEventListener('input', function() {
@@ -144,62 +165,122 @@ window.onload = function () {
   let analyser;
   let stream;
 
-  navigator.mediaDevices.getUserMedia({ audio: true })
-    .then(function (mediaStream) {
-      stream = mediaStream;
-      audioCtx = new AudioContext();
-      source = audioCtx.createMediaStreamSource(stream);
-      analyser = audioCtx.createAnalyser();
-      source.connect(analyser);
+  try {
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(function (mediaStream) {
+        stream = mediaStream;
+        try {
+          audioCtx = new AudioContext();
+          source = audioCtx.createMediaStreamSource(stream);
+          analyser = audioCtx.createAnalyser();
+          source.connect(analyser);
 
-      const bufferLength = analyser.frequencyBinCount;
-      const dataArray = new Uint8Array(bufferLength);
+          const bufferLength = analyser.frequencyBinCount;
+          const dataArray = new Uint8Array(bufferLength);
+          let lastUpdateTime = 0;
+          const UPDATE_INTERVAL = 100; // ms
 
-      function updateVolume() {
-        if (!isPaused) {
-          analyser.getByteFrequencyData(dataArray);
-          const volume = dataArray.reduce((acc, val) => acc + val, 0) / bufferLength;
+          function updateVolume(timestamp) {
+            if (!isPaused && (!lastUpdateTime || timestamp - lastUpdateTime > UPDATE_INTERVAL)) {
+              analyser.getByteFrequencyData(dataArray);
+              const volume = dataArray.reduce((acc, val) => acc + val, 0) / bufferLength;
 
-          let dB = 0;
+              let dB = 0;
 
-          if (volume !== 0 && baseline !== 0) {
-            dB = 20 * Math.log10(volume / baseline);
-          }
+              if (volume !== 0 && baseline !== 0) {
+                dB = 20 * Math.log10(volume / baseline);
+              }
 
-          const scaledVolume = Math.min((volume / 255) * 2000, 200);
+              const scaledVolume = Math.min((volume / 255) * 2000, 200);
 
-          volumeElem.style.height = `${scaledVolume}px`;
+              volumeElem.style.height = `${scaledVolume}px`;
 
-          if (dB > alarmThreshold) {
-            volumeElem.style.backgroundColor = "#FF0000"; // Red
-            if (!isMuted) {
-              alarmAudio.play();
+              if (dB > alarmThreshold) {
+                volumeElem.style.backgroundColor = "#FF0000"; // Red
+                if (!isMuted && audioInitialized) {
+                  // For iOS, we need to check if the audio is already playing
+                  if (alarmAudio.paused) {
+                    alarmAudio.play().catch(err => {
+                      console.error("Could not play alarm:", err);
+                    });
+                  }
+                }
+              } else if (dB > warningThreshold) {
+                volumeElem.style.backgroundColor = "#FFA500"; // Orange
+                alarmAudio.pause();
+              } else {
+                volumeElem.style.backgroundColor = "#4CAF50"; // Green
+                alarmAudio.pause();
+              }
+
+              if (!isNaN(dB) && isFinite(dB)) {
+                dbElem.textContent = `Current dB: ${dB.toFixed(2)} dB`;
+              } else {
+                dbElem.textContent = "Current dB: Too low to calculate";
+              }
+              
+              lastUpdateTime = timestamp;
             }
-          } else if (dB > warningThreshold) {
-            volumeElem.style.backgroundColor = "#FFA500"; // Orange
-            alarmAudio.pause();
-          } else {
-            volumeElem.style.backgroundColor = "#4CAF50"; // Green
-            alarmAudio.pause();
+            
+            requestAnimationFrame(updateVolume);
           }
 
-          if (!isNaN(dB) && isFinite(dB)) {
-            dbElem.textContent = `Current dB: ${dB.toFixed(2)} dB`;
-          } else {
-            dbElem.textContent = "Current dB: Too low to calculate";
-          }
+          updateVolume();
+        } catch (e) {
+          console.error('Error creating audio context:', e);
+          dbElem.textContent = "Error: Could not initialize audio system";
+          dbElem.style.color = "red";
         }
-        
-        requestAnimationFrame(updateVolume);
+      })
+      .catch(function (err) {
+        console.error('Error accessing the microphone:', err);
+        dbElem.textContent = "Error: Microphone access denied";
+        dbElem.style.color = "red";
+      });
+  } catch (e) {
+    console.error('Error setting up media devices:', e);
+    dbElem.textContent = "Error: Media devices not supported";
+    dbElem.style.color = "red";
+  }
+    
+  // Load saved settings if available
+  if (localStorage.getItem('volumeDetectorSettings')) {
+    try {
+      const settings = JSON.parse(localStorage.getItem('volumeDetectorSettings'));
+      if (settings.baseline) {
+        baseline = settings.baseline;
+        baselineInput.value = baseline;
+        baselineValueElem.textContent = baseline;
       }
-
-      updateVolume();
-    })
-    .catch(function (err) {
-      console.error('Error accessing the microphone:', err);
-      dbElem.textContent = "Error: Microphone access denied";
-      dbElem.style.color = "red";
-    });
+      if (settings.warningThreshold) {
+        warningThreshold = settings.warningThreshold;
+        warningThresholdInput.value = warningThreshold;
+        warningThresholdValueElem.textContent = warningThreshold;
+      }
+      if (settings.alarmThreshold) {
+        alarmThreshold = settings.alarmThreshold;
+        alarmThresholdInput.value = alarmThreshold;
+        alarmThresholdValueElem.textContent = alarmThreshold;
+      }
+    } catch (e) {
+      console.error('Error loading settings:', e);
+    }
+  }
+  
+  // Save settings when changed
+  function saveSettings() {
+    const settings = {
+      baseline,
+      warningThreshold,
+      alarmThreshold
+    };
+    localStorage.setItem('volumeDetectorSettings', JSON.stringify(settings));
+  }
+  
+  // Save settings when inputs change
+  baselineInput.addEventListener('change', saveSettings);
+  warningThresholdInput.addEventListener('change', saveSettings);
+  alarmThresholdInput.addEventListener('change', saveSettings);
     
   // Clean up resources when page is closed
   window.addEventListener('beforeunload', () => {
@@ -209,6 +290,7 @@ window.onload = function () {
     }
   });
 };
+
   </script>
 </body>
 </html>
