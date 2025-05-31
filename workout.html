@@ -80,8 +80,8 @@
   
     </div>
 
-    <audio id="start-sound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" preload="auto"></audio>
-    <audio id="end-sound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg" preload="auto"></audio>
+    <audio id="start-sound" src="https://cdn.pixabay.com/audio/2022/03/19/audio_41203856b4.mp3" preload="auto"></audio>
+    <audio id="end-sound" src="https://cdn.pixabay.com/audio/2024/05/23/audio_336d55dfa8.mp3" preload="auto"></audio>
 
     <script>
         // Hardcoded workout plan with individual rep durations
@@ -203,12 +203,12 @@
                 statusEl.style.color = 'black';
                 timerEl.style.color = 'blue';
                 statusEl.textContent = `Rep ${currentRep} of ${ex.reps}`;
-                playStartSound();
+                playStartSound(); // Play at the start of every rep
                 startTimer(ex.repDuration, () => {
                     progressCount++;
                     updateProgress();
                 }, () => {
-                    playEndSound();
+                    playEndSound(); // Play at the end of every rep
                     if (currentRep < ex.reps) {
                         isBreak = true;
                         statusEl.style.color = 'red';
@@ -242,7 +242,6 @@
             if (currentRep === 1) {
                 // Break between exercises
                 statusEl.textContent = "Break between exercises";
-                // Show next exercise if there is one
                 if (currentExercise + 1 < workoutPlan.length) {
                     const nextEx = workoutPlan[currentExercise + 1];
                     document.getElementById('next-exercise').textContent =
@@ -259,12 +258,11 @@
                 document.getElementById('next-exercise').textContent = "";
                 nextExerciseImgEl.style.display = 'none';
             }
-            playStartSound();
+            // Do NOT play any sound here!
             startTimer(seconds, () => {
                 progressCount++;
                 updateProgress();
             }, () => {
-                playEndSound();
                 callback();
             });
         }
