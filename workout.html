@@ -66,14 +66,18 @@
         <div id="exercise-explanation" style="font-style: italic; margin-bottom: 10px;"></div>
         <div id="timer"></div>
         <div id="status"></div>
+        <div id="next-exercise" style="font-size:1em; color: #555; margin-bottom: 10px;"></div>
+        <img id="next-exercise-img" class="exercise-img" style="display:none; max-width:200px; margin-bottom:10px;" alt="Next Exercise Image" />
         <div id="progress-bar-container">
             <div id="progress-bar"></div>
         </div>
+
         <button id="startBtn">Start</button>
         <button id="pauseBtn" disabled>Pause</button>
         <button id="resumeBtn" disabled>Resume</button>
         <button id="resetBtn" disabled>Reset</button>
         <button id="skipBtn" disabled>Skip</button>
+  
     </div>
 
     <audio id="start-sound" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg" preload="auto"></audio>
@@ -83,13 +87,13 @@
         // Hardcoded workout plan with individual rep durations
         const workoutPlan = [
             { name: "Stretch 1 RIGHT", reps: 2, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 5, imgUrl: "exercise/no1.gif", explanation: "Right leg." },
-            { name: "Stretch 1 LEFT", reps: 2, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 30, imgUrl: "exercise/no1.gif", explanation: "Left leg." },
+            { name: "Stretch 1 LEFT", reps: 1, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 15, imgUrl: "exercise/no1.gif", explanation: "Left leg." },
 
-            { name: "Stretch 2 RIGHT", reps: 2, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 5, imgUrl: "exercise/no2.gif", explanation: "Right leg." },
-            { name: "Stretch 2 LEFT", reps: 2, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 30, imgUrl: "exercise/no2.gif", explanation: "Left leg." },
+            { name: "Stretch 2 RIGHT", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 5, imgUrl: "exercise/no2.gif", explanation: "Right leg." },
+            { name: "Stretch 2 LEFT", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 15, imgUrl: "exercise/no2.gif", explanation: "Left leg." },
 
             { name: "Straight leg raise RIGHT", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 5, imgUrl: "exercise/no3.gif", explanation: "Right leg." },
-            { name: "Straight leg raise LEFT", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 30, imgUrl: "exercise/no3.gif", explanation: "Left leg." },
+            { name: "Straight leg raise LEFT", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 15, imgUrl: "exercise/no3.gif", explanation: "Left leg." },
 
             { name: "Quad sets RIGHT", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 5, imgUrl: "exercise/no4.gif", explanation: "Right leg." },
             { name: "Quad sets LEFT", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 30, imgUrl: "exercise/no4.gif", explanation: "Left leg." },
@@ -97,8 +101,8 @@
             { name: "Sitting straight leg raise RIGHT", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 5, imgUrl: "exercise/no5.gif", explanation: "Right leg." },
             { name: "Sitting straight leg raise LEFT", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 30, imgUrl: "exercise/no5.gif", explanation: "Left leg." },
 
-            { name: "Towel squeeze", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 30, imgUrl: "exercise/no6.gif", explanation: "" },
-            { name: "Calf raise", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 30, imgUrl: "exercise/no7.gif", explanation: "" }
+            { name: "Towel squeeze", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 15, imgUrl: "exercise/no6.gif", explanation: "" },
+            { name: "Calf raise", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 1, imgUrl: "exercise/no7.gif", explanation: "" }
         ];
 
        // Hardcoded break durations in seconds
@@ -171,6 +175,7 @@
         }
 
         function nextStep() {
+            const nextExerciseImgEl = document.getElementById('next-exercise-img');
             if (currentExercise >= workoutPlan.length) {
                 currentExerciseEl.textContent = "Workout Complete! Nobu is amazing!";
                 exerciseImgEl.style.display = 'none';
@@ -182,8 +187,13 @@
                 skipBtn.disabled = true;
                 resetBtn.disabled = false;
                 startBtn.disabled = true;
+                document.getElementById('next-exercise').textContent = "";
+                nextExerciseImgEl.style.display = 'none';
                 return;
             }
+            // Clear "next exercise" at the start of a new exercise
+            document.getElementById('next-exercise').textContent = "";
+            nextExerciseImgEl.style.display = 'none';
             const ex = workoutPlan[currentExercise];
             currentExerciseEl.textContent = `${ex.name} (Exercise ${currentExercise + 1} of ${workoutPlan.length})`;
             exerciseImgEl.src = ex.imgUrl;
@@ -228,7 +238,27 @@
         }
 
         function startBreak(seconds, callback) {
-            statusEl.textContent = (currentRep === 1 ? "Break between exercises" : "Break between reps");
+            const nextExerciseImgEl = document.getElementById('next-exercise-img');
+            if (currentRep === 1) {
+                // Break between exercises
+                statusEl.textContent = "Break between exercises";
+                // Show next exercise if there is one
+                if (currentExercise + 1 < workoutPlan.length) {
+                    const nextEx = workoutPlan[currentExercise + 1];
+                    document.getElementById('next-exercise').textContent =
+                        `Next: ${nextEx.name} (${nextEx.explanation || ''})`;
+                    nextExerciseImgEl.src = nextEx.imgUrl;
+                    nextExerciseImgEl.style.display = '';
+                } else {
+                    document.getElementById('next-exercise').textContent = "";
+                    nextExerciseImgEl.style.display = 'none';
+                }
+            } else {
+                // Break between reps
+                statusEl.textContent = "Break between reps";
+                document.getElementById('next-exercise').textContent = "";
+                nextExerciseImgEl.style.display = 'none';
+            }
             playStartSound();
             startTimer(seconds, () => {
                 progressCount++;
