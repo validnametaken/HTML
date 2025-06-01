@@ -164,15 +164,22 @@
             }, 1000);
         }
 
-        function playStartSound() {
-            startSound.currentTime = 0;
-            startSound.play();
-        }
+function playStartSound() {
+    startSound.currentTime = 0;
+    startSound.play().catch(e => {
+        console.warn('Start sound failed to play:', e);
+        // Could show user notification or fallback behavior
+    });
+}
 
         function playEndSound() {
-            endSound.currentTime = 0;
-            endSound.play();
-        }
+    endSound.pause();
+    endSound.currentTime = 0;
+    // endSound.load(); // Remove this line for iOS
+    endSound.play().catch(e => {
+        console.log('End sound play error:', e);
+    });
+}
 
         function nextStep() {
             const nextExerciseImgEl = document.getElementById('next-exercise-img');
@@ -302,6 +309,9 @@
         }
 
         startBtn.addEventListener('click', () => {
+            // Unlock both audio elements for iOS
+            startSound.play().catch(()=>{});
+            endSound.play().then(()=>{ endSound.pause(); endSound.currentTime = 0; }).catch(()=>{});
             startBtn.disabled = true;
             pauseBtn.disabled = false;
             skipBtn.disabled = false;
