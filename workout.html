@@ -61,6 +61,10 @@
 <body>
     <h1>Exercise Timer</h1>
     <div id="workout">
+        <div style="font-weight:bold; color:#888;">Next Exercise</div>
+        <div id="next-exercise" style="font-size:1em; color: #555; margin-bottom: 10px;"></div>
+        <img id="next-exercise-img" class="exercise-img" style="display:none; max-width:200px; margin-bottom:10px;" alt="Next Exercise Image" />
+
         <div id="current-exercise"></div>
         <img id="exercise-img" class="exercise-img" src="" alt="Exercise Image" />
         <div id="exercise-explanation" style="font-style: italic; margin-bottom: 10px;"></div>
@@ -86,7 +90,7 @@
     <script>
         // Hardcoded workout plan with individual rep durations
         const workoutPlan = [
-            { name: "Stretch 1 RIGHT", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 5, imgUrl: "exercise/no1.gif", explanation: "Right leg." },
+            { name: "Stretch 1 RIGHT", reps: 1, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 5, imgUrl: "exercise/no1.gif", explanation: "Right leg." },
             { name: "Stretch 1 LEFT", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 15, imgUrl: "exercise/no1.gif", explanation: "Left leg." },
 
             { name: "Stretch 2 RIGHT", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 5, imgUrl: "exercise/no2.gif", explanation: "Right leg." },
