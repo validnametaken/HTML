@@ -90,7 +90,7 @@
     <script>
         // Hardcoded workout plan with individual rep durations
         const workoutPlan = [
-            { name: "Stretch 1 RIGHT", reps: 1, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 5, imgUrl: "exercise/no1.gif", explanation: "Right leg." },
+            { name: "Stretch 1 RIGHT", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 5, imgUrl: "exercise/no1.gif", explanation: "Right leg." },
             { name: "Stretch 1 LEFT", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 15, imgUrl: "exercise/no1.gif", explanation: "Left leg." },
 
             { name: "Stretch 2 RIGHT", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 5, imgUrl: "exercise/no2.gif", explanation: "Right leg." },
@@ -221,10 +221,11 @@ function playStartSound() {
                 }, () => {
                     playEndSound(); // Play at the end of every rep
                     if (currentRep < ex.reps) {
+                        // Break between reps
                         isBreak = true;
                         statusEl.style.color = 'red';
                         timerEl.style.color = 'red';
-                        startBreak(ex.breakBetweenReps, () => {
+                        startBreak(ex.breakBetweenReps, false, () => { // <--- false for between reps
                             isBreak = false;
                             statusEl.style.color = 'black';
                             timerEl.style.color = 'blue';
@@ -232,12 +233,13 @@ function playStartSound() {
                             nextStep();
                         });
                     } else {
+                        // Break between exercises
                         isBreak = true;
                         statusEl.style.color = 'red';
                         timerEl.style.color = 'red';
                         currentRep = 1;
                         currentExercise++;
-                        startBreak(ex.breakBetweenExercises, () => {
+                        startBreak(ex.breakBetweenExercises, true, () => { // <--- true for between exercises
                             isBreak = false;
                             statusEl.style.color = 'black';
                             timerEl.style.color = 'blue';
@@ -248,13 +250,13 @@ function playStartSound() {
             }
         }
 
-        function startBreak(seconds, callback) {
+        function startBreak(seconds, isBetweenExercises, callback) {
             const nextExerciseImgEl = document.getElementById('next-exercise-img');
-            if (currentRep === 1) {
+            if (isBetweenExercises) {
                 // Break between exercises
                 statusEl.textContent = "Break between exercises";
-                if (currentExercise + 1 < workoutPlan.length) {
-                    const nextEx = workoutPlan[currentExercise + 1];
+                if (currentExercise < workoutPlan.length) {
+                    const nextEx = workoutPlan[currentExercise];
                     document.getElementById('next-exercise').textContent =
                         `Next: ${nextEx.name} (${nextEx.explanation || ''})`;
                     nextExerciseImgEl.src = nextEx.imgUrl;
@@ -269,7 +271,6 @@ function playStartSound() {
                 document.getElementById('next-exercise').textContent = "";
                 nextExerciseImgEl.style.display = 'none';
             }
-            // Do NOT play any sound here!
             startTimer(seconds, () => {
                 progressCount++;
                 updateProgress();
