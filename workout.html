@@ -32,8 +32,8 @@
         }
 
         #timer { font-size: 6em; margin: 20px 0; color: blue; }
-        #current-exercise { font-weight: bold; font-size: 3.2em; }
-        #status { margin-bottom: 20px; font-style: italic; }
+        #current-exercise { font-weight: bold; font-size: 1.2em; }
+        #status { margin-bottom: 20px; font-style: italic; font-size: 2em; }
         #exercise-explanation { margin-bottom: 20px; font-style: italic; font-size: 4em;}
         button { margin-right: 300px; padding: 8px 16px; font-size: 1em; }
         #progress-bar-container {
@@ -100,7 +100,7 @@
             { name: "Straight leg raise RIGHT", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 5, imgUrl: "exercise/no3.gif", explanation: "Right leg." },
             { name: "Straight leg raise LEFT", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 15, imgUrl: "exercise/no3.gif", explanation: "Left leg." },
 
-            { name: "Quad sets", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 30, imgUrl: "exercise/no4.gif", explanation: "Right leg." },
+            { name: "Quad sets", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 30, imgUrl: "exercise/no4.gif", explanation: "" },
 
             { name: "Sitting straight leg raise RIGHT", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 5, imgUrl: "exercise/no5.gif", explanation: "Right leg." },
             { name: "Sitting straight leg raise LEFT", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 30, imgUrl: "exercise/no5.gif", explanation: "Left leg." },
@@ -327,6 +327,8 @@ function playStartSound() {
             // Unlock both audio elements for iOS
             startSound.play().catch(()=>{});
             endSound.play().then(()=>{ endSound.pause(); endSound.currentTime = 0; }).catch(()=>{});
+            const switchSound = document.getElementById('switch-sound');
+            switchSound.play().then(()=>{ switchSound.pause(); switchSound.currentTime = 0; }).catch(()=>{});
             startBtn.disabled = true;
             pauseBtn.disabled = false;
             skipBtn.disabled = false;
