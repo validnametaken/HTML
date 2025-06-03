@@ -32,7 +32,7 @@
         }
 
         #timer { font-size: 6em; margin: 20px 0; color: blue; }
-        #current-exercise { font-weight: bold; font-size: 1.2em; }
+        #current-exercise { font-weight: bold; font-size: 3.2em; }
         #status { margin-bottom: 20px; font-style: italic; }
         #exercise-explanation { margin-bottom: 20px; font-style: italic; font-size: 4em;}
         button { margin-right: 300px; padding: 8px 16px; font-size: 1em; }
@@ -59,7 +59,7 @@
     </style>
 </head>
 <body>
-    <h1>Exercise Timer (v. 2) </h1>
+    <h1>Exercise Timer (v. 3) </h1>
     <div id="workout">
         <div style="font-weight:bold; color:#888;">Next Exercise</div>
         <div id="next-exercise" style="font-size:1em; color: #555; margin-bottom: 10px;"></div>
@@ -86,6 +86,7 @@
 
     <audio id="start-sound" src="https://cdn.pixabay.com/audio/2022/03/19/audio_41203856b4.mp3" preload="auto"></audio>
     <audio id="end-sound" src="https://cdn.pixabay.com/audio/2024/05/23/audio_336d55dfa8.mp3" preload="auto"></audio>
+    <audio id="switch-sound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b9b273d.mp3" preload="auto"></audio>
 
     <script>
         // Hardcoded workout plan with individual rep durations
@@ -184,6 +185,15 @@ function playStartSound() {
     });
 }
 
+        function playSwitchSound() {
+    const switchSound = document.getElementById('switch-sound');
+    switchSound.pause();
+    switchSound.currentTime = 0;
+    switchSound.play().catch(e => {
+        console.log('Switch sound play error:', e);
+    });
+}
+
         function nextStep() {
             const nextExerciseImgEl = document.getElementById('next-exercise-img');
             if (currentExercise >= workoutPlan.length) {
@@ -218,8 +228,8 @@ function playStartSound() {
                     progressCount++;
                     updateProgress();
                 }, () => {
-                    playEndSound(); // Play at the end of every rep
                     if (currentRep < ex.reps) {
+                        playEndSound(); // Play at the end of every rep except the last
                         // Break between reps
                         isBreak = true;
                         statusEl.style.color = 'red';
@@ -236,6 +246,7 @@ function playStartSound() {
                         isBreak = true;
                         statusEl.style.color = 'red';
                         timerEl.style.color = 'red';
+                        playSwitchSound(); // Only play switch sound after last rep
                         currentRep = 1;
                         currentExercise++;
                         startBreak(ex.breakBetweenExercises, true, () => { // <--- true for between exercises
