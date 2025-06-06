@@ -59,7 +59,7 @@
     </style>
 </head>
 <body>
-    <h1>Exercise Timer (v. 5) </h1>
+    <h1>Exercise Timer (v. 6) </h1>
     <div id="workout">
         <div style="font-weight:bold; color:#888;">Next Exercise</div>
         <div id="next-exercise" style="font-size:1em; color: #555; margin-bottom: 10px;"></div>
@@ -194,10 +194,14 @@ function playStartSound() {
     });
 }
 
+const praises = ["amazing", "awesome", "incredible", "fantastic", "excellent", "superb", "outstanding"];
+
+const randomPraise = praises[Math.floor(Math.random() * praises.length)];
+
         function nextStep() {
             const nextExerciseImgEl = document.getElementById('next-exercise-img');
             if (currentExercise >= workoutPlan.length) {
-                currentExerciseEl.textContent = "Workout Complete! Nobu is amazing!";
+                currentExerciseEl.textContent = `Workout Complete! Nobu is ${randomPraise}!`;
                 exerciseImgEl.style.display = 'none';
                 exerciseExplanationEl.textContent = '';
                 timerEl.textContent = "";
