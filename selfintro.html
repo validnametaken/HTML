@@ -944,32 +944,32 @@
                 this.nextSlide(e);
             }
 
-            nextSlide(e) {
-                if (!e || (e.target && e.target.classList.contains('slide') && !this.isSelecting)) {
-                    document.getElementById(`slide${this.currentSlide}`).style.display = 'none';
-                    this.currentSlide = this.currentSlide >= this.totalSlides ? 1 : this.currentSlide + 1;
-                    resetRevealState(this.currentSlide);
-                    const nextSlide = document.getElementById(`slide${this.currentSlide}`);
-                    nextSlide.style.display = 'flex';
+nextSlide(e) {
+    if (!e || (!this.isSelecting)) {
+        document.getElementById(`slide${this.currentSlide}`).style.display = 'none';
+        this.currentSlide = this.currentSlide >= this.totalSlides ? 1 : this.currentSlide + 1;
+        resetRevealState(this.currentSlide);
+        const nextSlide = document.getElementById(`slide${this.currentSlide}`);
+        nextSlide.style.display = 'flex';
 
-                    // Load images
-                    const images = nextSlide.querySelectorAll('img[data-src]');
-                    images.forEach(img => {
-                        img.src = img.dataset.src;
-                        img.removeAttribute('data-src');
-                    });
+        // Load images
+        const images = nextSlide.querySelectorAll('img[data-src]');
+        images.forEach(img => {
+            img.src = img.dataset.src;
+            img.removeAttribute('data-src');
+        });
 
-                    // Load text
-                    const textElements = nextSlide.querySelectorAll('[data-content]');
-                    textElements.forEach(element => {
-                        element.textContent = element.dataset.content;
-                        element.removeAttribute('data-content');
-                    });
+        // Load text
+        const textElements = nextSlide.querySelectorAll('[data-content]');
+        textElements.forEach(element => {
+            element.textContent = element.dataset.content;
+            element.removeAttribute('data-content');
+        });
 
-                    // Load age calculators
-                    updateAgeCalculators();
-                }
-            }
+        // Load age calculators
+        updateAgeCalculators();
+    }
+}
 
 
             prevSlide() {
