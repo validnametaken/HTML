@@ -533,7 +533,7 @@
                 transform: rotateX(0deg);
             }
 
-            }
+        }
 
         .hidden-until-img {
             visibility: hidden;
@@ -545,11 +545,12 @@
 
 <body>
 
-    <div id="loader" style="
+    <div id="loader"
+        style="
   position:fixed; left:0; top:0; width:100vw; height:100vh;
   background:white; color:#222; display:flex; align-items:center; justify-content:center; z-index:9999; font-size:2rem;">
-  Loading presentation...
-</div>
+        Loading presentation...
+    </div>
 
     <!-- #region =============== Slides =============== -->
     <div class="wave"></div>
@@ -562,8 +563,8 @@
         <div class="slide" id="slide1" style="padding-top: 15px; justify-content: flex-start;">
             <img src="selfintro/Andy5yo.jpg" alt="Andy at the age of 5"
                 style="flex: 1; max-width: 98%; max-height: 98%;object-fit: contain;">
-<!-- Commented out button -->
-<!-- <button id="goto-slide1">Go to Slide X</button> -->
+            <!-- Commented out button -->
+            <!-- <button id="goto-slide1">Go to Slide X</button> -->
 
         </div>
 
@@ -601,163 +602,128 @@
 
         <!-- Slide 6 -->
         <div class="slide" id="slide6"
-             style="display: none; padding-top: 15px; justify-content: flex-start; height: 100vh;">
-            <div style="display: flex; align-items: center; gap: 20px; max-width: 98%; height: 98%;">
-
-<div class="img-placeholder-wrap" style="position:relative; display:inline-block; max-width:80%; max-height:98%;">
-  <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" class="placeholder-img"
-       style="width:100%; height:100%; object-fit:contain; position:absolute; left:0; top:0;">
-  <img data-src="selfintro/Noah.jpg" data-alt="Baskin Robbins?" class="delayed-img"
-       style="width:100%; height:100%; object-fit:contain; position:relative; z-index:1;">
-</div>
-
-
-                    <div style="display: flex; flex-direction: column; gap: 2rem;">
-                        <p style="font-size: 5vw; font-weight: bold;">This is Noah.</p>
-                        <span class="age-calculator" data-birthdate="2014-11-25" data-offset="0" data-prefix="He is "
-                            data-suffix="." style="font-size: 5vw; font-weight: bold;">
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-
-        <!-- Slide 7 -->
-        <div class="slide" id="slide7"
             style="display: none; padding-top: 15px; justify-content: flex-start; height: 100vh;">
             <div style="display: flex; align-items: center; gap: 20px; max-width: 98%; height: 98%;">
-                <img data-src="selfintro/Allan1.jpg" data-alt="Allan"
+                <img data-src="selfintro/Noah.jpg" data-alt="Noah"
                     style="max-width: 80%; max-height: 98%; object-fit: contain;">
+
                 <div style="display: flex; flex-direction: column; gap: 2rem;">
-                    <p style="font-size: 5vw; font-weight: bold;">This is Allan.</p>
-                    <span class="age-calculator" data-birthdate="2018-07-18" data-offset="0" data-prefix="He is "
+                    <p style="font-size: 5vw; font-weight: bold;">This is Noah.</p>
+                    <span class="age-calculator" data-birthdate="2014-11-25" data-offset="0" data-prefix="He is "
                         data-suffix="." style="font-size: 5vw; font-weight: bold;">
                     </span>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Slide 8 -->
-        <div class="slide" id="slide8"
-            style="display: none; padding-top: 15px; justify-content: flex-start; height: 100vh;">
-            <div style="display: flex; align-items: center; gap: 20px; max-width: 99%; height: 80%;">
-                <img data-src="selfintro/Nina1.jpg" data-alt="Nina"
-                    style="max-width: 90%; max-height: 90%; object-fit: contain;">
-                <div style="display: flex; flex-direction: column; gap: 2rem;">
-                    <p style="font-size: 10rem; font-weight: bold;">This is Nina.</p>
-                    <span class="age-calculator" data-birthdate="2020-10-02" data-offset="0" data-prefix="She is "
-                        data-suffix="." style="font-size: 10rem; font-weight: bold;">
-                    </span>
+
+
+    <!-- Slide 7 -->
+    <div class="slide" id="slide7"
+        style="display: none; padding-top: 15px; justify-content: flex-start; height: 100vh;">
+        <div style="display: flex; align-items: center; gap: 20px; max-width: 98%; height: 98%;">
+            <img data-src="selfintro/Allan1.jpg" data-alt="Allan"
+                style="max-width: 80%; max-height: 98%; object-fit: contain;">
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+                <p style="font-size: 5vw; font-weight: bold;">This is Allan.</p>
+                <span class="age-calculator" data-birthdate="2018-07-18" data-offset="0" data-prefix="He is "
+                    data-suffix="." style="font-size: 5vw; font-weight: bold;">
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 8 -->
+    <div class="slide" id="slide8"
+        style="display: none; padding-top: 15px; justify-content: flex-start; height: 100vh;">
+        <div style="display: flex; align-items: center; gap: 20px; max-width: 99%; height: 80%;">
+            <img data-src="selfintro/Nina1.jpg" data-alt="Nina"
+                style="max-width: 90%; max-height: 90%; object-fit: contain;">
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+                <p style="font-size: 10rem; font-weight: bold;">This is Nina.</p>
+                <span class="age-calculator" data-birthdate="2020-10-02" data-offset="0" data-prefix="She is "
+                    data-suffix="." style="font-size: 10rem; font-weight: bold;">
+                </span>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Slide 9 -->
+    <div class="slide" id="slide9" style="display: none; padding-top: 15px; justify-content: flex-start;">
+        <img data-src="selfintro/family1.jpg" alt="my family"
+            style="flex: 1; max-width: 80%; max-height: 80%;object-fit: contain;">
+    </div>
+
+    <!-- Slide 10 -->
+    <div class="slide" id="slide10" style="display: none; padding-top: 15px; justify-content: flex-start;">
+        <img data-src="selfintro/DenmarkFlag.jpg" alt="Where am I from?"
+            style="flex: 1; max-width: 80%; max-height: 80%;object-fit: contain;">
+    </div>
+
+    <!-- Slide 11 -->
+    <div class="slide comparison" id="slide11"
+        style="display: none; padding-top: 15px; justify-content: center; align-items: center; text-align: center;">
+        <div class="comparison-container">
+            <h2 class="comparison-question">Which country is bigger?</h2>
+            <div class="country-comparison">
+                <div class="country-card">
+                    <span class="country-name highlight">Japan</span>
+                    <img src="selfintro/jp.png" alt="Japan Flag" class="country-flag">
+                </div>
+
+                <div class="vs-badge">VS</div>
+
+                <div class="country-card">
+                    <span class="country-name highlight">Denmark</span>
+                    <img src="selfintro/dk.png" alt="Denmark Flag" class="country-flag">
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Slide 12 -->
+    <div class="slide" id="slide12" style="display: none; padding-top: 15px; justify-content: flex-start;">
+        <img data-src="selfintro/DenJap.PNG" alt="How old is Andy now?"
+            style="flex: 1; max-width: 80%; max-height: 80%; object-fit: contain; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); border-radius: 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); padding: 20px;">
+    </div>
 
 
-        <!-- Slide 9 -->
-        <div class="slide" id="slide9" style="display: none; padding-top: 15px; justify-content: flex-start;">
-            <img data-src="selfintro/family1.jpg" alt="my family"
-                style="flex: 1; max-width: 80%; max-height: 80%;object-fit: contain;">
-        </div>
+    <!-- Slide 13 -->
+    <div class="slide" id="slide13"
+        style="display: none; padding-top: 15px; justify-content: center; align-items: center;">
+        <div class="thought-container" style="position: absolute; width: 100%; height: 100%;">
 
-        <!-- Slide 10 -->
-        <div class="slide" id="slide10" style="display: none; padding-top: 15px; justify-content: flex-start;">
-            <img data-src="selfintro/DenmarkFlag.jpg" alt="Where am I from?"
-                style="flex: 1; max-width: 80%; max-height: 80%;object-fit: contain;">
-        </div>
-
-        <!-- Slide 11 -->
-        <div class="slide comparison" id="slide11"
-            style="display: none; padding-top: 15px; justify-content: center; align-items: center; text-align: center;">
-            <div class="comparison-container">
-                <h2 class="comparison-question">Which country is bigger?</h2>
-                <div class="country-comparison">
-                    <div class="country-card">
-                        <span class="country-name highlight">Japan</span>
-                        <img src="selfintro/jp.png" alt="Japan Flag" class="country-flag">
-                    </div>
-
-                    <div class="vs-badge">VS</div>
-
-                    <div class="country-card">
-                        <span class="country-name highlight">Denmark</span>
-                        <img src="selfintro/dk.png" alt="Denmark Flag" class="country-flag">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 12 -->
-        <div class="slide" id="slide12" style="display: none; padding-top: 15px; justify-content: flex-start;">
-            <img data-src="selfintro/DenJap.PNG" alt="How old is Andy now?"
-                style="flex: 1; max-width: 80%; max-height: 80%; object-fit: contain; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); border-radius: 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); padding: 20px;">
-        </div>
-
-
-        <!-- Slide 13 -->
-        <div class="slide" id="slide13"
-            style="display: none; padding-top: 15px; justify-content: center; align-items: center;">
-            <div class="thought-container" style="position: absolute; width: 100%; height: 100%;">
-
-                <!-- Top Left Thought Bubble -->
-                <div class="thought-bubble top-left">
-                    <svg viewBox="0 0 500 300">
-                        <defs>
-                            <clipPath id="bubbleClip1">
-                                <path
-                                    d="m250,1 c-27.103,0,-50.616,11.744,-63.768,29.088 c-12.203,-6.9299,-26.995,-11.12,-43.062,-11.12 c-41.35,0,-74.946,27.003,-74.946,60.239 c0,2.4423,0.564,4.7768,0.9162,7.1432 c-35.711,4.5799,-63.127,29.221,-63.127,59.208 c0,29.712,26.889,54.302,62.119,59.208 c-0.7138,3.336,-1.2827,6.7372,-1.2827,10.236 c0,33.236,33.596,60.165,74.946,60.165 c20.253,0,38.554,-6.5026,52.041,-17.011 c13.745,13.141,34.065,21.724,57.08,21.724 c32.837,0,60.442,-17.148,70.548,-40.797 c8.0886,2.4042,16.713,3.9766,25.837,3.9766 c41.35,0,74.854,-27.003,74.854,-60.239 c0,-16.713,-8.4769,-31.8,-22.172,-42.712 c6.9141,-9.1174,11.178,-19.699,11.178,-31.15 c0,-33.236,-33.596,-60.165,-74.946,-60.165 c-4.3528,0,-8.5851,0.3837,-12.735,0.9573 c-6.6771,-27.748,-37.017,-48.751,-73.48,-48.751 Z" />
-                            </clipPath>
-                        </defs>
-                        <image href="selfintro/sushi1.jpg" x="-10%" y="0%" width="100%" height="100%"
-                            clip-path="url(#bubbleClip1)" />
-                        <path class="bubble-path"
-                            d="m250,1 c-27.103,0,-50.616,11.744,-63.768,29.088 c-12.203,-6.9299,-26.995,-11.12,-43.062,-11.12 c-41.35,0,-74.946,27.003,-74.946,60.239 c0,2.4423,0.564,4.7768,0.9162,7.1432 c-35.711,4.5799,-63.127,29.221,-63.127,59.208 c0,29.712,26.889,54.302,62.119,59.208 c-0.7138,3.336,-1.2827,6.7372,-1.2827,10.236 c0,33.236,33.596,60.165,74.946,60.165 c20.253,0,38.554,-6.5026,52.041,-17.011 c13.745,13.141,34.065,21.724,57.08,21.724 c32.837,0,60.442,-17.148,70.548,-40.797 c8.0886,2.4042,16.713,3.9766,25.837,3.9766 c41.35,0,74.854,-27.003,74.854,-60.239 c0,-16.713,-8.4769,-31.8,-22.172,-42.712 c6.9141,-9.1174,11.178,-19.699,11.178,-31.15 c0,-33.236,-33.596,-60.165,-74.946,-60.165 c-4.3528,0,-8.5851,0.3837,-12.735,0.9573 c-6.6771,-27.748,-37.017,-48.751,-73.48,-48.751 Z">
-                        </path>
-                    </svg>
-                </div>
-
-                <!-- Top Right Thought Bubble -->
-                <div class="thought-bubble top-right">
-                    <svg viewBox="0 0 500 300">
-                        <defs>
-                            <clipPath id="bubbleClip2">
-                                <path class="bubble-path"
-                                    d="m250,1 c-27.103,0,-50.616,11.744,-63.768,29.088 c-12.203,-6.9299,-26.995,-11.12,-43.062,-11.12 c-41.35,0,-74.946,27.003,-74.946,60.239 c0,2.4423,0.564,4.7768,0.9162,7.1432 c-35.711,4.5799,-63.127,29.221,-63.127,59.208 c0,29.712,26.889,54.302,62.119,59.208 c-0.7138,3.336,-1.2827,6.7372,-1.2827,10.236 c0,33.236,33.596,60.165,74.946,60.165 c20.253,0,38.554,-6.5026,52.041,-17.011 c13.745,13.141,34.065,21.724,57.08,21.724 c32.837,0,60.442,-17.148,70.548,-40.797 c8.0886,2.4042,16.713,3.9766,25.837,3.9766 c41.35,0,74.854,-27.003,74.854,-60.239 c0,-16.713,-8.4769,-31.8,-22.172,-42.712 c6.9141,-9.1174,11.178,-19.699,11.178,-31.15 c0,-33.236,-33.596,-60.165,-74.946,-60.165 c-4.3528,0,-8.5851,0.3837,-12.735,0.9573 c-6.6771,-27.748,-37.017,-48.751,-73.48,-48.751 Z">
-                                </path>
-                            </clipPath>
-                        </defs>
-                        <!-- Clipped image -->
-                        <image href="selfintro/kimono1.jpg" x="-10%" y="0%" width="100%" height="100%"
-                            clip-path="url(#bubbleClip1)" />
-
-                        <!-- Bubble outline -->
-                        <path class="bubble-path"
-                            d="m250,1 c-27.103,0,-50.616,11.744,-63.768,29.088 c-12.203,-6.9299,-26.995,-11.12,-43.062,-11.12 c-41.35,0,-74.946,27.003,-74.946,60.239 c0,2.4423,0.564,4.7768,0.9162,7.1432 c-35.711,4.5799,-63.127,29.221,-63.127,59.208 c0,29.712,26.889,54.302,62.119,59.208 c-0.7138,3.336,-1.2827,6.7372,-1.2827,10.236 c0,33.236,33.596,60.165,74.946,60.165 c20.253,0,38.554,-6.5026,52.041,-17.011 c13.745,13.141,34.065,21.724,57.08,21.724 c32.837,0,60.442,-17.148,70.548,-40.797 c8.0886,2.4042,16.713,3.9766,25.837,3.9766 c41.35,0,74.854,-27.003,74.854,-60.239 c0,-16.713,-8.4769,-31.8,-22.172,-42.712 c6.9141,-9.1174,11.178,-19.699,11.178,-31.15 c0,-33.236,-33.596,-60.165,-74.946,-60.165 c-4.3528,0,-8.5851,0.3837,-12.735,0.9573 c-6.6771,-27.748,-37.017,-48.751,-73.48,-48.751 Z">
-                        </path>
-                    </svg>
-                </div>
-
-                <!-- Add other thought bubbles here with same structure -->
-
-                <!-- Center Japanese Flag -->
-                <div class="japan-flag">
-                    <img src="selfintro/Japan.jpg" alt="Japanese Flag">
-                </div>
-            </div>
-
-            <!-- Bottom Left Thought Bubble -->
-            <div class="thought-bubble bottom-left">
+            <!-- Top Left Thought Bubble -->
+            <div class="thought-bubble top-left">
                 <svg viewBox="0 0 500 300">
                     <defs>
-                        <clipPath id="bubbleClip3">
+                        <clipPath id="bubbleClip1">
+                            <path
+                                d="m250,1 c-27.103,0,-50.616,11.744,-63.768,29.088 c-12.203,-6.9299,-26.995,-11.12,-43.062,-11.12 c-41.35,0,-74.946,27.003,-74.946,60.239 c0,2.4423,0.564,4.7768,0.9162,7.1432 c-35.711,4.5799,-63.127,29.221,-63.127,59.208 c0,29.712,26.889,54.302,62.119,59.208 c-0.7138,3.336,-1.2827,6.7372,-1.2827,10.236 c0,33.236,33.596,60.165,74.946,60.165 c20.253,0,38.554,-6.5026,52.041,-17.011 c13.745,13.141,34.065,21.724,57.08,21.724 c32.837,0,60.442,-17.148,70.548,-40.797 c8.0886,2.4042,16.713,3.9766,25.837,3.9766 c41.35,0,74.854,-27.003,74.854,-60.239 c0,-16.713,-8.4769,-31.8,-22.172,-42.712 c6.9141,-9.1174,11.178,-19.699,11.178,-31.15 c0,-33.236,-33.596,-60.165,-74.946,-60.165 c-4.3528,0,-8.5851,0.3837,-12.735,0.9573 c-6.6771,-27.748,-37.017,-48.751,-73.48,-48.751 Z" />
+                        </clipPath>
+                    </defs>
+                    <image href="selfintro/sushi1.jpg" x="-10%" y="0%" width="100%" height="100%"
+                        clip-path="url(#bubbleClip1)" />
+                    <path class="bubble-path"
+                        d="m250,1 c-27.103,0,-50.616,11.744,-63.768,29.088 c-12.203,-6.9299,-26.995,-11.12,-43.062,-11.12 c-41.35,0,-74.946,27.003,-74.946,60.239 c0,2.4423,0.564,4.7768,0.9162,7.1432 c-35.711,4.5799,-63.127,29.221,-63.127,59.208 c0,29.712,26.889,54.302,62.119,59.208 c-0.7138,3.336,-1.2827,6.7372,-1.2827,10.236 c0,33.236,33.596,60.165,74.946,60.165 c20.253,0,38.554,-6.5026,52.041,-17.011 c13.745,13.141,34.065,21.724,57.08,21.724 c32.837,0,60.442,-17.148,70.548,-40.797 c8.0886,2.4042,16.713,3.9766,25.837,3.9766 c41.35,0,74.854,-27.003,74.854,-60.239 c0,-16.713,-8.4769,-31.8,-22.172,-42.712 c6.9141,-9.1174,11.178,-19.699,11.178,-31.15 c0,-33.236,-33.596,-60.165,-74.946,-60.165 c-4.3528,0,-8.5851,0.3837,-12.735,0.9573 c-6.6771,-27.748,-37.017,-48.751,-73.48,-48.751 Z">
+                    </path>
+                </svg>
+            </div>
+
+            <!-- Top Right Thought Bubble -->
+            <div class="thought-bubble top-right">
+                <svg viewBox="0 0 500 300">
+                    <defs>
+                        <clipPath id="bubbleClip2">
                             <path class="bubble-path"
                                 d="m250,1 c-27.103,0,-50.616,11.744,-63.768,29.088 c-12.203,-6.9299,-26.995,-11.12,-43.062,-11.12 c-41.35,0,-74.946,27.003,-74.946,60.239 c0,2.4423,0.564,4.7768,0.9162,7.1432 c-35.711,4.5799,-63.127,29.221,-63.127,59.208 c0,29.712,26.889,54.302,62.119,59.208 c-0.7138,3.336,-1.2827,6.7372,-1.2827,10.236 c0,33.236,33.596,60.165,74.946,60.165 c20.253,0,38.554,-6.5026,52.041,-17.011 c13.745,13.141,34.065,21.724,57.08,21.724 c32.837,0,60.442,-17.148,70.548,-40.797 c8.0886,2.4042,16.713,3.9766,25.837,3.9766 c41.35,0,74.854,-27.003,74.854,-60.239 c0,-16.713,-8.4769,-31.8,-22.172,-42.712 c6.9141,-9.1174,11.178,-19.699,11.178,-31.15 c0,-33.236,-33.596,-60.165,-74.946,-60.165 c-4.3528,0,-8.5851,0.3837,-12.735,0.9573 c-6.6771,-27.748,-37.017,-48.751,-73.48,-48.751 Z">
                             </path>
                         </clipPath>
                     </defs>
                     <!-- Clipped image -->
-                    <image href="selfintro/Fuji1.jpg" x="-10%" y="0%" width="100%" height="100%"
+                    <image href="selfintro/kimono1.jpg" x="-10%" y="0%" width="100%" height="100%"
                         clip-path="url(#bubbleClip1)" />
 
                     <!-- Bubble outline -->
@@ -767,60 +733,74 @@
                 </svg>
             </div>
 
-            <!-- Bottom Right Thought Bubble -->
-            <div class="thought-bubble bottom-right">
-                <svg viewBox="0 0 500 300">
-                    <defs>
-                        <clipPath id="bubbleClip4">
-                            <path class="bubble-path"
-                                d="m250,1 c-27.103,0,-50.616,11.744,-63.768,29.088 c-12.203,-6.9299,-26.995,-11.12,-43.062,-11.12 c-41.35,0,-74.946,27.003,-74.946,60.239 c0,2.4423,0.564,4.7768,0.9162,7.1432 c-35.711,4.5799,-63.127,29.221,-63.127,59.208 c0,29.712,26.889,54.302,62.119,59.208 c-0.7138,3.336,-1.2827,6.7372,-1.2827,10.236 c0,33.236,33.596,60.165,74.946,60.165 c20.253,0,38.554,-6.5026,52.041,-17.011 c13.745,13.141,34.065,21.724,57.08,21.724 c32.837,0,60.442,-17.148,70.548,-40.797 c8.0886,2.4042,16.713,3.9766,25.837,3.9766 c41.35,0,74.854,-27.003,74.854,-60.239 c0,-16.713,-8.4769,-31.8,-22.172,-42.712 c6.9141,-9.1174,11.178,-19.699,11.178,-31.15 c0,-33.236,-33.596,-60.165,-74.946,-60.165 c-4.3528,0,-8.5851,0.3837,-12.735,0.9573 c-6.6771,-27.748,-37.017,-48.751,-73.48,-48.751 Z">
-                            </path>
-                        </clipPath>
-                    </defs>
-                    <!-- Clipped image -->
-                    <image href="selfintro/Shrine1.jpg" x="-25%" y="-25%" width="140%" height="140%"
-                        clip-path="url(#bubbleClip1)" />
+            <!-- Add other thought bubbles here with same structure -->
 
-                    <!-- Bubble outline -->
-                    <path class="bubble-path"
-                        d="m250,1 c-27.103,0,-50.616,11.744,-63.768,29.088 c-12.203,-6.9299,-26.995,-11.12,-43.062,-11.12 c-41.35,0,-74.946,27.003,-74.946,60.239 c0,2.4423,0.564,4.7768,0.9162,7.1432 c-35.711,4.5799,-63.127,29.221,-63.127,59.208 c0,29.712,26.889,54.302,62.119,59.208 c-0.7138,3.336,-1.2827,6.7372,-1.2827,10.236 c0,33.236,33.596,60.165,74.946,60.165 c20.253,0,38.554,-6.5026,52.041,-17.011 c13.745,13.141,34.065,21.724,57.08,21.724 c32.837,0,60.442,-17.148,70.548,-40.797 c8.0886,2.4042,16.713,3.9766,25.837,3.9766 c41.35,0,74.854,-27.003,74.854,-60.239 c0,-16.713,-8.4769,-31.8,-22.172,-42.712 c6.9141,-9.1174,11.178,-19.699,11.178,-31.15 c0,-33.236,-33.596,-60.165,-74.946,-60.165 c-4.3528,0,-8.5851,0.3837,-12.735,0.9573 c-6.6771,-27.748,-37.017,-48.751,-73.48,-48.751 Z">
-                    </path>
-                </svg>
+            <!-- Center Japanese Flag -->
+            <div class="japan-flag">
+                <img src="selfintro/Japan.jpg" alt="Japanese Flag">
             </div>
-
         </div>
 
-
-        <!-- Slide 14 -->
-        <div class="slide" id="slide14"
-            style="display: none; padding-top: 15px; justify-content: center; align-items: center;">
-            <div class="thought-container" style="position: absolute; width: 100%; height: 100%;">
-
-                <!-- Top Left Thought Bubble -->
-                <div class="thought-bubble top-left">
-                    <svg viewBox="0 0 500 300">
-                        <path class="bubble-path"
-                            d="m250,1 c-27.103,0,-50.616,11.744,-63.768,29.088 c-12.203,-6.9299,-26.995,-11.12,-43.062,-11.12 c-41.35,0,-74.946,27.003,-74.946,60.239 c0,2.4423,0.564,4.7768,0.9162,7.1432 c-35.711,4.5799,-63.127,29.221,-63.127,59.208 c0,29.712,26.889,54.302,62.119,59.208 c-0.7138,3.336,-1.2827,6.7372,-1.2827,10.236 c0,33.236,33.596,60.165,74.946,60.165 c20.253,0,38.554,-6.5026,52.041,-17.011 c13.745,13.141,34.065,21.724,57.08,21.724 c32.837,0,60.442,-17.148,70.548,-40.797 c8.0886,2.4042,16.713,3.9766,25.837,3.9766 c41.35,0,74.854,-27.003,74.854,-60.239 c0,-16.713,-8.4769,-31.8,-22.172,-42.712 c6.9141,-9.1174,11.178,-19.699,11.178,-31.15 c0,-33.236,-33.596,-60.165,-74.946,-60.165 c-4.3528,0,-8.5851,0.3837,-12.735,0.9573 c-6.6771,-27.748,-37.017,-48.751,-73.48,-48.751 Z" />
-                    </svg>
-                </div>
-
-                <!-- Top Right Thought Bubble -->
-                <div class="thought-bubble top-right">
-                    <svg viewBox="0 0 500 300">
+        <!-- Bottom Left Thought Bubble -->
+        <div class="thought-bubble bottom-left">
+            <svg viewBox="0 0 500 300">
+                <defs>
+                    <clipPath id="bubbleClip3">
                         <path class="bubble-path"
                             d="m250,1 c-27.103,0,-50.616,11.744,-63.768,29.088 c-12.203,-6.9299,-26.995,-11.12,-43.062,-11.12 c-41.35,0,-74.946,27.003,-74.946,60.239 c0,2.4423,0.564,4.7768,0.9162,7.1432 c-35.711,4.5799,-63.127,29.221,-63.127,59.208 c0,29.712,26.889,54.302,62.119,59.208 c-0.7138,3.336,-1.2827,6.7372,-1.2827,10.236 c0,33.236,33.596,60.165,74.946,60.165 c20.253,0,38.554,-6.5026,52.041,-17.011 c13.745,13.141,34.065,21.724,57.08,21.724 c32.837,0,60.442,-17.148,70.548,-40.797 c8.0886,2.4042,16.713,3.9766,25.837,3.9766 c41.35,0,74.854,-27.003,74.854,-60.239 c0,-16.713,-8.4769,-31.8,-22.172,-42.712 c6.9141,-9.1174,11.178,-19.699,11.178,-31.15 c0,-33.236,-33.596,-60.165,-74.946,-60.165 c-4.3528,0,-8.5851,0.3837,-12.735,0.9573 c-6.6771,-27.748,-37.017,-48.751,-73.48,-48.751 Z">
                         </path>
-                    </svg>
-                </div>
+                    </clipPath>
+                </defs>
+                <!-- Clipped image -->
+                <image href="selfintro/Fuji1.jpg" x="-10%" y="0%" width="100%" height="100%"
+                    clip-path="url(#bubbleClip1)" />
 
-                <!-- Center Danish Flag -->
-                <div class="denmark-flag">
-                    <img src="selfintro/dk.png" alt="Japanese Flag">
-                </div>
+                <!-- Bubble outline -->
+                <path class="bubble-path"
+                    d="m250,1 c-27.103,0,-50.616,11.744,-63.768,29.088 c-12.203,-6.9299,-26.995,-11.12,-43.062,-11.12 c-41.35,0,-74.946,27.003,-74.946,60.239 c0,2.4423,0.564,4.7768,0.9162,7.1432 c-35.711,4.5799,-63.127,29.221,-63.127,59.208 c0,29.712,26.889,54.302,62.119,59.208 c-0.7138,3.336,-1.2827,6.7372,-1.2827,10.236 c0,33.236,33.596,60.165,74.946,60.165 c20.253,0,38.554,-6.5026,52.041,-17.011 c13.745,13.141,34.065,21.724,57.08,21.724 c32.837,0,60.442,-17.148,70.548,-40.797 c8.0886,2.4042,16.713,3.9766,25.837,3.9766 c41.35,0,74.854,-27.003,74.854,-60.239 c0,-16.713,-8.4769,-31.8,-22.172,-42.712 c6.9141,-9.1174,11.178,-19.699,11.178,-31.15 c0,-33.236,-33.596,-60.165,-74.946,-60.165 c-4.3528,0,-8.5851,0.3837,-12.735,0.9573 c-6.6771,-27.748,-37.017,-48.751,-73.48,-48.751 Z">
+                </path>
+            </svg>
+        </div>
+
+        <!-- Bottom Right Thought Bubble -->
+        <div class="thought-bubble bottom-right">
+            <svg viewBox="0 0 500 300">
+                <defs>
+                    <clipPath id="bubbleClip4">
+                        <path class="bubble-path"
+                            d="m250,1 c-27.103,0,-50.616,11.744,-63.768,29.088 c-12.203,-6.9299,-26.995,-11.12,-43.062,-11.12 c-41.35,0,-74.946,27.003,-74.946,60.239 c0,2.4423,0.564,4.7768,0.9162,7.1432 c-35.711,4.5799,-63.127,29.221,-63.127,59.208 c0,29.712,26.889,54.302,62.119,59.208 c-0.7138,3.336,-1.2827,6.7372,-1.2827,10.236 c0,33.236,33.596,60.165,74.946,60.165 c20.253,0,38.554,-6.5026,52.041,-17.011 c13.745,13.141,34.065,21.724,57.08,21.724 c32.837,0,60.442,-17.148,70.548,-40.797 c8.0886,2.4042,16.713,3.9766,25.837,3.9766 c41.35,0,74.854,-27.003,74.854,-60.239 c0,-16.713,-8.4769,-31.8,-22.172,-42.712 c6.9141,-9.1174,11.178,-19.699,11.178,-31.15 c0,-33.236,-33.596,-60.165,-74.946,-60.165 c-4.3528,0,-8.5851,0.3837,-12.735,0.9573 c-6.6771,-27.748,-37.017,-48.751,-73.48,-48.751 Z">
+                        </path>
+                    </clipPath>
+                </defs>
+                <!-- Clipped image -->
+                <image href="selfintro/Shrine1.jpg" x="-25%" y="-25%" width="140%" height="140%"
+                    clip-path="url(#bubbleClip1)" />
+
+                <!-- Bubble outline -->
+                <path class="bubble-path"
+                    d="m250,1 c-27.103,0,-50.616,11.744,-63.768,29.088 c-12.203,-6.9299,-26.995,-11.12,-43.062,-11.12 c-41.35,0,-74.946,27.003,-74.946,60.239 c0,2.4423,0.564,4.7768,0.9162,7.1432 c-35.711,4.5799,-63.127,29.221,-63.127,59.208 c0,29.712,26.889,54.302,62.119,59.208 c-0.7138,3.336,-1.2827,6.7372,-1.2827,10.236 c0,33.236,33.596,60.165,74.946,60.165 c20.253,0,38.554,-6.5026,52.041,-17.011 c13.745,13.141,34.065,21.724,57.08,21.724 c32.837,0,60.442,-17.148,70.548,-40.797 c8.0886,2.4042,16.713,3.9766,25.837,3.9766 c41.35,0,74.854,-27.003,74.854,-60.239 c0,-16.713,-8.4769,-31.8,-22.172,-42.712 c6.9141,-9.1174,11.178,-19.699,11.178,-31.15 c0,-33.236,-33.596,-60.165,-74.946,-60.165 c-4.3528,0,-8.5851,0.3837,-12.735,0.9573 c-6.6771,-27.748,-37.017,-48.751,-73.48,-48.751 Z">
+                </path>
+            </svg>
+        </div>
+
+    </div>
+
+
+    <!-- Slide 14 -->
+    <div class="slide" id="slide14"
+        style="display: none; padding-top: 15px; justify-content: center; align-items: center;">
+        <div class="thought-container" style="position: absolute; width: 100%; height: 100%;">
+
+            <!-- Top Left Thought Bubble -->
+            <div class="thought-bubble top-left">
+                <svg viewBox="0 0 500 300">
+                    <path class="bubble-path"
+                        d="m250,1 c-27.103,0,-50.616,11.744,-63.768,29.088 c-12.203,-6.9299,-26.995,-11.12,-43.062,-11.12 c-41.35,0,-74.946,27.003,-74.946,60.239 c0,2.4423,0.564,4.7768,0.9162,7.1432 c-35.711,4.5799,-63.127,29.221,-63.127,59.208 c0,29.712,26.889,54.302,62.119,59.208 c-0.7138,3.336,-1.2827,6.7372,-1.2827,10.236 c0,33.236,33.596,60.165,74.946,60.165 c20.253,0,38.554,-6.5026,52.041,-17.011 c13.745,13.141,34.065,21.724,57.08,21.724 c32.837,0,60.442,-17.148,70.548,-40.797 c8.0886,2.4042,16.713,3.9766,25.837,3.9766 c41.35,0,74.854,-27.003,74.854,-60.239 c0,-16.713,-8.4769,-31.8,-22.172,-42.712 c6.9141,-9.1174,11.178,-19.699,11.178,-31.15 c0,-33.236,-33.596,-60.165,-74.946,-60.165 c-4.3528,0,-8.5851,0.3837,-12.735,0.9573 c-6.6771,-27.748,-37.017,-48.751,-73.48,-48.751 Z" />
+                </svg>
             </div>
 
-            <!-- Bottom Left Thought Bubble -->
-            <div class="thought-bubble bottom-left">
+            <!-- Top Right Thought Bubble -->
+            <div class="thought-bubble top-right">
                 <svg viewBox="0 0 500 300">
                     <path class="bubble-path"
                         d="m250,1 c-27.103,0,-50.616,11.744,-63.768,29.088 c-12.203,-6.9299,-26.995,-11.12,-43.062,-11.12 c-41.35,0,-74.946,27.003,-74.946,60.239 c0,2.4423,0.564,4.7768,0.9162,7.1432 c-35.711,4.5799,-63.127,29.221,-63.127,59.208 c0,29.712,26.889,54.302,62.119,59.208 c-0.7138,3.336,-1.2827,6.7372,-1.2827,10.236 c0,33.236,33.596,60.165,74.946,60.165 c20.253,0,38.554,-6.5026,52.041,-17.011 c13.745,13.141,34.065,21.724,57.08,21.724 c32.837,0,60.442,-17.148,70.548,-40.797 c8.0886,2.4042,16.713,3.9766,25.837,3.9766 c41.35,0,74.854,-27.003,74.854,-60.239 c0,-16.713,-8.4769,-31.8,-22.172,-42.712 c6.9141,-9.1174,11.178,-19.699,11.178,-31.15 c0,-33.236,-33.596,-60.165,-74.946,-60.165 c-4.3528,0,-8.5851,0.3837,-12.735,0.9573 c-6.6771,-27.748,-37.017,-48.751,-73.48,-48.751 Z">
@@ -828,85 +808,100 @@
                 </svg>
             </div>
 
-            <!-- Bottom Right Thought Bubble -->
-            <div class="thought-bubble bottom-right">
-                <svg viewBox="0 0 500 300">
-                    <path class="bubble-path"
-                        d="m250,1 c-27.103,0,-50.616,11.744,-63.768,29.088 c-12.203,-6.9299,-26.995,-11.12,-43.062,-11.12 c-41.35,0,-74.946,27.003,-74.946,60.239 c0,2.4423,0.564,4.7768,0.9162,7.1432 c-35.711,4.5799,-63.127,29.221,-63.127,59.208 c0,29.712,26.889,54.302,62.119,59.208 c-0.7138,3.336,-1.2827,6.7372,-1.2827,10.236 c0,33.236,33.596,60.165,74.946,60.165 c20.253,0,38.554,-6.5026,52.041,-17.011 c13.745,13.141,34.065,21.724,57.08,21.724 c32.837,0,60.442,-17.148,70.548,-40.797 c8.0886,2.4042,16.713,3.9766,25.837,3.9766 c41.35,0,74.854,-27.003,74.854,-60.239 c0,-16.713,-8.4769,-31.8,-22.172,-42.712 c6.9141,-9.1174,11.178,-19.699,11.178,-31.15 c0,-33.236,-33.596,-60.165,-74.946,-60.165 c-4.3528,0,-8.5851,0.3837,-12.735,0.9573 c-6.6771,-27.748,-37.017,-48.751,-73.48,-48.751 Z">
-                    </path>
-                </svg>
+            <!-- Center Danish Flag -->
+            <div class="denmark-flag">
+                <img src="selfintro/dk.png" alt="Japanese Flag">
             </div>
         </div>
 
-        <!-- Slide 15 -->
-        <div class="slide" id="slide15" style="display: none; padding-top: 15px; justify-content: flex-start;">
-            <img data-src="selfintro/lego1.jpg" alt="Lego Blocks"
-                style="flex: 1; max-width: 80%; max-height: 80%;object-fit: contain;">
+        <!-- Bottom Left Thought Bubble -->
+        <div class="thought-bubble bottom-left">
+            <svg viewBox="0 0 500 300">
+                <path class="bubble-path"
+                    d="m250,1 c-27.103,0,-50.616,11.744,-63.768,29.088 c-12.203,-6.9299,-26.995,-11.12,-43.062,-11.12 c-41.35,0,-74.946,27.003,-74.946,60.239 c0,2.4423,0.564,4.7768,0.9162,7.1432 c-35.711,4.5799,-63.127,29.221,-63.127,59.208 c0,29.712,26.889,54.302,62.119,59.208 c-0.7138,3.336,-1.2827,6.7372,-1.2827,10.236 c0,33.236,33.596,60.165,74.946,60.165 c20.253,0,38.554,-6.5026,52.041,-17.011 c13.745,13.141,34.065,21.724,57.08,21.724 c32.837,0,60.442,-17.148,70.548,-40.797 c8.0886,2.4042,16.713,3.9766,25.837,3.9766 c41.35,0,74.854,-27.003,74.854,-60.239 c0,-16.713,-8.4769,-31.8,-22.172,-42.712 c6.9141,-9.1174,11.178,-19.699,11.178,-31.15 c0,-33.236,-33.596,-60.165,-74.946,-60.165 c-4.3528,0,-8.5851,0.3837,-12.735,0.9573 c-6.6771,-27.748,-37.017,-48.751,-73.48,-48.751 Z">
+                </path>
+            </svg>
         </div>
 
-        <!-- Slide 16 -->
-        <div class="slide" id="slide16" style="display: none; padding-top: 15px; justify-content: flex-start;">
-            <img data-src="selfintro/lego2.jpg" alt="Lego Blocks"
-                style="flex: 1; max-width: 80%; max-height: 80%;object-fit: contain;">
+        <!-- Bottom Right Thought Bubble -->
+        <div class="thought-bubble bottom-right">
+            <svg viewBox="0 0 500 300">
+                <path class="bubble-path"
+                    d="m250,1 c-27.103,0,-50.616,11.744,-63.768,29.088 c-12.203,-6.9299,-26.995,-11.12,-43.062,-11.12 c-41.35,0,-74.946,27.003,-74.946,60.239 c0,2.4423,0.564,4.7768,0.9162,7.1432 c-35.711,4.5799,-63.127,29.221,-63.127,59.208 c0,29.712,26.889,54.302,62.119,59.208 c-0.7138,3.336,-1.2827,6.7372,-1.2827,10.236 c0,33.236,33.596,60.165,74.946,60.165 c20.253,0,38.554,-6.5026,52.041,-17.011 c13.745,13.141,34.065,21.724,57.08,21.724 c32.837,0,60.442,-17.148,70.548,-40.797 c8.0886,2.4042,16.713,3.9766,25.837,3.9766 c41.35,0,74.854,-27.003,74.854,-60.239 c0,-16.713,-8.4769,-31.8,-22.172,-42.712 c6.9141,-9.1174,11.178,-19.699,11.178,-31.15 c0,-33.236,-33.596,-60.165,-74.946,-60.165 c-4.3528,0,-8.5851,0.3837,-12.735,0.9573 c-6.6771,-27.748,-37.017,-48.751,-73.48,-48.751 Z">
+                </path>
+            </svg>
         </div>
+    </div>
 
-        <!-- Slide 17 -->
-        <div class="slide" id="slide17" style="display: none; padding-top: 15px; justify-content: flex-start;">
-            <img data-src="selfintro/lego3.jpg" alt="Lego Blocks"
-                style="flex: 1; max-width: 80%; max-height: 80%;object-fit: contain;">
-        </div>
+    <!-- Slide 15 -->
+    <div class="slide" id="slide15" style="display: none; padding-top: 15px; justify-content: flex-start;">
+        <img data-src="selfintro/lego1.jpg" alt="Lego Blocks"
+            style="flex: 1; max-width: 80%; max-height: 80%;object-fit: contain;">
+    </div>
 
-        <!-- Slide 18 -->
-        <div class="slide" id="slide18"
-            style="display: none; padding-top: 15px; justify-content: flex-start; height: 100vh;">
-            <div style="display: flex; align-items: center; gap: 20px; max-width: 99%; height: 80%;">
-                <img data-src="selfintro/sports.png" data-alt="sports"
-                    style="max-width: 90%; max-height: 90%; object-fit: contain;">
-                <div style="display: flex; flex-direction: column; gap: 2rem;">
-                    <p style="font-size: 10rem; font-weight: regular;">What sport do you like?</p>
-                </div>
+    <!-- Slide 16 -->
+    <div class="slide" id="slide16" style="display: none; padding-top: 15px; justify-content: flex-start;">
+        <img data-src="selfintro/lego2.jpg" alt="Lego Blocks"
+            style="flex: 1; max-width: 80%; max-height: 80%;object-fit: contain;">
+    </div>
+
+    <!-- Slide 17 -->
+    <div class="slide" id="slide17" style="display: none; padding-top: 15px; justify-content: flex-start;">
+        <img data-src="selfintro/lego3.jpg" alt="Lego Blocks"
+            style="flex: 1; max-width: 80%; max-height: 80%;object-fit: contain;">
+    </div>
+
+    <!-- Slide 18 -->
+    <div class="slide" id="slide18"
+        style="display: none; padding-top: 15px; justify-content: flex-start; height: 100vh;">
+        <div style="display: flex; align-items: center; gap: 20px; max-width: 99%; height: 80%;">
+            <img data-src="selfintro/sports.png" data-alt="sports"
+                style="max-width: 90%; max-height: 90%; object-fit: contain;">
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+                <p style="font-size: 10rem; font-weight: regular;">What sport do you like?</p>
             </div>
         </div>
+    </div>
 
-        <!-- Slide 19 -->
-        <div class="slide" id="slide19" style="display: none; padding-top: 15px; justify-content: flex-start;">
-            <img data-src="selfintro/poi1.jpg" alt="poi"
-                style="flex: 1; max-width: 80%; max-height: 80%;object-fit: contain;">
-            <p class="reveal-text hidden photo-caption" style="font-size: 3rem;">
-                I like poi.</p>
-        </div>
+    <!-- Slide 19 -->
+    <div class="slide" id="slide19" style="display: none; padding-top: 15px; justify-content: flex-start;">
+        <img data-src="selfintro/poi1.jpg" alt="poi"
+            style="flex: 1; max-width: 80%; max-height: 80%;object-fit: contain;">
+        <p class="reveal-text hidden photo-caption" style="font-size: 3rem;">
+            I like poi.</p>
+    </div>
 
-        <!-- Slide 20 -->
-        <div class="slide" id="slide20" style="display: none; padding-top: 15px; justify-content: flex-start;">
-            <img data-src="selfintro/poi2.JPG" alt="How old is Andy now?"
-                style="flex: 1; max-width: 80%; max-height: 80%;object-fit: contain;">
-        </div>
+    <!-- Slide 20 -->
+    <div class="slide" id="slide20" style="display: none; padding-top: 15px; justify-content: flex-start;">
+        <img data-src="selfintro/poi2.JPG" alt="How old is Andy now?"
+            style="flex: 1; max-width: 80%; max-height: 80%;object-fit: contain;">
+    </div>
 
-        <!-- Slide 21 -->
-        <div class="slide" id="slide21" style="display: none; padding-top: 15px; justify-content: flex-start;">
-            <img data-src="selfintro/poi3.JPG" alt="How old is Andy now?"
-                style="flex: 1; max-width: 80%; max-height: 80%;object-fit: contain;">
-        </div>
+    <!-- Slide 21 -->
+    <div class="slide" id="slide21" style="display: none; padding-top: 15px; justify-content: flex-start;">
+        <img data-src="selfintro/poi3.JPG" alt="How old is Andy now?"
+            style="flex: 1; max-width: 80%; max-height: 80%;object-fit: contain;">
+    </div>
 
-        <!-- Slide 22 -->
-        <div class="slide" id="slide22" style="display: none; padding-top: 15px; justify-content: flex-start;">
-            <div>
-                <span class="questions">A</span>
-                <span class="questions">N</span>
-                <span class="questions">Y</span>
-                <span class="questions"> </span>
-                <span class="questions">Q</span>
-                <span class="questions">U</span>
-                <span class="questions">E</span>
-                <span class="questions">S</span>
-                <span class="questions">T</span>
-                <span class="questions">I</span>
-                <span class="questions">O</span>
-                <span class="questions">N</span>
-                <span class="questions">S</span>
-                <span class="questions">?</span>
-            </div>
+    <!-- Slide 22 -->
+    <div class="slide" id="slide22" style="display: none; padding-top: 15px; justify-content: flex-start;">
+        <div>
+            <span class="questions">A</span>
+            <span class="questions">N</span>
+            <span class="questions">Y</span>
+            <span class="questions"> </span>
+            <span class="questions">Q</span>
+            <span class="questions">U</span>
+            <span class="questions">E</span>
+            <span class="questions">S</span>
+            <span class="questions">T</span>
+            <span class="questions">I</span>
+            <span class="questions">O</span>
+            <span class="questions">N</span>
+            <span class="questions">S</span>
+            <span class="questions">?</span>
         </div>
+    </div>
 
 
     </div>
@@ -928,7 +923,11 @@
             }
 
             init() {
-                document.getElementById('slideshow').addEventListener('click', (e) => this.handleSlideClick(e));
+                //document.getElementById('slideshow').addEventListener('click', (e) => this.handleSlideClick(e));
+                document.querySelectorAll('.slide').forEach(slide => {
+                    slide.addEventListener('click', (e) => this.handleSlideClick(e));
+                });
+
                 document.addEventListener('keydown', (e) => this.handleKeyPress(e));
                 document.addEventListener('mousedown', (e) => this.handleMouseDown(e));
                 document.addEventListener('mouseup', (e) => this.handleMouseUp(e));
@@ -957,35 +956,35 @@
                 this.nextSlide(e);
             }
 
-nextSlide(e) {
-    if (!e || (!this.isSelecting)) {
-        document.getElementById(`slide${this.currentSlide}`).style.display = 'none';
-        this.currentSlide = this.currentSlide >= this.totalSlides ? 1 : this.currentSlide + 1;
-        resetRevealState(this.currentSlide);
-        const nextSlide = document.getElementById(`slide${this.currentSlide}`);
-        nextSlide.style.display = 'flex';
+            nextSlide(e) {
+                if (!e || (!this.isSelecting)) {
+                    document.getElementById(`slide${this.currentSlide}`).style.display = 'none';
+                    this.currentSlide = this.currentSlide >= this.totalSlides ? 1 : this.currentSlide + 1;
+                    resetRevealState(this.currentSlide);
+                    const nextSlide = document.getElementById(`slide${this.currentSlide}`);
+                    nextSlide.style.display = 'flex';
 
-        // Load images
-        const images = nextSlide.querySelectorAll('img[data-src]');
-        images.forEach(img => {
-            img.src = img.dataset.src;
-            img.removeAttribute('data-src');
-        });
+                    // Load images
+                    const images = nextSlide.querySelectorAll('img[data-src]');
+                    images.forEach(img => {
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                    });
 
-        // Load text
-        const textElements = nextSlide.querySelectorAll('[data-content]');
-        textElements.forEach(element => {
-            element.textContent = element.dataset.content;
-            element.removeAttribute('data-content');
-        });
+                    // Load text
+                    const textElements = nextSlide.querySelectorAll('[data-content]');
+                    textElements.forEach(element => {
+                        element.textContent = element.dataset.content;
+                        element.removeAttribute('data-content');
+                    });
 
-        // Load age calculators
-        updateAgeCalculators();
+                    // Load age calculators
+                    updateAgeCalculators();
 
-        // Taking care of placeholder images
-        swapInDelayedImages(nextSlide);
-    }
-}
+                    // Taking care of placeholder images
+                    swapInDelayedImages(nextSlide);
+                }
+            }
 
 
             prevSlide() {
@@ -1055,64 +1054,64 @@ nextSlide(e) {
         }
 
 
-// --- Preload all images before starting the slideshow ---
-const imageUrls = [
-    'selfintro/Andy5yo.jpg',
-    'selfintro/Toy Story.jpg',
-    'selfintro/toyandy.jpg',
-    'selfintro/Andy.JPG',
-    'selfintro/ice-cream-cone.png',
-    'selfintro/Noah.jpg',
-    'selfintro/Allan1.jpg',
-    'selfintro/Nina1.jpg',
-    'selfintro/family1.jpg',
-    'selfintro/DenmarkFlag.jpg',
-    'selfintro/jp.png',
-    'selfintro/dk.png',
-    'selfintro/DenJap.PNG',
-    'selfintro/sushi1.jpg',
-    'selfintro/kimono1.jpg',
-    'selfintro/Fuji1.jpg',
-    'selfintro/Shrine1.jpg',
-    'selfintro/lego1.jpg',
-    'selfintro/lego2.jpg',
-    'selfintro/lego3.jpg',
-    'selfintro/sports.png',
-    'selfintro/poi1.jpg',
-    'selfintro/poi2.JPG',
-    'selfintro/poi3.JPG',
-    'selfintro/Japan.jpg'
-    // Add any other images you use!
-];
+        // --- Preload all images before starting the slideshow ---
+        const imageUrls = [
+            'selfintro/Andy5yo.jpg',
+            'selfintro/Toy Story.jpg',
+            'selfintro/toyandy.jpg',
+            'selfintro/Andy.JPG',
+            'selfintro/ice-cream-cone.png',
+            'selfintro/Noah.jpg',
+            'selfintro/Allan1.jpg',
+            'selfintro/Nina1.jpg',
+            'selfintro/family1.jpg',
+            'selfintro/DenmarkFlag.jpg',
+            'selfintro/jp.png',
+            'selfintro/dk.png',
+            'selfintro/DenJap.PNG',
+            'selfintro/sushi1.jpg',
+            'selfintro/kimono1.jpg',
+            'selfintro/Fuji1.jpg',
+            'selfintro/Shrine1.jpg',
+            'selfintro/lego1.jpg',
+            'selfintro/lego2.jpg',
+            'selfintro/lego3.jpg',
+            'selfintro/sports.png',
+            'selfintro/poi1.jpg',
+            'selfintro/poi2.JPG',
+            'selfintro/poi3.JPG',
+            'selfintro/Japan.jpg'
+            // Add any other images you use!
+        ];
 
-function preloadImages(urls, allDone) {
-    let loaded = 0;
-    if (urls.length === 0) allDone();
-    urls.forEach(url => {
-        const img = new Image();
-        img.onload = img.onerror = function() {
-            loaded++;
-            if (loaded === urls.length) allDone();
-        };
-        img.src = url;
-    });
-}
+        function preloadImages(urls, allDone) {
+            let loaded = 0;
+            if (urls.length === 0) allDone();
+            urls.forEach(url => {
+                const img = new Image();
+                img.onload = img.onerror = function () {
+                    loaded++;
+                    if (loaded === urls.length) allDone();
+                };
+                img.src = url;
+            });
+        }
 
-// Hide all slides until loaded
-document.querySelectorAll('.slide').forEach(slide => slide.style.display = 'none');
+        // Hide all slides until loaded
+        document.querySelectorAll('.slide').forEach(slide => slide.style.display = 'none');
 
-preloadImages(imageUrls, function() {
-    document.getElementById('loader').style.display = 'none';
-    // Show the first slide
-    document.getElementById('slide1').style.display = 'flex';
-    // Now start the slideshow
-    window.slideshow = new Slideshow(22);
-});
+        preloadImages(imageUrls, function () {
+            document.getElementById('loader').style.display = 'none';
+            // Show the first slide
+            document.getElementById('slide1').style.display = 'flex';
+            // Now start the slideshow
+            window.slideshow = new Slideshow(22);
+        });
 
 
 
         // Initialize the slideshow
-       // const slideshow = new Slideshow(22);
+        // const slideshow = new Slideshow(22);
 
 
 
@@ -1157,22 +1156,22 @@ preloadImages(imageUrls, function() {
         }
 
 
-function swapInDelayedImages(slideElement) {
-    // For each delayed image in the current slide
-    slideElement.querySelectorAll('img.delayed-img[data-src]').forEach(function(img) {
-        // Only set src if not already set
-        if (!img.src || img.src.indexOf(img.dataset.src) === -1) {
-            img.src = img.dataset.src;
-            img.removeAttribute('data-src');
+        function swapInDelayedImages(slideElement) {
+            // For each delayed image in the current slide
+            slideElement.querySelectorAll('img.delayed-img[data-src]').forEach(function (img) {
+                // Only set src if not already set
+                if (!img.src || img.src.indexOf(img.dataset.src) === -1) {
+                    img.src = img.dataset.src;
+                    img.removeAttribute('data-src');
+                }
+                // When the real image loads, hide the placeholder
+                img.addEventListener('load', function handler() {
+                    const placeholder = img.parentElement.querySelector('.placeholder-img');
+                    if (placeholder) placeholder.style.display = 'none';
+                    img.removeEventListener('load', handler);
+                });
+            });
         }
-        // When the real image loads, hide the placeholder
-        img.addEventListener('load', function handler() {
-            const placeholder = img.parentElement.querySelector('.placeholder-img');
-            if (placeholder) placeholder.style.display = 'none';
-            img.removeEventListener('load', handler);
-        });
-    });
-}
 
         //#endregion
 
