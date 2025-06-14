@@ -536,13 +536,15 @@
 </head>
 
 <body>
-
-    <div id="loader"
-        style="
+<div id="loader" style="
   position:fixed; left:0; top:0; width:100vw; height:100vh;
-  background:white; color:#222; display:flex; align-items:center; justify-content:center; z-index:9999; font-size:2rem;">
-        Loading presentation...
-    </div>
+  background:white; color:#222; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:9999; font-family:sans-serif;">
+  <span style="font-size:2rem; margin-bottom:2rem;">Loading presentation...</span>
+  <div id="progress-bar-bg" style="width:60vw; height:1.5rem; background:#eee; border-radius:0.75rem; overflow:hidden;">
+    <div id="progress-bar" style="width:0%; height:100%; background:#4a90e2; transition:width 0.2s;"></div>
+  </div>
+  <span id="progress-text" style="margin-top:1rem; font-size:1.2rem;">0%</span>
+</div>
 
     <!-- #region =============== Slides =============== -->
     <div class="wave"></div>
@@ -607,7 +609,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    
 
 
 
@@ -874,11 +876,74 @@
 
 
     </div>
+
     <!-- #endregion -->
 
  <script>
 
     //#region =============== Scripts ===============  -->     
+    // --- Preload all images before starting the slideshow ---
+    const imageUrls = [
+        'selfintro/Andy5yo.jpg',
+        'selfintro/Toy Story.jpg',
+        'selfintro/toyandy.jpg',
+        'selfintro/Andy.JPG',
+        'selfintro/ice-cream-cone.png',
+        'selfintro/Noah.jpg',
+        'selfintro/Allan1.jpg',
+        'selfintro/Nina1.jpg',
+        'selfintro/family1.jpg',
+        'selfintro/DenmarkFlag.jpg',
+        'selfintro/jp.png',
+        'selfintro/dk.png',
+        'selfintro/DenJap.PNG',
+        'selfintro/sushi1.jpg',
+        'selfintro/kimono1.jpg',
+        'selfintro/Fuji1.jpg',
+        'selfintro/Shrine1.jpg',
+        'selfintro/lego1.jpg',
+        'selfintro/lego2.jpg',
+        'selfintro/lego3.jpg',
+        'selfintro/sports.png',
+        'selfintro/poi1.jpg',
+        'selfintro/poi2.JPG',
+        'selfintro/poi3.JPG',
+        'selfintro/Japan.jpg'
+    ];
+
+    let loaded = 0;
+const progressBar = document.getElementById('progress-bar');
+const progressText = document.getElementById('progress-text');
+
+function updateProgress() {
+  const percent = Math.round((loaded / imageUrls.length) * 100);
+  progressBar.style.width = percent + '%';
+  progressText.textContent = percent + '%';
+}
+
+    function preloadImages(urls, allDone) {
+        let loaded = 0;
+        if (urls.length === 0) allDone();
+        urls.forEach(url => {
+            const img = new Image();
+            img.onload = img.onerror = function () {
+                loaded++;
+                if (loaded === urls.length) allDone();
+            };
+            img.src = url;
+        });
+    }
+
+document.querySelectorAll('.slide').forEach(slide => slide.style.display = 'none');
+
+preloadImages(imageUrls, function() {
+  document.getElementById('loader').style.display = 'none';
+  document.getElementById('slide1').style.display = 'flex';
+  window.slideshow = new Slideshow(22);
+});
+updateProgress();
+
+
     class Slideshow {
         constructor(totalSlides) {
             this.currentSlide = 1;
@@ -1072,47 +1137,7 @@
         }
     }
 
-    // --- Preload all images before starting the slideshow ---
-    const imageUrls = [
-        'selfintro/Andy5yo.jpg',
-        'selfintro/Toy Story.jpg',
-        'selfintro/toyandy.jpg',
-        'selfintro/Andy.JPG',
-        'selfintro/ice-cream-cone.png',
-        'selfintro/Noah.jpg',
-        'selfintro/Allan1.jpg',
-        'selfintro/Nina1.jpg',
-        'selfintro/family1.jpg',
-        'selfintro/DenmarkFlag.jpg',
-        'selfintro/jp.png',
-        'selfintro/dk.png',
-        'selfintro/DenJap.PNG',
-        'selfintro/sushi1.jpg',
-        'selfintro/kimono1.jpg',
-        'selfintro/Fuji1.jpg',
-        'selfintro/Shrine1.jpg',
-        'selfintro/lego1.jpg',
-        'selfintro/lego2.jpg',
-        'selfintro/lego3.jpg',
-        'selfintro/sports.png',
-        'selfintro/poi1.jpg',
-        'selfintro/poi2.JPG',
-        'selfintro/poi3.JPG',
-        'selfintro/Japan.jpg'
-    ];
 
-    function preloadImages(urls, allDone) {
-        let loaded = 0;
-        if (urls.length === 0) allDone();
-        urls.forEach(url => {
-            const img = new Image();
-            img.onload = img.onerror = function () {
-                loaded++;
-                if (loaded === urls.length) allDone();
-            };
-            img.src = url;
-        });
-    }
 
     // Hide all slides until loaded
     document.querySelectorAll('.slide').forEach(slide => slide.style.display = 'none');
