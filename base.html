@@ -1,14 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>My Project</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- iOS web app meta -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="My Project">
-  <!-- Inline critical loader CSS -->
+    <meta charset="UTF-8">
+    <!-- #region Inline critical loader CSS -->
+
   <style>
     body {
       margin: 0;
@@ -102,10 +97,23 @@
     #main-content {
       display: none;
     }
+ 
+  </style>
+     <!-- #endregion -->
+  
+  <title>My Project</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- iOS web app meta -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="My Project">
+<style>
+    /* Add main styles here */
+
   </style>
 </head>
 <body>
-  <!-- Preloader -->
+  <!-- #region Preloader -->
   <div id="loader" role="status" aria-live="polite">
     <div id="loader-card">
       <div class="loader-logo">
@@ -123,6 +131,7 @@
       <span id="progress-text">0%</span>
     </div>
   </div>
+   <!-- #endregion -->
 
   <!-- Main app content goes here -->
   <div id="main-content">
@@ -131,7 +140,7 @@
   </div>
 
   <script>
-    // --- Preloader logic ---
+    // #region Preloader logic
     // List your assets here (images, etc.)
     const assetsToPreload = [
       // 'img/example1.png',
@@ -179,6 +188,12 @@
         updateProgress();
       }, 50);
     });
+    // #endregion
+// #region Main Script Here
+
+
+
+  // #endregion
   </script>
 </body>
 </html>
