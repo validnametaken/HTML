@@ -1,6 +1,21 @@
 <html>
 
 <head>
+      <style>
+    #loader {
+      position:fixed; left:0; top:0; width:100vw; height:100vh;
+      background:white; color:#222; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:9999; font-family:sans-serif;
+    }
+    #progress-bar-bg {
+      width:60vw; height:1.5rem; background:#eee; border-radius:0.75rem; overflow:hidden;
+    }
+    #progress-bar {
+      width:0%; height:100%; background:#4a90e2; transition:width 0.2s;
+    }
+    #progress-text {
+      margin-top:1rem; font-size:1.2rem;
+    }
+  </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -908,8 +923,8 @@
         'selfintro/Fuji1.jpg',
         'selfintro/Shrine1.jpg',
         'selfintro/lego1.jpg',
-        'selfintro/lego2.jpg',
-        'selfintro/lego3.jpg',
+        'selfintro/lego2.JPG',
+        'selfintro/lego3.JPG',
         'selfintro/sports.png',
         'selfintro/poi1.jpg',
         'selfintro/poi2.JPG',
@@ -917,9 +932,9 @@
         'selfintro/Japan.jpg'
     ];
 
-    let loaded = 0;
 const progressBar = document.getElementById('progress-bar');
 const progressText = document.getElementById('progress-text');
+let loaded = 0;
 
 function updateProgress() {
   const percent = Math.round((loaded / imageUrls.length) * 100);
@@ -928,12 +943,13 @@ function updateProgress() {
 }
 
     function preloadImages(urls, allDone) {
-        let loaded = 0;
+        
         if (urls.length === 0) allDone();
         urls.forEach(url => {
             const img = new Image();
             img.onload = img.onerror = function () {
                 loaded++;
+                updateProgress();
                 if (loaded === urls.length) allDone();
             };
             img.src = url;
@@ -965,6 +981,7 @@ updateProgress();
             
             this.init();
         }
+        
 
         init() {
             // Cache all slide elements upfront
@@ -1057,10 +1074,7 @@ updateProgress();
 
             // Load age calculators
             this.updateAgeCalculators();
-
-            // Handle delayed images
-            this.swapInDelayedImages(slideElement);
-        }
+}
 
         handleKeyPress(e) {
             if (e.key === 'ArrowRight') {
@@ -1128,33 +1142,9 @@ updateProgress();
             });
         }
 
-        swapInDelayedImages(slideElement) {
-            slideElement.querySelectorAll('img.delayed-img[data-src]').forEach(function (img) {
-                if (!img.src || img.src.indexOf(img.dataset.src) === -1) {
-                    img.src = img.dataset.src;
-                    img.removeAttribute('data-src');
-                }
-                img.addEventListener('load', function handler() {
-                    const placeholder = img.parentElement.querySelector('.placeholder-img');
-                    if (placeholder) placeholder.style.display = 'none';
-                    img.removeEventListener('load', handler);
-                });
-            });
-        }
-    }
+}
 
 
-
-    // Hide all slides until loaded
-    document.querySelectorAll('.slide').forEach(slide => slide.style.display = 'none');
-
-    preloadImages(imageUrls, function () {
-        document.getElementById('loader').style.display = 'none';
-        // Show the first slide
-        document.getElementById('slide1').style.display = 'flex';
-        // Now start the slideshow
-        window.slideshow = new Slideshow(22);
-    });
 
     // Add event listener to button (if the button exists)
     document.addEventListener('DOMContentLoaded', () => {
@@ -1182,11 +1172,6 @@ updateProgress();
         }
     }
 
-    function swapInDelayedImages(slideElement) {
-        if (window.slideshow) {
-            window.slideshow.swapInDelayedImages(slideElement);
-        }
-    }
 
     //#endregion
 
