@@ -876,37 +876,124 @@
     </div>
     <!-- #endregion -->
 
-    <script>
+ <script>
 
-        //#region =============== Scripts ===============  -->     
-        class Slideshow {
-            constructor(totalSlides) {
-                this.currentSlide = 1;
-                this.totalSlides = totalSlides;
-                this.revealIndexes = {};
-                this.isSelecting = false;
-                this.startX = 0;
-                this.startY = 0;
+    //#region =============== Scripts ===============  -->     
+    class Slideshow {
+        constructor(totalSlides) {
+            this.currentSlide = 1;
+            this.totalSlides = totalSlides;
+            this.revealIndexes = {};
+            this.isSelecting = false;
+            this.startX = 0;
+            this.startY = 0;
+            
+            // Cache DOM elements
+            this.slides = {};
+            this.slideshow = document.getElementById('slideshow');
+            
+            this.init();
+        }
 
-                this.init();
+        init() {
+            // Cache all slide elements upfront
+            this.cacheSlideElements();
+            
+            // Use event delegation instead of adding listeners to each slide
+            this.slideshow.addEventListener('click', (e) => this.handleSlideClick(e));
+            
+            document.addEventListener('keydown', (e) => this.handleKeyPress(e));
+            document.addEventListener('mousedown', (e) => this.handleMouseDown(e));
+            document.addEventListener('mouseup', (e) => this.handleMouseUp(e));
+
+            // Initialize first slide
+            this.slides[1].style.display = 'flex';
+        }
+
+        cacheSlideElements() {
+            // Cache all slide elements to avoid repeated DOM queries
+            for (let i = 1; i <= this.totalSlides; i++) {
+                this.slides[i] = document.getElementById(`slide${i}`);
+            }
+        }
+
+        handleSlideClick(e) {
+            // Check if click came from a slide (event delegation)
+            const slideElement = e.target.closest('.slide');
+            if (!slideElement) return;
+            
+            const currentSlideElement = this.slides[this.currentSlide];
+            const revealElements = currentSlideElement.querySelectorAll('.reveal-text');
+
+            if (!this.revealIndexes[this.currentSlide]) {
+                this.revealIndexes[this.currentSlide] = 0;
             }
 
-            init() {
-                //document.getElementById('slideshow').addEventListener('click', (e) => this.handleSlideClick(e));
-                document.querySelectorAll('.slide').forEach(slide => {
-                    slide.addEventListener('click', (e) => this.handleSlideClick(e));
-                });
-
-                document.addEventListener('keydown', (e) => this.handleKeyPress(e));
-                document.addEventListener('mousedown', (e) => this.handleMouseDown(e));
-                document.addEventListener('mouseup', (e) => this.handleMouseUp(e));
-
-                // Initialize first slide
-                document.getElementById('slide1').style.display = 'flex';
+            if (revealElements.length > 0) {
+                if (this.revealIndexes[this.currentSlide] < revealElements.length) {
+                    revealElements[this.revealIndexes[this.currentSlide]].classList.remove('hidden');
+                    this.revealIndexes[this.currentSlide]++;
+                    return;
+                }
             }
 
-            handleSlideClick(e) {
-                const currentSlideElement = document.getElementById(`slide${this.currentSlide}`);
+            this.revealIndexes[this.currentSlide] = 0;
+            this.nextSlide(e);
+        }
+
+        nextSlide(e) {
+            if (!e || (!this.isSelecting)) {
+                // Use cached elements instead of DOM queries
+                this.slides[this.currentSlide].style.display = 'none';
+                this.currentSlide = this.currentSlide >= this.totalSlides ? 1 : this.currentSlide + 1;
+                this.resetRevealState(this.currentSlide);
+                
+                const nextSlide = this.slides[this.currentSlide];
+                nextSlide.style.display = 'flex';
+
+                // Batch DOM operations
+                this.loadSlideContent(nextSlide);
+            }
+        }
+
+        prevSlide() {
+            // Use cached elements
+            this.slides[this.currentSlide].style.display = 'none';
+            this.currentSlide = this.currentSlide <= 1 ? this.totalSlides : this.currentSlide - 1;
+            this.resetRevealState(this.currentSlide);
+            
+            const prevSlide = this.slides[this.currentSlide];
+            prevSlide.style.display = 'flex';
+
+            // Batch DOM operations
+            this.loadSlideContent(prevSlide);
+        }
+
+        loadSlideContent(slideElement) {
+            // Load images
+            const images = slideElement.querySelectorAll('img[data-src]');
+            images.forEach(img => {
+                img.src = img.dataset.src;
+                img.removeAttribute('data-src');
+            });
+
+            // Load text
+            const textElements = slideElement.querySelectorAll('[data-content]');
+            textElements.forEach(element => {
+                element.textContent = element.dataset.content;
+                element.removeAttribute('data-content');
+            });
+
+            // Load age calculators
+            this.updateAgeCalculators();
+
+            // Handle delayed images
+            this.swapInDelayedImages(slideElement);
+        }
+
+        handleKeyPress(e) {
+            if (e.key === 'ArrowRight') {
+                const currentSlideElement = this.slides[this.currentSlide];
                 const revealElements = currentSlideElement.querySelectorAll('.reveal-text');
 
                 if (!this.revealIndexes[this.currentSlide]) {
@@ -920,202 +1007,48 @@
                         return;
                     }
                 }
-
-                this.revealIndexes[this.currentSlide] = 0;
-                this.nextSlide(e);
+                this.nextSlide();
             }
+            if (e.key === 'ArrowLeft') this.prevSlide();
+        }
 
-            nextSlide(e) {
-                if (!e || (!this.isSelecting)) {
-                    document.getElementById(`slide${this.currentSlide}`).style.display = 'none';
-                    this.currentSlide = this.currentSlide >= this.totalSlides ? 1 : this.currentSlide + 1;
-                    resetRevealState(this.currentSlide);
-                    const nextSlide = document.getElementById(`slide${this.currentSlide}`);
-                    nextSlide.style.display = 'flex';
+        handleMouseDown(e) {
+            this.isSelecting = true;
+            this.startX = e.clientX;
+            this.startY = e.clientY;
+        }
 
-                    // Load images
-                    const images = nextSlide.querySelectorAll('img[data-src]');
-                    images.forEach(img => {
-                        img.src = img.dataset.src;
-                        img.removeAttribute('data-src');
-                    });
+        handleMouseUp(e) {
+            const moveX = Math.abs(e.clientX - this.startX);
+            const moveY = Math.abs(e.clientY - this.startY);
 
-                    // Load text
-                    const textElements = nextSlide.querySelectorAll('[data-content]');
-                    textElements.forEach(element => {
-                        element.textContent = element.dataset.content;
-                        element.removeAttribute('data-content');
-                    });
-
-                    // Load age calculators
-                    updateAgeCalculators();
-
-                    // Taking care of placeholder images
-                    swapInDelayedImages(nextSlide);
-                }
-            }
-
-
-            prevSlide() {
-                document.getElementById(`slide${this.currentSlide}`).style.display = 'none';
-                this.currentSlide = this.currentSlide <= 1 ? this.totalSlides : this.currentSlide - 1;
-                resetRevealState(this.currentSlide);
-                const prevSlide = document.getElementById(`slide${this.currentSlide}`);
-                prevSlide.style.display = 'flex';
-
-                // Load images
-                const images = prevSlide.querySelectorAll('img[data-src]');
-                images.forEach(img => {
-                    img.src = img.dataset.src;
-                    img.removeAttribute('data-src');
-                });
-
-                // Load text
-                const textElements = prevSlide.querySelectorAll('[data-content]');
-                textElements.forEach(element => {
-                    element.textContent = element.dataset.content;
-                    element.removeAttribute('data-content');
-                });
-
-                // Load age calculators
-                updateAgeCalculators();
-            }
-
-            handleKeyPress(e) {
-                if (e.key === 'ArrowRight') {
-                    const currentSlideElement = document.getElementById(`slide${this.currentSlide}`);
-                    const revealElements = currentSlideElement.querySelectorAll('.reveal-text');
-
-                    if (!this.revealIndexes[this.currentSlide]) {
-                        this.revealIndexes[this.currentSlide] = 0;
-                    }
-
-                    if (revealElements.length > 0) {
-                        if (this.revealIndexes[this.currentSlide] < revealElements.length) {
-                            revealElements[this.revealIndexes[this.currentSlide]].classList.remove('hidden');
-                            this.revealIndexes[this.currentSlide]++;
-                            return;
-                        }
-                    }
-                    this.nextSlide();
-                }
-                if (e.key === 'ArrowLeft') this.prevSlide();
-            }
-
-            handleMouseDown(e) {
-                this.isSelecting = true;
-                this.startX = e.clientX;
-                this.startY = e.clientY;
-            }
-
-            handleMouseUp(e) {
-                const moveX = Math.abs(e.clientX - this.startX);
-                const moveY = Math.abs(e.clientY - this.startY);
-
-                if (moveX < 5 && moveY < 5) {
+            if (moveX < 5 && moveY < 5) {
+                this.isSelecting = false;
+            } else {
+                setTimeout(() => {
                     this.isSelecting = false;
-                } else {
-                    setTimeout(() => {
-                        this.isSelecting = false;
-                    }, 100);
-                }
+                }, 100);
             }
         }
 
-
-        // --- Preload all images before starting the slideshow ---
-        const imageUrls = [
-            'selfintro/Andy5yo.jpg',
-            'selfintro/Toy Story.jpg',
-            'selfintro/toyandy.jpg',
-            'selfintro/Andy.JPG',
-            'selfintro/ice-cream-cone.png',
-            'selfintro/Noah.jpg',
-            'selfintro/Allan1.jpg',
-            'selfintro/Nina1.jpg',
-            'selfintro/family1.jpg',
-            'selfintro/DenmarkFlag.jpg',
-            'selfintro/jp.png',
-            'selfintro/dk.png',
-            'selfintro/DenJap.PNG',
-            'selfintro/sushi1.jpg',
-            'selfintro/kimono1.jpg',
-            'selfintro/Fuji1.jpg',
-            'selfintro/Shrine1.jpg',
-            'selfintro/lego1.jpg',
-            'selfintro/lego2.jpg',
-            'selfintro/lego3.jpg',
-            'selfintro/sports.png',
-            'selfintro/poi1.jpg',
-            'selfintro/poi2.JPG',
-            'selfintro/poi3.JPG',
-            'selfintro/Japan.jpg'
-            // Add any other images you use!
-        ];
-
-        function preloadImages(urls, allDone) {
-            let loaded = 0;
-            if (urls.length === 0) allDone();
-            urls.forEach(url => {
-                const img = new Image();
-                img.onload = img.onerror = function () {
-                    loaded++;
-                    if (loaded === urls.length) allDone();
-                };
-                img.src = url;
-            });
-        }
-
-        // Hide all slides until loaded
-        document.querySelectorAll('.slide').forEach(slide => slide.style.display = 'none');
-
-        preloadImages(imageUrls, function () {
-            document.getElementById('loader').style.display = 'none';
-            // Show the first slide
-            document.getElementById('slide1').style.display = 'flex';
-            // Now start the slideshow
-            window.slideshow = new Slideshow(22);
-        });
-
-
-
-        // Initialize the slideshow
-        // const slideshow = new Slideshow(22);
-
-
-
-        // Add event listener to button
-        document.getElementById('goto-slide1').addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent the nextSlide function from being called
-            // Hide current slide
-            document.getElementById(`slide${slideshow.currentSlide}`).style.display = 'none';
-            // Show slide 1
-            slideshow.currentSlide = 22;
-            document.getElementById(`slide${slideshow.currentSlide}`).style.display = 'flex';
-        });
-
-        function resetRevealState(slideNumber) {
-            const slideElement = document.getElementById(`slide${slideNumber}`);
+        resetRevealState(slideNumber) {
+            const slideElement = this.slides[slideNumber];
             const revealElements = slideElement.querySelectorAll('.reveal-text');
             revealElements.forEach(element => {
                 element.classList.add('hidden');
             });
-            slideshow.revealIndexes[slideNumber] = 0;
+            this.revealIndexes[slideNumber] = 0;
         }
 
-        // Update the age when the slide is shown
-        document.addEventListener('DOMContentLoaded', () => {
-            const ageElement = document.getElementById('age-difference');
-            if (ageElement) {
-                ageElement.textContent = getAgeDifference();
-            }
-        });
-
-        function updateAgeCalculators() {
-            document.querySelectorAll('.age-calculator').forEach(element => {
+        updateAgeCalculators() {
+            // Cache the current slide's age calculators to avoid querying all slides
+            const currentSlideElement = this.slides[this.currentSlide];
+            const ageCalculators = currentSlideElement.querySelectorAll('.age-calculator');
+            
+            ageCalculators.forEach(element => {
                 const birthDate = new Date(element.dataset.birthdate);
                 const offset = parseInt(element.dataset.offset);
-                const prefix = element.dataset.prefix || '';  // Use empty string if no prefix
+                const prefix = element.dataset.prefix || '';
                 const suffix = element.dataset.suffix || '';
                 const now = new Date();
                 const diff = now - birthDate;
@@ -1124,16 +1057,12 @@
             });
         }
 
-
-        function swapInDelayedImages(slideElement) {
-            // For each delayed image in the current slide
+        swapInDelayedImages(slideElement) {
             slideElement.querySelectorAll('img.delayed-img[data-src]').forEach(function (img) {
-                // Only set src if not already set
                 if (!img.src || img.src.indexOf(img.dataset.src) === -1) {
                     img.src = img.dataset.src;
                     img.removeAttribute('data-src');
                 }
-                // When the real image loads, hide the placeholder
                 img.addEventListener('load', function handler() {
                     const placeholder = img.parentElement.querySelector('.placeholder-img');
                     if (placeholder) placeholder.style.display = 'none';
@@ -1141,10 +1070,97 @@
                 });
             });
         }
+    }
 
-        //#endregion
+    // --- Preload all images before starting the slideshow ---
+    const imageUrls = [
+        'selfintro/Andy5yo.jpg',
+        'selfintro/Toy Story.jpg',
+        'selfintro/toyandy.jpg',
+        'selfintro/Andy.JPG',
+        'selfintro/ice-cream-cone.png',
+        'selfintro/Noah.jpg',
+        'selfintro/Allan1.jpg',
+        'selfintro/Nina1.jpg',
+        'selfintro/family1.jpg',
+        'selfintro/DenmarkFlag.jpg',
+        'selfintro/jp.png',
+        'selfintro/dk.png',
+        'selfintro/DenJap.PNG',
+        'selfintro/sushi1.jpg',
+        'selfintro/kimono1.jpg',
+        'selfintro/Fuji1.jpg',
+        'selfintro/Shrine1.jpg',
+        'selfintro/lego1.jpg',
+        'selfintro/lego2.jpg',
+        'selfintro/lego3.jpg',
+        'selfintro/sports.png',
+        'selfintro/poi1.jpg',
+        'selfintro/poi2.JPG',
+        'selfintro/poi3.JPG',
+        'selfintro/Japan.jpg'
+    ];
 
-    </script>
+    function preloadImages(urls, allDone) {
+        let loaded = 0;
+        if (urls.length === 0) allDone();
+        urls.forEach(url => {
+            const img = new Image();
+            img.onload = img.onerror = function () {
+                loaded++;
+                if (loaded === urls.length) allDone();
+            };
+            img.src = url;
+        });
+    }
+
+    // Hide all slides until loaded
+    document.querySelectorAll('.slide').forEach(slide => slide.style.display = 'none');
+
+    preloadImages(imageUrls, function () {
+        document.getElementById('loader').style.display = 'none';
+        // Show the first slide
+        document.getElementById('slide1').style.display = 'flex';
+        // Now start the slideshow
+        window.slideshow = new Slideshow(22);
+    });
+
+    // Add event listener to button (if the button exists)
+    document.addEventListener('DOMContentLoaded', () => {
+        const gotoButton = document.getElementById('goto-slide1');
+        if (gotoButton) {
+            gotoButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                window.slideshow.slides[window.slideshow.currentSlide].style.display = 'none';
+                window.slideshow.currentSlide = 22;
+                window.slideshow.slides[window.slideshow.currentSlide].style.display = 'flex';
+            });
+        }
+    });
+
+    // Global functions for backward compatibility (if needed elsewhere)
+    function resetRevealState(slideNumber) {
+        if (window.slideshow) {
+            window.slideshow.resetRevealState(slideNumber);
+        }
+    }
+
+    function updateAgeCalculators() {
+        if (window.slideshow) {
+            window.slideshow.updateAgeCalculators();
+        }
+    }
+
+    function swapInDelayedImages(slideElement) {
+        if (window.slideshow) {
+            window.slideshow.swapInDelayedImages(slideElement);
+        }
+    }
+
+    //#endregion
+
+</script>
+
 </body>
 
 </html>
