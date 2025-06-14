@@ -3,17 +3,91 @@
 <head>
       <style>
     #loader {
-      position:fixed; left:0; top:0; width:100vw; height:100vh;
-      background:white; color:#222; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:9999; font-family:sans-serif;
+      position: fixed;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(255,255,255,0.95);
+      color: #222;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      font-family: inherit;
+      transition: opacity 0.5s;
+    }
+    #loader.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+    #loader-card {
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      padding: 2.5rem 2.5rem 2rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 260px;
+      max-width: 90vw;
+    }
+    .loader-logo {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 1.5rem;
+      /* Example: a simple SVG icon, replace as needed */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .loader-spinner {
+      width: 48px;
+      height: 48px;
+      border: 5px solid #e0e0e0;
+      border-top: 5px solid #4a90e2;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 2rem;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
     #progress-bar-bg {
-      width:60vw; height:1.5rem; background:#eee; border-radius:0.75rem; overflow:hidden;
+      width: 60vw;
+      max-width: 320px;
+      height: 1.2rem;
+      background: #e0e7ef;
+      border-radius: 0.6rem;
+      overflow: hidden;
+      margin-bottom: 1.2rem;
+      box-shadow: 0 2px 8px rgba(74,144,226,0.08);
     }
     #progress-bar {
-      width:0%; height:100%; background:#4a90e2; transition:width 0.2s;
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #4a90e2 0%, #7ed6df 100%);
+      border-radius: 0.6rem;
+      transition: width 0.3s cubic-bezier(.4,2,.6,1), background 0.3s;
+      box-shadow: 0 0 8px #4a90e2aa;
     }
     #progress-text {
-      margin-top:1rem; font-size:1.2rem;
+      margin-top: 0.2rem;
+      font-size: 1.1rem;
+      color: #4a90e2;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-shadow: 0 1px 2px #fff8;
+    }
+    #loader-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      color: #222;
+      letter-spacing: 0.02em;
+      text-align: center;
+    }
+    /* Hide main content until loaded */
+    #main-content {
+      display: none;
     }
   </style>
     <meta charset="UTF-8">
@@ -557,15 +631,24 @@
 </head>
 
 <body>
-<div id="loader" style="
-  position:fixed; left:0; top:0; width:100vw; height:100vh;
-  background:white; color:#222; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:9999; font-family:sans-serif;">
-  <span style="font-size:2rem; margin-bottom:2rem;">Loading presentation...</span>
-  <div id="progress-bar-bg" style="width:60vw; height:1.5rem; background:#eee; border-radius:0.75rem; overflow:hidden;">
-    <div id="progress-bar" style="width:0%; height:100%; background:#4a90e2; transition:width 0.2s;"></div>
+  <!-- Preloader -->
+  <div id="loader" role="status" aria-live="polite">
+    <div id="loader-card">
+      <div class="loader-logo">
+        <!-- Example SVG icon (replace with your logo if desired) -->
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <circle cx="24" cy="24" r="22" stroke="#4a90e2" stroke-width="4" fill="#eaf6ff"/>
+          <text x="24" y="30" text-anchor="middle" font-size="18" fill="#4a90e2" font-family="Arial" font-weight="bold">★</text>
+        </svg>
+      </div>
+      <div id="loader-title">Andy is cooking it up, hold on!</div>
+      <div class="loader-spinner"></div>
+      <div id="progress-bar-bg">
+        <div id="progress-bar"></div>
+      </div>
+      <span id="progress-text">0%</span>
+    </div>
   </div>
-  <span id="progress-text" style="margin-top:1rem; font-size:1.2rem;">0%</span>
-</div>
 
     <!-- #region =============== Slides =============== -->
     <div class="wave"></div>
