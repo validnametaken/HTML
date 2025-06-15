@@ -109,6 +109,90 @@
   <meta name="apple-mobile-web-app-title" content="My Project">
 <style>
     /* Add main styles here */
+html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #222;
+    }
+    #game-area {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      transition: background-image 0.5s;
+    }
+    #mission-text {
+      font-size: 2.2rem;
+      color: #fff;
+      text-shadow: 0 2px 8px #000a;
+      margin-top: 2rem;
+      margin-bottom: 1.5rem;
+      background: rgba(0,0,0,0.3);
+      padding: 0.5em 1.2em;
+      border-radius: 1em;
+    }
+    #animals {
+      position: absolute;
+      left: 0; top: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .animal-gif {
+      position: absolute;
+      left: -120px;
+      height: 120px;
+      pointer-events: none;
+      transition: left 2s linear;
+      will-change: left;
+      user-select: none;
+    }
+    #answer-area {
+      position: relative;
+      z-index: 3;
+      margin-bottom: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #answer {
+      font-size: 2rem;
+      width: 80px;
+      text-align: center;
+      border-radius: 0.5em;
+      border: 2px solid #4a90e2;
+      margin: 0 0.5em;
+      padding: 0.2em 0.5em;
+    }
+    #submit-btn, #next-btn {
+      font-size: 1.4rem;
+      margin: 1em 0.5em 0 0.5em;
+      padding: 0.5em 1.5em;
+      border-radius: 0.5em;
+      border: none;
+      background: #4a90e2;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #0002;
+      transition: background 0.2s;
+    }
+    #submit-btn:hover, #next-btn:hover {
+      background: #357ab8;
+    }
+    #feedback {
+      font-size: 1.6rem;
+      margin-top: 0.8em;
+      color: #fff;
+      text-shadow: 0 2px 8px #000a;
+      min-height: 2em;
+    }
 
   </style>
 </head>
@@ -134,9 +218,17 @@
    <!-- #endregion -->
 
   <!-- Main app content goes here -->
-  <div id="main-content">
-    <h1>Welcome to My Project</h1>
-    <!-- Your app or page content here -->
+ <div id="game-area">
+    <div id="mission-text"></div>
+    <div id="animals"></div>
+    <div id="answer-area">
+      <input id="answer" type="number" min="1" placeholder="Your answer">
+      <button id="submit-btn">Submit</button>
+      <div id="feedback"></div>
+      <button id="next-btn" style="display:none;">Next</button>
+    </div>
+  </div>
+
   </div>
 
   <script>
@@ -191,7 +283,162 @@
     // #endregion
 // #region Main Script Here
 
+ const missions = [
+{
+    animal: "dog",
+    animalGif: "howmany/dog.gif",
+    background: "howmany/bg_dog.jpg",
+    question: "How many dogs ran across?",
+    count: 3,
+    delay: 0.7, // seconds between animals
+    speed: 2.5, // seconds for animal to cross
+    paths: [
+      "straight", // first animal
+      "straight", // second animal
+      "straight"  // third animal
+    ]
+  },
+  {
+    animal: "cat",
+    animalGif: "howmany/cat.gif",
+    background: "howmany/bg_cat.jpg",
+    question: "How many cats ran across?",
+    count: 4,
+    delay: 0.5,
+    speed: 2.2,
+    paths: [
+      "straight",
+      "wavy",
+      "straight",
+      "wavy"
+    ]
+  },
+      {
+        animal: "bird",
+        animalGif: "howmany/bird.gif",
+        background: "howmany/bg_bird.jpg",
+        question: "How many birds flew across?",
+        min: 2, max: 6
+      },
+      {
+        animal: "frog",
+        animalGif: "howmany/frog.gif",
+        background: "howmany/bg_frog.jpg",
+        question: "How many frogs hopped across?",
+        min: 2, max: 6
+      },
+      {
+        animal: "monkey",
+        animalGif: "howmany/monkey.gif",
+        background: "howmany/bg_monkey.jpg",
+        question: "How many monkeys ran across?",
+        min: 2, max: 6
+      },
+      {
+        animal: "rabbit",
+        animalGif: "howmany/rabbit.gif",
+        background: "howmany/bg_rabbit.jpg",
+        question: "How many rabbits ran across?",
+        min: 2, max: 6
+      }
+    ];
 
+    let currentMission = 0;
+    let animalCount = 0;
+
+function startMission(index) {
+  const mission = missions[index];
+  animalCount = mission.count;
+  document.getElementById('game-area').style.backgroundImage = `url('${mission.background}')`;
+  document.getElementById('mission-text').textContent = mission.question;
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('answer').value = '';
+  document.getElementById('next-btn').style.display = 'none';
+  animateAnimals(
+    mission.animalGif,
+    mission.count,
+    mission.delay,
+    mission.speed,
+    mission.paths
+  );
+}
+
+function animateAnimals(gif, count, delay, speed, paths) {
+  const animalsDiv = document.getElementById('animals');
+  animalsDiv.innerHTML = '';
+  let totalDelay = 0;
+  for (let i = 0; i < count; i++) {
+    setTimeout(() => {
+      const img = document.createElement('img');
+      img.src = gif;
+      img.className = 'animal-gif';
+      img.style.left = '-120px';
+      img.style.bottom = (10 + Math.random() * 40) + '%';
+      animalsDiv.appendChild(img);
+
+      // Animate path
+      if (paths && paths[i] === "wavy") {
+        animateWavy(img, speed);
+      } else {
+        animateStraight(img, speed);
+      }
+    }, totalDelay * 1000);
+    totalDelay += delay;
+  }
+}
+
+// Straight path
+function animateStraight(img, speed) {
+  setTimeout(() => {
+    img.style.transition = `left ${speed}s linear`;
+    img.style.left = '110vw';
+  }, 50);
+  setTimeout(() => {
+    img.remove();
+  }, (speed + 0.1) * 1000);
+}
+
+// Wavy path (uses translateY for a sine wave effect)
+function animateWavy(img, speed) {
+  let start = null;
+  const duration = speed * 1000;
+  const amplitude = 40 + Math.random() * 30; // px
+  const frequency = 2 + Math.random(); // waves
+
+  function step(timestamp) {
+    if (!start) start = timestamp;
+    const elapsed = timestamp - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const left = -120 + progress * (window.innerWidth + 240);
+    const y = amplitude * Math.sin(progress * frequency * Math.PI * 2);
+    img.style.left = `${left}px`;
+    img.style.transform = `translateY(${y}px)`;
+    if (progress < 1) {
+      requestAnimationFrame(step);
+    } else {
+      img.remove();
+    }
+  }
+  requestAnimationFrame(step);
+}
+
+    document.getElementById('submit-btn').onclick = function() {
+      const answer = parseInt(document.getElementById('answer').value, 10);
+      if (answer === animalCount) {
+        document.getElementById('feedback').textContent = '✅ Correct!';
+        document.getElementById('next-btn').style.display = 'inline-block';
+      } else {
+        document.getElementById('feedback').textContent = '❌ Try again!';
+      }
+    };
+
+    document.getElementById('next-btn').onclick = function() {
+      currentMission = (currentMission + 1) % missions.length;
+      startMission(currentMission);
+    };
+
+    // Start first mission
+    window.onload = () => startMission(0);
 
   // #endregion
   </script>
