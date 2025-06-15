@@ -10,10 +10,12 @@
 
 
   .base-timer {
-    position: relative;
-    width: 500px; /* Adjust as needed */
-    height: 500px; /* Adjust as needed */
-  }
+  position: relative;
+  width: max(40vw, 40vw, 80vw);
+  min-width: 200px;
+  min-height: 200px;
+  margin: 0 auto;
+}
 
   .base-timer__svg {
     transform: scaleX(-1);
@@ -61,7 +63,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 75px; /* Adjust as needed */
+      font-size: 15vw; /* Adjust as needed */
   }
 
   #title {
@@ -78,10 +80,10 @@
   }
 
   /* Increase font size for the "Set Timer Duration" section */
-  #app label[for="duration"], #app input#duration {
-    text-align: center;
-    font-size: 30px; 
-  }
+#app label[for="minutes"],
+#app label[for="seconds"] {
+    font-size: 3vw;
+}
 
   #app button {
     font-family: 'Courgette', cursive; /* Use Courgette font for buttons */
@@ -105,9 +107,11 @@
 <audio id="alarm" src="alarm.mp3"></audio>
 
 <div id="app">
-  <label for="duration">Set Timer Duration (in seconds):</label>
+<label for="minutes">Minutes:</label>
+<input type="number" id="minutes" name="minutes" min="0" value="0" style="width:60px; font-size: 3vw;">
+<label for="seconds">Seconds:</label>
+<input type="number" id="seconds" name="seconds" min="0" max="59" value="20" style="width:60px; font-size: 3vw;">
   <br>
-  <input type="number" id="duration" name="duration" min="1" value="20">
   <br>
   <br>
   <button onclick="startTimer()">Start Timer</button>
@@ -126,8 +130,12 @@
 
 <script>
   // JavaScript Code
-  const FULL_DASH_ARRAY = 283;
-  let timeLimit = parseInt(document.getElementById("duration").value);
+  const FULL_DASH_ARRAY = 283;function getTimeLimit() {
+  const mins = parseInt(document.getElementById("minutes").value) || 0;
+  const secs = parseInt(document.getElementById("seconds").value) || 0;
+  return mins * 60 + secs;
+}
+let timeLimit = getTimeLimit();
   let warningPercentage = parseInt(document.getElementById("warningPercentage").value);
   let alertPercentage = parseInt(document.getElementById("alertPercentage").value);
 
@@ -178,7 +186,7 @@
   }
 
   function startTimer() {
-    timeLimit = parseInt(document.getElementById("duration").value);
+   timeLimit = getTimeLimit();
     warningPercentage = parseInt(document.getElementById("warningPercentage").value);
     alertPercentage = parseInt(document.getElementById("alertPercentage").value);
     timeLeft = timeLimit;
