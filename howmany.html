@@ -10,6 +10,10 @@
       font-family: system-ui, sans-serif;
       background: #f8f8f8;
     }
+    html, body {
+  overflow-x: hidden;
+}
+#game-area { border: 2px solid red; }
     #loader {
       position: fixed;
       left: 0; top: 0; width: 100vw; height: 100vh;
@@ -118,8 +122,8 @@ html, body {
     }
     #game-area {
       position: relative;
-      width: 100vw;
-      height: 100vh;
+      width: 98vw;
+      height: 98vh;
       overflow: hidden;
       background-size: cover;
       background-position: center;
@@ -144,6 +148,7 @@ html, body {
       left: 0; top: 0; width: 100%; height: 100%;
       pointer-events: none;
       z-index: 2;
+      border: 2px solid red;
     }
     .animal-gif {
       position: absolute;
@@ -153,6 +158,7 @@ html, body {
       transition: left 2s linear;
       will-change: left;
       user-select: none;
+      border: 2px solid red;
     }
     #answer-area {
       position: relative;
@@ -193,6 +199,10 @@ html, body {
       text-shadow: 0 2px 8px #000a;
       min-height: 2em;
     }
+
+    .animal-gif {
+  transition: left VAR_DURATION s linear;
+}
 
   </style>
 </head>
@@ -273,7 +283,7 @@ html, body {
           document.getElementById('loader').classList.add('hide');
           setTimeout(() => {
             document.getElementById('loader').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
+            document.getElementById('game-area').style.display = 'block';
             // Initialize your app here if needed
           }, 500); // Match transition duration
         });
@@ -282,6 +292,7 @@ html, body {
     });
     // #endregion
 // #region Main Script Here
+const baseSpeed = 400; // pixels per second
 
  const missions = [
 {
@@ -291,11 +302,11 @@ html, body {
     question: "How many dogs ran across?",
     count: 3,
     delay: 0.7, // seconds between animals
-    speed: 2.5, // seconds for animal to cross
+    speed: 1, // seconds for animal to cross
     paths: [
-      "straight", // first animal
+      "wavy", // first animal
       "straight", // second animal
-      "straight"  // third animal
+      "curved"  // third animal
     ]
   },
   {
@@ -377,50 +388,133 @@ function animateAnimals(gif, count, delay, speed, paths) {
       animalsDiv.appendChild(img);
 
       // Animate path
-      if (paths && paths[i] === "wavy") {
-        animateWavy(img, speed);
-      } else {
-        animateStraight(img, speed);
-      }
+if (paths && paths[i] === "wavy") {
+  animateWavy(img, speed);
+} else if (paths && paths[i] === "curved") {
+  animateCurved(img, speed);
+} else {
+  animateStraight(img, speed);
+}
     }, totalDelay * 1000);
     totalDelay += delay;
   }
 }
 
 // Straight path
-function animateStraight(img, speed) {
-  setTimeout(() => {
-    img.style.transition = `left ${speed}s linear`;
-    img.style.left = '110vw';
-  }, 50);
-  setTimeout(() => {
-    img.remove();
-  }, (speed + 0.1) * 1000);
+function animateStraight(img, speedMultiplier) {
+  img.onload = () => {
+    const gameArea = document.getElementById('game-area');
+    const areaWidth = gameArea.offsetWidth;
+    const imgWidth = img.width || 120;
+    const startX = -imgWidth;
+    const endX = areaWidth + imgWidth;
+    const distance = endX - startX;
+    const duration = distance / (baseSpeed * speedMultiplier); // seconds
+
+    img.style.transition = `left ${duration}s linear`;
+    img.style.left = `${endX}px`;
+
+    setTimeout(() => {
+      img.remove();
+    }, (duration + 0.1) * 1000);
+  };
+  if (img.complete) img.onload();
 }
+
 
 // Wavy path (uses translateY for a sine wave effect)
-function animateWavy(img, speed) {
-  let start = null;
-  const duration = speed * 1000;
-  const amplitude = 40 + Math.random() * 30; // px
-  const frequency = 2 + Math.random(); // waves
+function animateWavy(img, speedMultiplier) {
+  img.onload = () => {
+    const gameArea = document.getElementById('game-area');
+    const areaWidth = gameArea.offsetWidth;
+    const imgWidth = img.width || 120;
+    const startX = -imgWidth;
+    const endX = areaWidth + imgWidth;
+    const distance = endX - startX;
+    const duration = distance / (baseSpeed * speedMultiplier); // seconds
 
-  function step(timestamp) {
-    if (!start) start = timestamp;
-    const elapsed = timestamp - start;
-    const progress = Math.min(elapsed / duration, 1);
-    const left = -120 + progress * (window.innerWidth + 240);
-    const y = amplitude * Math.sin(progress * frequency * Math.PI * 2);
-    img.style.left = `${left}px`;
-    img.style.transform = `translateY(${y}px)`;
-    if (progress < 1) {
-      requestAnimationFrame(step);
-    } else {
-      img.remove();
+    // Set initial position and transition
+    img.style.left = `${startX}px`;
+    img.style.transition = `left ${duration}s linear`;
+
+    // Animate vertical movement with JS
+    const amplitude = 40 + Math.random() * 30;
+    const frequency = 2 + Math.random();
+
+    let startTime = null;
+    function step(now) {
+      if (!startTime) startTime = now;
+      const elapsed = (now - startTime) / 1000; // seconds
+      const progress = Math.min(elapsed / duration, 1);
+      const y = amplitude * Math.sin(progress * frequency * Math.PI * 2);
+      img.style.transform = `translateY(${y}px)`;
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      }
     }
-  }
-  requestAnimationFrame(step);
+    requestAnimationFrame(step);
+    // Start the horizontal movement (after a tiny delay to ensure transition is set)
+    setTimeout(() => {
+      img.style.left = `${endX}px`;
+    }, 20);
+
+    // Remove the image after the transition completes
+    setTimeout(() => {
+      img.remove();
+    }, (duration + 0.1) * 1000);
+  };
+  if (img.complete) img.onload();
 }
+
+// Curved path (simple quadratic curve)
+function animateCurved(img, speedMultiplier) {
+  img.onload = () => {
+    const gameArea = document.getElementById('game-area');
+    const areaWidth = gameArea.offsetWidth;
+    const imgWidth = img.width || 120;
+    const startX = -imgWidth;
+    const endX = areaWidth + imgWidth;
+    const distance = endX - startX;
+    const duration = distance / (baseSpeed * speedMultiplier); // seconds
+
+    // Set initial position and transition for left
+    img.style.left = `${startX}px`;
+    img.style.transition = `left ${duration}s linear`;
+
+    // Parabolic arc parameters
+    const arcHeight = 120 + Math.random() * 80; // px, how high the arc is
+
+    let startTime = null;
+    function step(now) {
+      if (!startTime) startTime = now;
+      const elapsed = (now - startTime) / 1000; // seconds
+      const progress = Math.min(elapsed / duration, 1);
+
+      // Parabolic arc: y = -4h * (x - 0.5)^2 + h
+      // where h = arcHeight, x = progress (0 to 1)
+      const y = -4 * arcHeight * Math.pow(progress - 0.5, 2) + arcHeight;
+      img.style.transform = `translateY(${-y}px)`;
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      }
+    }
+    requestAnimationFrame(step);
+
+    // Start the horizontal movement (after a tiny delay to ensure transition is set)
+    setTimeout(() => {
+      img.style.left = `${endX}px`;
+    }, 20);
+
+    // Remove the image after the transition completes
+    setTimeout(() => {
+      img.remove();
+    }, (duration + 0.1) * 1000);
+  };
+  if (img.complete) img.onload();
+}
+
+
 
     document.getElementById('submit-btn').onclick = function() {
       const answer = parseInt(document.getElementById('answer').value, 10);
