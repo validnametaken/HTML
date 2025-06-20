@@ -119,6 +119,7 @@ html, body {
       height: 100%;
       font-family: 'Segoe UI', Arial, sans-serif;
       background: #222;
+       overflow-x: hidden;
     }
     #game-area {
       position: relative;
@@ -126,7 +127,7 @@ html, body {
       height: 99vh;
       overflow: hidden;
       background-size: cover;
-      background-position: center;
+      background-position: bottom;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -153,7 +154,7 @@ html, body {
     .animal-gif {
       position: absolute;
       left: -120px;
-      height: 120px;
+      height: 15vh;
       pointer-events: none;
       transition: left 2s linear;
       will-change: left;
@@ -182,6 +183,16 @@ html, body {
   transition: left VAR_DURATION s linear;
 }
 
+#overlay {
+  font-size: 5vw;
+}
+#countdown {
+  font-size: 10vw;
+}
+#overlay-text {
+  font-size: 7vw; /* or any size you prefer */
+}
+
   </style>
 </head>
 <body>
@@ -190,7 +201,7 @@ html, body {
     <div id="loader-card">
       <div class="loader-logo">
         <!-- Example SVG icon (replace with your logo if desired) -->
-        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+        <svg width="8vw" height="8vw" viewBox="0 0 48 48" fill="none">
           <circle cx="24" cy="24" r="22" stroke="#4a90e2" stroke-width="4" fill="#eaf6ff"/>
           <text x="24" y="30" text-anchor="middle" font-size="18" fill="#4a90e2" font-family="Arial" font-weight="bold">★</text>
         </svg>
@@ -278,19 +289,16 @@ const baseSpeed = 400; // pixels per second
 
  const missions = [
 {
-    animal: "dog",
-    animalGif: "howmany/dog.gif",
-    background: "howmany/bg_dog.jpg",
-    question: "How many dogs?",
-    count: 3,
-    delay: 0.7, // seconds between animals
-    speed: 4, // seconds for animal to cross
-    paths: [
-      "wavy", // first animal
-      "straight", // second animal
-      "curved"  // third animal
-    ]
-  },
+  animal: "dog",
+  animalGif: "howmany/dog.gif",
+  background: "howmany/bg_dog.jpg",
+  question: "How many dogs?",
+  count: 3,
+  delay: 0.7,
+  speed: 4,
+  paths: ["wavy", "straight", "curved"],
+  startY: ["10%", "12%", "3%"] // Lower values are closer to the bottom
+},
   {
     animal: "cat",
     animalGif: "howmany/cat.gif",
@@ -301,11 +309,11 @@ const baseSpeed = 400; // pixels per second
     speed: 2.2,
     paths: [
       "straight",
-      "wavy",
       "straight",
-      "wavy"
-    ]
-  },
+      "straight",
+      "straight"],
+    startY: ["10%", "20%", "30%"] // Lower values are closer to the bottom
+},
       {
         animal: "bird",
         animalGif: "howmany/bird.gif",
@@ -389,7 +397,8 @@ function runAnimals(mission) {
     mission.count,
     mission.delay,
     mission.speed,
-    mission.paths
+    mission.paths,
+    mission // pass the whole mission for startY
   );
 }
 
@@ -449,7 +458,7 @@ tryAgainBtn.onclick = function(e) {
   });
 };
 
-function animateAnimals(gif, count, delay, speed, paths) {
+function animateAnimals(gif, count, delay, speed, paths, mission) {
   const animalsDiv = document.getElementById('animals');
   animalsDiv.innerHTML = '';
   let totalDelay = 0;
@@ -459,7 +468,11 @@ function animateAnimals(gif, count, delay, speed, paths) {
       img.src = gif;
       img.className = 'animal-gif';
       img.style.left = '-120px';
-      img.style.bottom = (10 + Math.random() * 40) + '%';
+      if (mission.startY && mission.startY[i]) {
+  img.style.bottom = mission.startY[i];
+} else {
+  img.style.bottom = (10 + Math.random() * 40) + '%'; // fallback
+}
       animalsDiv.appendChild(img);
 
       // Animate path
@@ -556,8 +569,8 @@ function animateCurved(img, speedMultiplier) {
     img.style.left = `${startX}px`;
     img.style.transition = `left ${duration}s linear`;
 
-    // Parabolic arc parameters
-    const arcHeight = 120 + Math.random() * 80; // px, how high the arc is
+// Parabolic arc parameters (responsive)
+const arcHeight = gameArea.offsetHeight * (0.15 + Math.random() * 0.1); // 15%–25% of game area height
 
     let startTime = null;
     function step(now) {
