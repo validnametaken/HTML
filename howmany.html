@@ -13,7 +13,7 @@
     html, body {
   overflow-x: hidden;
 }
-#game-area { border: 2px solid red; }
+
     #loader {
       position: fixed;
       left: 0; top: 0; width: 100vw; height: 100vh;
@@ -122,8 +122,8 @@ html, body {
     }
     #game-area {
       position: relative;
-      width: 98vw;
-      height: 98vh;
+      width: 99vw;
+      height: 99vh;
       overflow: hidden;
       background-size: cover;
       background-position: center;
@@ -139,17 +139,17 @@ html, body {
       text-shadow: 0 2px 8px #000a;
       margin-top: 2rem;
       margin-bottom: 1.5rem;
-      background: rgba(0,0,0,0.3);
       padding: 0.5em 1.2em;
       border-radius: 1em;
     }
     #animals {
       position: absolute;
-      left: 0; top: 0; width: 100%; height: 100%;
+      left: 0; top: 0; width: 99.5%; height: 99%;
       pointer-events: none;
       z-index: 2;
       border: 2px solid red;
     }
+
     .animal-gif {
       position: absolute;
       left: -120px;
@@ -176,28 +176,6 @@ html, body {
       border: 2px solid #4a90e2;
       margin: 0 0.5em;
       padding: 0.2em 0.5em;
-    }
-    #submit-btn, #next-btn {
-      font-size: 1.4rem;
-      margin: 1em 0.5em 0 0.5em;
-      padding: 0.5em 1.5em;
-      border-radius: 0.5em;
-      border: none;
-      background: #4a90e2;
-      color: #fff;
-      cursor: pointer;
-      box-shadow: 0 2px 8px #0002;
-      transition: background 0.2s;
-    }
-    #submit-btn:hover, #next-btn:hover {
-      background: #357ab8;
-    }
-    #feedback {
-      font-size: 1.6rem;
-      margin-top: 0.8em;
-      color: #fff;
-      text-shadow: 0 2px 8px #000a;
-      min-height: 2em;
     }
 
     .animal-gif {
@@ -231,12 +209,15 @@ html, body {
  <div id="game-area">
     <div id="mission-text"></div>
     <div id="animals"></div>
-    <div id="answer-area">
-      <input id="answer" type="number" min="1" placeholder="Your answer">
-      <button id="submit-btn">Submit</button>
-      <div id="feedback"></div>
-      <button id="next-btn" style="display:none;">Next</button>
-    </div>
+<div id="overlay" style="position:absolute;left:0;top:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;z-index:10; background:rgba(245, 0, 0, 0.2);font-size:3rem;color:#fff;user-select:none;cursor:pointer;transition:background 0.3s;">  <span id="overlay-text"></span>
+<button id="try-again-btn" title="Try again" style="display:none; position:absolute; top:2vw; right:2vw; background:none; border:none; cursor:pointer; z-index:20; padding:0;">
+  <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+    <circle cx="20" cy="20" r="18" stroke="#fff" stroke-width="3" fill="rgba(0,0,0,0.15)"/>
+    <path d="M27 20a7 7 0 1 0-3.5 6" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <polygon points="27,20 31,18 29,23" fill="#fff"/>
+  </svg>
+</button></div>
+<div id="countdown" style="position:absolute;left:0;top:0;width:100%;height:100%;display:none;align-items:center;justify-content:center;z-index:20;font-size:7vw;color:#fff;text-shadow:0 2px 8px #000a;font-weight:bold;pointer-events:none;"></div>
   </div>
 
   </div>
@@ -253,6 +234,7 @@ html, body {
     let loaded = 0;
     const progressBar = document.getElementById('progress-bar');
     const progressText = document.getElementById('progress-text');
+    const tryAgainBtn = document.getElementById('try-again-btn');
 
     function updateProgress() {
       const percent = assetsToPreload.length
@@ -299,10 +281,10 @@ const baseSpeed = 400; // pixels per second
     animal: "dog",
     animalGif: "howmany/dog.gif",
     background: "howmany/bg_dog.jpg",
-    question: "How many dogs ran across?",
+    question: "How many dogs?",
     count: 3,
     delay: 0.7, // seconds between animals
-    speed: 1, // seconds for animal to cross
+    speed: 4, // seconds for animal to cross
     paths: [
       "wavy", // first animal
       "straight", // second animal
@@ -313,7 +295,7 @@ const baseSpeed = 400; // pixels per second
     animal: "cat",
     animalGif: "howmany/cat.gif",
     background: "howmany/bg_cat.jpg",
-    question: "How many cats ran across?",
+    question: "How many cats?",
     count: 4,
     delay: 0.5,
     speed: 2.2,
@@ -354,17 +336,54 @@ const baseSpeed = 400; // pixels per second
       }
     ];
 
-    let currentMission = 0;
-    let animalCount = 0;
+let currentMission = 0;
+let phase = 0; // 0: background, 1: question, 2: countdown, 3: animals, 4: answer
+let animalCount = 0;
+
+const overlay = document.getElementById('overlay');
+const overlayText = document.getElementById('overlay-text');
+const countdownDiv = document.getElementById('countdown');
+const gameArea = document.getElementById('game-area');
+
+function showOverlay(text) {
+  overlayText.textContent = text;
+  overlay.style.display = 'flex';
+}
+
+function hideOverlay() {
+  overlay.style.display = 'none';
+}
+
+function showCountdown(callback) {
+  countdownDiv.style.display = 'flex';
+  let nums = ['3', '2', '1', 'Go!'];
+  let i = 0;
+  function next() {
+    countdownDiv.textContent = nums[i];
+    i++;
+    if (i < nums.length) {
+      setTimeout(next, 700);
+    } else {
+      setTimeout(() => {
+        countdownDiv.style.display = 'none';
+        callback();
+      }, 700);
+    }
+  }
+  next();
+}
 
 function startMission(index) {
   const mission = missions[index];
   animalCount = mission.count;
-  document.getElementById('game-area').style.backgroundImage = `url('${mission.background}')`;
-  document.getElementById('mission-text').textContent = mission.question;
-  document.getElementById('feedback').textContent = '';
-  document.getElementById('answer').value = '';
-  document.getElementById('next-btn').style.display = 'none';
+  gameArea.style.backgroundImage = `url('${mission.background}')`;
+  document.getElementById('animals').innerHTML = '';
+  overlay.style.background = 'rgba(0,0,0,0.2)';
+  phase = 0;
+  showOverlay(''); // Show only background
+}
+
+function runAnimals(mission) {
   animateAnimals(
     mission.animalGif,
     mission.count,
@@ -373,6 +392,62 @@ function startMission(index) {
     mission.paths
   );
 }
+
+function showAnswer(mission) {
+  showOverlay(`${mission.count} ${mission.animal}${mission.count > 1 ? 's' : ''}`);
+  overlay.style.background = 'rgba(0,0,0,0.5)';
+  tryAgainBtn.style.display = 'none';
+}
+
+overlay.onclick = function() {
+  const mission = missions[currentMission];
+  if (phase === 0) {
+    // Show question
+    showOverlay(mission.question);
+    phase = 1;
+  } else if (phase === 1) {
+    // Show countdown
+    hideOverlay();
+    phase = 2;
+    showCountdown(() => {
+      phase = 3;
+      runAnimals(mission);
+      // After animals finish, allow answer to be shown on click
+      setTimeout(() => {
+        phase = 4;
+        overlay.style.background = 'rgba(0,0,0,0.2)';
+        showOverlay('How many?');
+        tryAgainBtn.style.display = 'inline-block';
+      }, (mission.count - 1) * mission.delay * 1000 + (gameArea.offsetWidth + 120 * 2) / (baseSpeed * mission.speed) * 1000 + 500);
+    });
+  } else if (phase === 4) {
+    // Show answer and hide Try Again button
+    showAnswer(mission);
+    tryAgainBtn.style.display = 'none';
+    phase = 5;
+  } else if (phase === 5) {
+    // Next mission
+    currentMission = (currentMission + 1) % missions.length;
+    startMission(currentMission);
+  }
+};
+
+tryAgainBtn.onclick = function(e) {
+  e.stopPropagation(); // Prevent overlay click
+  tryAgainBtn.style.display = 'none';
+  overlay.style.display = 'none';
+  phase = 2; // Go back to countdown/animals phase
+  showCountdown(() => {
+    phase = 3;
+    runAnimals(missions[currentMission]);
+    setTimeout(() => {
+      phase = 4;
+      overlay.style.background = 'rgba(0,0,0,0.2)';
+      showOverlay('How many?');
+      tryAgainBtn.style.display = 'inline-block';
+    }, (missions[currentMission].count - 1) * missions[currentMission].delay * 1000 + (gameArea.offsetWidth + 120 * 2) / (baseSpeed * missions[currentMission].speed) * 1000 + 500);
+  });
+};
 
 function animateAnimals(gif, count, delay, speed, paths) {
   const animalsDiv = document.getElementById('animals');
@@ -514,22 +589,6 @@ function animateCurved(img, speedMultiplier) {
   if (img.complete) img.onload();
 }
 
-
-
-    document.getElementById('submit-btn').onclick = function() {
-      const answer = parseInt(document.getElementById('answer').value, 10);
-      if (answer === animalCount) {
-        document.getElementById('feedback').textContent = '✅ Correct!';
-        document.getElementById('next-btn').style.display = 'inline-block';
-      } else {
-        document.getElementById('feedback').textContent = '❌ Try again!';
-      }
-    };
-
-    document.getElementById('next-btn').onclick = function() {
-      currentMission = (currentMission + 1) % missions.length;
-      startMission(currentMission);
-    };
 
     // Start first mission
     window.onload = () => startMission(0);
