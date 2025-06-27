@@ -105,7 +105,7 @@
   </style>
      <!-- #endregion -->
   
-  <title>My Project</title>
+  <title>How Many...?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- iOS web app meta -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -153,13 +153,14 @@ html, body {
       padding: 0.5em 1.2em;
       border-radius: 1em;
     }
-    #animals {
-      position: absolute;
-      left: 0; top: 0; width: 99.5%; height: 99%;
-      pointer-events: none;
-      z-index: 2;
-      border: 2px solid red;
-    }
+#animals {
+  position: absolute;
+  left: 0; top: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 2;
+  border: 2px solid rgb(212, 0, 255);
+  box-sizing: border-box;
+}
 
     .animal-gif {
       position: absolute;
@@ -299,10 +300,7 @@ html, body {
 function scaleGameArea() {
   const { width: designWidth, height: designHeight } = getBestAspectRatio();
   const area = document.getElementById('game-area');
-  const scale = Math.min(
-    window.innerWidth / designWidth,
-    window.innerHeight / designHeight
-  );
+  const scale = Math.min(window.innerWidth / designWidth, window.innerHeight / designHeight);
   area.style.width = designWidth + "px";
   area.style.height = designHeight + "px";
   area.style.transform = `scale(${scale})`;
@@ -313,28 +311,14 @@ function scaleGameArea() {
 window.addEventListener('resize', scaleGameArea);
 window.addEventListener('DOMContentLoaded', scaleGameArea);
 
+
+// function getBestAspectRatio() {
+//   return { width: 1200, height: 900 }; // 4:3 only
+// }
+
 function getBestAspectRatio() {
-  const w = window.innerWidth;
-  const h = window.innerHeight;
-  const ratio = w / h;
-  // 16:9 ≈ 1.78, 4:3 ≈ 1.33
-  if (ratio < 1.55) {
-    // Closer to 4:3
-    return { width: 1200, height: 900 };
-  } else {
-    // Closer to 16:9
-    return { width: 1600, height: 900 };
-  }
+  return { width: 1600, height: 900 }; // 16:9 only
 }
-
-function getGrasslineOffset() {
-  // These values may need tweaking based on your background image!
-  const { width } = getBestAspectRatio();
-  if (width === 1600) return 115;   // 16:9: 110px from bottom
-  if (width === 1200) return 70;   // 4:3: 160px from bottom
-  return 120; // fallback
-}
-
 
 const baseSpeed = 400; // pixels per second
 
@@ -347,8 +331,8 @@ const baseSpeed = 400; // pixels per second
   count: 3,
   delay: 0.7,
   speed: 2,
-  paths: ["straight", "straight", "straight"],
-  startY: ["20%", "12%", "3%"] // Lower values are closer to the bottom
+  paths: ["wavy(200,1)", "wavy(80,1)", "wavy(80,1)"],
+  startY: ["100", "100", "100"] // Lower values are closer to the bottom
 },
   {
     animal: "cat",
@@ -358,12 +342,8 @@ const baseSpeed = 400; // pixels per second
     count: 4,
     delay: 0.5,
     speed: 2.2,
-    paths: [
-      "straight",
-      "straight",
-      "straight",
-      "straight"],
-    startY: ["10%", "20%", "30%"] // Lower values are closer to the bottom
+  paths: ["straight(0.0)", "straight(0.1)", "curved(0.1)", "curved(0.2)"],
+  startY: ["0", "300", "400", "600"] // Lower values are closer to the bottom
 },{
     animal: "bird",
     animalGif: "howmany/bird.gif",
@@ -372,12 +352,8 @@ const baseSpeed = 400; // pixels per second
     count: 4,
     delay: 0.2,
     speed: 2.6,
-    paths: [
-      "straight",
-      "wavy",
-      "straight",
-      "straight"],
-    startY: ["50%", "70%", "60%", "80%"] // Lower values are closer to the bottom
+  paths: ["straight(0.0)", "straight(0.1)", "curved(0.1)", "curved(0.2)"],
+  startY: ["0", "300", "400", "600"] // Lower values are closer to the bottom
 },
 {
     animal: "frog",
@@ -387,12 +363,8 @@ const baseSpeed = 400; // pixels per second
     count: 4,
     delay: 0.5,
     speed: 2.2,
-    paths: [
-      "straight",
-      "straight",
-      "straight",
-      "straight"],
-    startY: ["10%", "20%", "30%"] // Lower values are closer to the bottom
+  paths: ["straight(0.0)", "straight(0.1)", "curved(0.1)", "curved(0.2)"],
+  startY: ["0", "300", "400", "600"] // Lower values are closer to the bottom
 },
 {
     animal: "monkey",
@@ -402,12 +374,8 @@ const baseSpeed = 400; // pixels per second
     count: 4,
     delay: 0.5,
     speed: 2.2,
-    paths: [
-      "straight",
-      "straight",
-      "straight",
-      "straight"],
-    startY: ["10%", "20%", "30%"] // Lower values are closer to the bottom
+  paths: ["straight(0.0)", "straight(0.1)", "curved(0.1)", "curved(0.2)"],
+  startY: ["0", "300", "400", "600"] // Lower values are closer to the bottom
 },
 {
     animal: "rabbit",
@@ -417,12 +385,8 @@ const baseSpeed = 400; // pixels per second
     count: 4,
     delay: 0.5,
     speed: 2.2,
-    paths: [
-      "straight",
-      "straight",
-      "straight",
-      "straight"],
-    startY: ["10%", "20%", "30%"] // Lower values are closer to the bottom
+  paths: ["straight(0.0)", "straight(0.1)", "curved(0.1)", "curved(0.2)"],
+  startY: ["0", "300", "400", "600"] // Lower values are closer to the bottom
 },
     ];
 
@@ -550,36 +514,52 @@ function animateAnimals(gif, count, delay, speed, paths, mission) {
       img.src = gif;
       img.className = 'animal-gif';
       img.style.left = '-120px';
-
-const grassline = getGrasslineOffset();
-let extra = 0;
-if (mission.startY && mission.startY[i]) {
-  // If startY is in %, convert to px based on game area height
-  if (typeof mission.startY[i] === "string" && mission.startY[i].includes("%")) {
-    extra = parseFloat(mission.startY[i]) / 100 * gameArea.offsetHeight;
-  } else {
-    extra = parseFloat(mission.startY[i]);
-  }
+      let extra = 0;
+if (mission.startY && mission.startY[i] !== undefined) {
+  extra = parseFloat(mission.startY[i]); // assumes pixels
 }
-img.style.bottom = (grassline + extra) + "px";
+img.style.bottom = (extra) + "px";
+
 
       animalsDiv.appendChild(img);
 
       // Animate path
-if (paths && paths[i] === "wavy") {
-  animateWavy(img, speed);
-} else if (paths && paths[i] === "curved") {
-  animateCurved(img, speed);
-} else {
-  animateStraight(img, speed);
-}
-    }, totalDelay * 1000);
-    totalDelay += delay;
+// ...inside animateAnimals...
+if (paths && /^curved/.test(paths[i])) {
+  let curveDegree = 0.2;
+  const match = paths[i].match(/curved\(([\d.]+)\)/);
+  if (match) {
+    curveDegree = parseFloat(match[1]);
   }
+  animateCurved(img, speed, curveDegree);
+} else if (paths && /^straight\s*\(/.test(paths[i])) {
+  let angle = 0;
+  const match = paths[i].match(/straight\s*\(([-\d.]+)\)/);
+  if (match) {
+    angle = parseFloat(match[1]);
+  }
+  animateStraight(img, speed, angle);
+} else if (paths && /^wavy/.test(paths[i])) {
+  // Parse amplitude and frequency, e.g. "wavy(60,3)"
+  let amplitude = 40 + Math.random() * 30;
+  let frequency = 2 + Math.random();
+  const match = paths[i].match(/wavy\(([\d.]+),\s*([\d.]+)\)/);
+  if (match) {
+    amplitude = parseFloat(match[1]);
+    frequency = parseFloat(match[2]);
+  }
+  animateWavy(img, speed, amplitude, frequency);
+} else {
+  animateStraight(img, speed, 0);
 }
+    }, totalDelay); // Close the setTimeout callback
+    totalDelay += delay * 1000;
+  } // Close the for loop
+} // Close the animateAnimals function
+
 
 // Straight path
-function animateStraight(img, speedMultiplier) {
+function animateStraight(img, speedMultiplier, angle = 0) {
   img.onload = () => {
     const gameArea = document.getElementById('game-area');
     const areaWidth = gameArea.offsetWidth;
@@ -587,10 +567,33 @@ function animateStraight(img, speedMultiplier) {
     const startX = -imgWidth;
     const endX = areaWidth + imgWidth;
     const distance = endX - startX;
-    const duration = distance / (baseSpeed * speedMultiplier); // seconds
+    const duration = distance / (baseSpeed * speedMultiplier);
 
+    img.style.left = `${startX}px`;
     img.style.transition = `left ${duration}s linear`;
-    img.style.left = `${endX}px`;
+
+    // Animate vertical movement if angle is set
+    if (angle !== 0) {
+      const totalY = areaWidth * angle; // angle is ratio of width (e.g. 0.1 for 10% up)
+      let startTime = null;
+      function step(now) {
+        if (!startTime) startTime = now;
+        const elapsed = (now - startTime) / 1000;
+        const progress = Math.min(elapsed / duration, 1);
+        const y = totalY * progress;
+        img.style.transform = `translateY(${-y}px)`;
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        }
+      }
+      requestAnimationFrame(step);
+    } else {
+      img.style.transform = '';
+    }
+
+    setTimeout(() => {
+      img.style.left = `${endX}px`;
+    }, 20);
 
     setTimeout(() => {
       img.remove();
@@ -601,7 +604,7 @@ function animateStraight(img, speedMultiplier) {
 
 
 // Wavy path (uses translateY for a sine wave effect)
-function animateWavy(img, speedMultiplier) {
+function animateWavy(img, speedMultiplier, amplitude = 40, frequency = 2) {
   img.onload = () => {
     const gameArea = document.getElementById('game-area');
     const areaWidth = gameArea.offsetWidth;
@@ -611,13 +614,8 @@ function animateWavy(img, speedMultiplier) {
     const distance = endX - startX;
     const duration = distance / (baseSpeed * speedMultiplier); // seconds
 
-    // Set initial position and transition
     img.style.left = `${startX}px`;
     img.style.transition = `left ${duration}s linear`;
-
-    // Animate vertical movement with JS
-    const amplitude = 40 + Math.random() * 30;
-    const frequency = 2 + Math.random();
 
     let startTime = null;
     function step(now) {
@@ -631,12 +629,11 @@ function animateWavy(img, speedMultiplier) {
       }
     }
     requestAnimationFrame(step);
-    // Start the horizontal movement (after a tiny delay to ensure transition is set)
+
     setTimeout(() => {
       img.style.left = `${endX}px`;
     }, 20);
 
-    // Remove the image after the transition completes
     setTimeout(() => {
       img.remove();
     }, (duration + 0.1) * 1000);
@@ -645,7 +642,7 @@ function animateWavy(img, speedMultiplier) {
 }
 
 // Curved path (simple quadratic curve)
-function animateCurved(img, speedMultiplier) {
+function animateCurved(img, speedMultiplier, curveDegree = 0.2) {
   img.onload = () => {
     const gameArea = document.getElementById('game-area');
     const areaWidth = gameArea.offsetWidth;
@@ -653,38 +650,30 @@ function animateCurved(img, speedMultiplier) {
     const startX = -imgWidth;
     const endX = areaWidth + imgWidth;
     const distance = endX - startX;
-    const duration = distance / (baseSpeed * speedMultiplier); // seconds
+    const duration = distance / (baseSpeed * speedMultiplier);
 
-    // Set initial position and transition for left
     img.style.left = `${startX}px`;
     img.style.transition = `left ${duration}s linear`;
 
-// Parabolic arc parameters (responsive)
-const arcHeight = gameArea.offsetHeight * (0.15 + Math.random() * 0.1); // 15%–25% of game area height
+    const arcHeight = gameArea.offsetHeight * curveDegree;
 
     let startTime = null;
     function step(now) {
       if (!startTime) startTime = now;
-      const elapsed = (now - startTime) / 1000; // seconds
+      const elapsed = (now - startTime) / 1000;
       const progress = Math.min(elapsed / duration, 1);
-
-      // Parabolic arc: y = -4h * (x - 0.5)^2 + h
-      // where h = arcHeight, x = progress (0 to 1)
       const y = -4 * arcHeight * Math.pow(progress - 0.5, 2) + arcHeight;
       img.style.transform = `translateY(${-y}px)`;
-
       if (progress < 1) {
         requestAnimationFrame(step);
       }
     }
     requestAnimationFrame(step);
 
-    // Start the horizontal movement (after a tiny delay to ensure transition is set)
     setTimeout(() => {
       img.style.left = `${endX}px`;
     }, 20);
 
-    // Remove the image after the transition completes
     setTimeout(() => {
       img.remove();
     }, (duration + 0.1) * 1000);
