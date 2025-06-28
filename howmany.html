@@ -637,25 +637,24 @@
 }
     };
 
-    tryAgainBtn.onclick = function (e) {
-      e.stopPropagation(); // Prevent overlay click
-      tryAgainBtn.style.display = 'none';
-      overlay.style.display = 'none';
-      phase = 2; // Go back to countdown/animals phase
-      showCountdown(() => {
-        phase = 3;
-        runAnimals(missions[currentMission]);
-        setTimeout(() => {
-          const finishTime = getLastAnimalFinishTime(mission, gameArea);
-          setTimeout(() => {
-            phase = 4;
-            overlay.style.background = 'rgba(0,0,0,0.2)';
-            showOverlay('How many?');
-            tryAgainBtn.style.display = 'inline-block';
-          }, finishTime);
-        }, (missions[currentMission].count - 1) * missions[currentMission].delay * 1000 + (gameArea.offsetWidth + 120 * 2) / (baseSpeed * missions[currentMission].speed) * 1000 + 500);
-      });
-    };
+tryAgainBtn.onclick = function (e) {
+  e.stopPropagation(); // Prevent overlay click
+  tryAgainBtn.style.display = 'none';
+  overlay.style.display = 'none';
+  phase = 2; // Go back to countdown/animals phase
+  const mission = missions[currentMission]; // <-- Make sure to use the current mission
+  showCountdown(() => {
+    phase = 3;
+    runAnimals(mission);
+    const finishTime = getLastAnimalFinishTime(mission, gameArea);
+    setTimeout(() => {
+      phase = 4;
+      overlay.style.background = 'rgba(0,0,0,0.2)';
+      showOverlay('How many?');
+      tryAgainBtn.style.display = 'inline-block';
+    }, finishTime);
+  });
+};
 
     function animateAnimals(gif, count, delay, speed, paths, mission) {
       const animalsDiv = document.getElementById('animals');
