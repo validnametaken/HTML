@@ -59,7 +59,7 @@
     </style>
 </head>
 <body>
-    <h1>Exercise Timer (v. 6) </h1>
+    <h1>Exercise Timer (v. 7) </h1>
     <div id="workout">
         <div style="font-weight:bold; color:#888;">Next Exercise</div>
         <div id="next-exercise" style="font-size:1em; color: #555; margin-bottom: 10px;"></div>
@@ -103,7 +103,7 @@
             { name: "Quad sets", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 30, imgUrl: "exercise/no4.gif", explanation: "" },
 
             { name: "Sitting straight leg raise RIGHT", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 5, imgUrl: "exercise/no5.gif", explanation: "Right leg." },
-            { name: "Sitting straight leg raise LEFT", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 30, imgUrl: "exercise/no5.gif", explanation: "Left leg." },
+            { name: "Sitting straight leg raise LEFT", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 15, imgUrl: "exercise/no5.gif", explanation: "Left leg." },
 
             { name: "Towel squeeze", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 15, imgUrl: "exercise/no6.gif", explanation: "" },
             { name: "Calf raise", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 1, imgUrl: "exercise/no7.gif", explanation: "" }
@@ -187,11 +187,13 @@ function playStartSound() {
 
         function playSwitchSound() {
     const switchSound = document.getElementById('switch-sound');
-    switchSound.pause();
-    switchSound.currentTime = 0;
-    switchSound.play().catch(e => {
-        console.log('Switch sound play error:', e);
-    });
+    if (switchSound.readyState >= 2) { // HAVE_CURRENT_DATA
+        switchSound.pause();
+        switchSound.currentTime = 0;
+        switchSound.play().catch(e => {
+            console.log('Switch sound play error:', e);
+        });
+    }
 }
 
 const praises = ["amazing", "awesome", "incredible", "fantastic", "excellent", "superb", "outstanding"];
