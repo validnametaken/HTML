@@ -76,19 +76,19 @@
     <script>
         // Array of events with dates
         const events = [
-            { id: 1, date: "June 26, 1983", title: "Nobu's Birthday", isBirthday: true },
-            { id: 2, date: "July 18, 2018", title: "Allan's Birthday", isBirthday: true},
-            { id: 3, date: "August 10, 1981", title: "Andy's Birthday", isBirthday: true},
-            { id: 4, date: "October 2, 2020", title: "Nina's Birthday", isBirthday: true},
-            { id: 5, date: "November 25, 2014", title: "Noah's Birthday", isBirthday: true},
-            { id: 6, date: "June 25, 2008 00:00:00", title: "Andy&Nobu Meeting" },
-            { id: 7, date: "February 23, 2009 00:00:00", title: "Marriage Day" },
-            { id: 8, date: "July 18, 2018 00:00:00", title: "Allan was born" },
-            { id: 9, date: "November 25, 2014 00:00:00", title: "Noah was born" },
-            { id: 10, date: "October 2, 2020 00:00:00", title: "Nina was born" },
-            { id: 11, date: "June 26, 1983 00:00:00", title: "Nobu was born" },
-            { id: 12, date: "April 14, 2012 00:00:00", title: "Ocean View House" },
-            { id: 13, date: "August 10, 1981 00:00:00", title: "Andy was born" }
+            { id: 1, date: "June 26, 1983", title: "Nobu's Birthday", isBirthday: true, symbol: "&#9826;"  },
+            { id: 2, date: "July 18, 2018", title: "Allan's Birthday", isBirthday: true, symbol: "&#8734;"},
+            { id: 3, date: "August 10, 1981", title: "Andy's Birthday", isBirthday: true, symbol: "&#9675;"},
+            { id: 4, date: "October 2, 2020", title: "Nina's Birthday", isBirthday: true, symbol: "&#9826;"},
+            { id: 5, date: "November 25, 2014", title: "Noah's Birthday", isBirthday: true, symbol: "&#8801;"},
+            { id: 6, date: "June 25, 2008 00:00:00", title: "Andy&Nobu Meeting", symbol: "&#9825;" },
+            { id: 7, date: "February 23, 2009 00:00:00", title: "Marriage Day", symbol: "&#9901;"  },
+            { id: 8, date: "July 18, 2018 00:00:00", title: "Allan was born", symbol: "&#8734;" },
+            { id: 9, date: "November 25, 2014 00:00:00", title: "Noah was born", symbol: "&#8801;" },
+            { id: 10, date: "October 2, 2020 00:00:00", title: "Nina was born", symbol: "&#9826;" },
+            { id: 11, date: "June 26, 1983 00:00:00", title: "Nobu was born", symbol: "&#9826;" },
+            { id: 12, date: "April 14, 2012 00:00:00", title: "Ocean View House", symbol: "&#8962;" },
+            { id: 13, date: "August 10, 1981 00:00:00", title: "Andy was born", symbol: "&#9675;" }
         ];
     
 
@@ -216,6 +216,15 @@ function separateEvents(events) {
                     headline.innerText = event.title;
                     timerDiv.appendChild(headline);
     
+                    const symbolSpan = document.createElement('span');
+symbolSpan.style.fontSize = "2em";
+symbolSpan.style.position = "absolute";
+symbolSpan.style.right = "0";
+symbolSpan.style.top = "50%";
+symbolSpan.style.transform = "translateY(-50%)";
+symbolSpan.innerHTML = event.symbol || "⭐";
+timerDiv.appendChild(symbolSpan);
+
 if (event.isBirthday) {
     // Always show timer for birthdays
     const timeElements = ['days', 'hours', 'minutes', 'seconds'];
@@ -247,18 +256,6 @@ if (event.isBirthday) {
                         });
                     }
     
-                    try {
-                        const image = await loadImage(`image${event.id}.png`);
-                        image.alt = `Image ${event.id}`;
-                        timerDiv.appendChild(image);
-                    } catch (error) {
-                        console.log(`Image for event ${event.id} not found`);
-                        // Add a placeholder image
-                        const placeholderImg = document.createElement('img');
-                        placeholderImg.src = 'placeholder.png';
-                        placeholderImg.alt = `Placeholder for ${event.title}`;
-                        timerDiv.appendChild(placeholderImg);
-                    }
     
                     if (i < sortedEvents.length - 1) {
                         const separator = document.createElement('div');
