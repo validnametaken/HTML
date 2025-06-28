@@ -76,11 +76,11 @@
     <script>
         // Array of events with dates
         const events = [
-            { id: 1, date: "June 26, 2025 00:00:00", title: "Nobu's Birthday" },
-            { id: 2, date: "July 18, 2025 00:00:00", title: "Allan's Birthday" },
-            { id: 3, date: "August 10, 2025 00:00:00", title: "Andy's Birthday" },
-            { id: 4, date: "October 2, 2025 00:00:00", title: "Nina's Birthday" },
-            { id: 5, date: "November 25, 2024 00:00:00", title: "Noah's Birthday" },
+            { id: 1, date: "June 26, 1983", title: "Nobu's Birthday", isBirthday: true },
+            { id: 2, date: "July 18, 2018", title: "Allan's Birthday", isBirthday: true},
+            { id: 3, date: "August 10, 1981", title: "Andy's Birthday", isBirthday: true},
+            { id: 4, date: "October 2, 2020", title: "Nina's Birthday", isBirthday: true},
+            { id: 5, date: "November 25, 2014", title: "Noah's Birthday", isBirthday: true},
             { id: 6, date: "June 25, 2008 00:00:00", title: "Andy&Nobu Meeting" },
             { id: 7, date: "February 23, 2009 00:00:00", title: "Marriage Day" },
             { id: 8, date: "July 18, 2018 00:00:00", title: "Allan was born" },
@@ -91,30 +91,47 @@
             { id: 13, date: "August 10, 1981 00:00:00", title: "Andy was born" }
         ];
     
-        // Function to update timer
-        function updateTimer(id, futureDate) {
-            const future = Date.parse(futureDate);
-            const now = new Date();
-            const diff = future - now;
-    
-            if (diff < 0) {
-                const daysPassed = Math.floor(-diff / (1000 * 60 * 60 * 24));
-                document.getElementById(`days${id}`).innerText = daysPassed;
-                document.getElementById(`hours${id}`).style.display = 'none';
-                document.getElementById(`minutes${id}`).style.display = 'none';
-                document.getElementById(`seconds${id}`).style.display = 'none';
-            } else {
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const secs = Math.floor((diff % (1000 * 60)) / 1000);
-    
-                document.getElementById(`days${id}`).innerText = days;
-                document.getElementById(`hours${id}`).innerText = hours;
-                document.getElementById(`minutes${id}`).innerText = mins;
-                document.getElementById(`seconds${id}`).innerText = secs;
-            }
-        }
+
+
+// Helper: get next birthday date as a string
+function getNextBirthday(birthdate) {
+    const now = new Date();
+    const birth = new Date(birthdate);
+    let next = new Date(now.getFullYear(), birth.getMonth(), birth.getDate());
+    if (next < now) {
+        next.setFullYear(next.getFullYear() + 1);
+    }
+    return next;
+}
+
+// Function to update timer
+function updateTimer(id, event) {
+    let future;
+    if (event.isBirthday) {
+        future = getNextBirthday(event.date);
+    } else {
+        future = new Date(event.date);
+    }
+    const now = new Date();
+    const diff = future - now;
+
+    if (diff < 0) {
+        document.getElementById(`days${id}`).innerText = "0";
+        document.getElementById(`hours${id}`).innerText = "0";
+        document.getElementById(`minutes${id}`).innerText = "0";
+        document.getElementById(`seconds${id}`).innerText = "0";
+    } else {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById(`days${id}`).innerText = days;
+        document.getElementById(`hours${id}`).innerText = hours;
+        document.getElementById(`minutes${id}`).innerText = mins;
+        document.getElementById(`seconds${id}`).innerText = secs;
+    }
+}
     
         // Function to load images
         function loadImage(src) {
@@ -127,13 +144,27 @@
         }
     
         // Separate events into past and future, and sort accordingly
-        function separateEvents(events) {
-            const sortedEvents = [...events].sort((a, b) => new Date(a.date) - new Date(b.date));
-            const now = Date.now();
-            const pastEvents = sortedEvents.filter(event => Date.parse(event.date) < now).reverse();
-            const futureEvents = sortedEvents.filter(event => Date.parse(event.date) >= now);
-            return { pastEvents, futureEvents };
+// Replace your separateEvents function with this:
+function separateEvents(events) {
+    const now = new Date();
+    // For sorting, use next birthday for birthdays, or event date for others
+    function getEventSortDate(event) {
+        if (event.isBirthday) {
+            return getNextBirthday(event.date);
         }
+        return new Date(event.date);
+    }
+    const sortedEvents = [...events].sort((a, b) => getEventSortDate(a) - getEventSortDate(b));
+    const pastEvents = sortedEvents.filter(event => {
+        if (event.isBirthday) return false; // birthdays always future
+        return Date.parse(event.date) < now;
+    }).reverse();
+    const futureEvents = sortedEvents.filter(event => {
+        if (event.isBirthday) return true;
+        return Date.parse(event.date) >= now;
+    });
+    return { pastEvents, futureEvents };
+}
     
         // Function to format date difference
         function formatDateDifference(eventDate, currentDate) {
@@ -185,12 +216,25 @@
                     headline.innerText = event.title;
                     timerDiv.appendChild(headline);
     
-                    if (Date.parse(event.date) < Date.now()) {
-                        const pastMessage = document.createElement('p');
-                        pastMessage.innerText = formatDateDifference(new Date(event.date), new Date());
-                        timerDiv.appendChild(pastMessage);
-                        timerDiv.classList.add('past-event');
-                    } else {
+if (event.isBirthday) {
+    // Always show timer for birthdays
+    const timeElements = ['days', 'hours', 'minutes', 'seconds'];
+    timeElements.forEach(element => {
+        const timeElementDiv = document.createElement('div');
+        const timeSpan = document.createElement('span');
+        timeSpan.id = `${element}${event.id}`;
+        timeSpan.innerText = '0';
+        timeElementDiv.appendChild(timeSpan);
+        timeElementDiv.innerHTML += `<span>${element}</span>`;
+        timerDiv.appendChild(timeElementDiv);
+    });
+
+} else if (Date.parse(event.date) < Date.now()) {
+    const pastMessage = document.createElement('p');
+    pastMessage.innerText = formatDateDifference(new Date(event.date), new Date());
+    timerDiv.appendChild(pastMessage);
+    timerDiv.classList.add('past-event');
+} else {
                         const timeElements = ['days', 'hours', 'minutes', 'seconds'];
                         timeElements.forEach(element => {
                             const timeElementDiv = document.createElement('div');
@@ -230,15 +274,50 @@
         createTimers();
     
         // Updates timers based on the current date and event dates
-        function updateTimers() {
-            events.forEach(event => {
-                if (Date.parse(event.date) >= Date.now()) {
-                    updateTimer(event.id, event.date);
-                }
-            });
+function updateTimer(id, event) {
+    let future;
+    if (event.isBirthday) {
+        future = getNextBirthday(event.date);
+    } else {
+        future = new Date(event.date);
+    }
+    const now = new Date();
+    const diff = future - now;
+
+    if (diff < 0) {
+        document.getElementById(`days${id}`).innerText = "0";
+        document.getElementById(`hours${id}`).innerText = "0";
+        document.getElementById(`minutes${id}`).innerText = "0";
+        document.getElementById(`seconds${id}`).innerText = "0";
+        if (event.isBirthday) {
+            document.getElementById(`untilMsg${id}`).innerText = "";
         }
-    
-        setInterval(updateTimers, 1000);
+    } else {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById(`days${id}`).innerText = days;
+        document.getElementById(`hours${id}`).innerText = hours;
+        document.getElementById(`minutes${id}`).innerText = mins;
+        document.getElementById(`seconds${id}`).innerText = secs;
+        if (event.isBirthday) {
+        
+        }
+    }
+}
+function updateTimers() {
+    events.forEach(event => {
+        updateTimer(event.id, event);
+    });
+}
+
+// Make sure to call updateTimers every second:
+setInterval(updateTimers, 1000);
+
+// Also call it once at the start to populate the timers immediately:
+updateTimers();
     </script>
     
 
