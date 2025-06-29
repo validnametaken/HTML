@@ -27,12 +27,12 @@ body {
 
 .game-container {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-template-rows: repeat(3, minmax(0, 1fr));
-    width: min(60vh, 800px);
-    height: min(60vh, 800px);
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    width: min(90vw, 400px);
+    height: min(90vw, 400px);
     margin: 20px auto;
-    gap: min(30px, 4vw);
+    gap: min(6vw, 24px);
     place-items: center;
 }
 
@@ -50,8 +50,10 @@ body {
 }
 
 .button {
-    width: min(20vh, 200px);
-    height: min(20vh, 200px);
+    width: min(40vw, 160px);
+    height: min(40vw, 160px);
+    max-width: 160px;
+    max-height: 160px;
     border-radius: 15px;
     cursor: pointer;
     transition: transform 0.2s ease;
@@ -64,23 +66,10 @@ body {
 }
 
 
-#green { background-color: #00c853; 
-    grid-column: 2;
-    grid-row: 1;
-}
-#red { background-color: #ff1744; 
-    grid-column: 3;
-    grid-row: 2;
-}
-#yellow { background-color: #ffd600; 
-    grid-column: 1;
-    grid-row: 2;
-
-}
-#blue { background-color: #2979ff; 
-    grid-column: 2;
-    grid-row: 3;
-}
+#green { background-color: #00c853; }
+#red { background-color: #ff1744; }
+#yellow { background-color: #ffd600; }
+#blue { background-color: #2979ff; }
 
 .button.active { 
     filter: brightness(160%);
