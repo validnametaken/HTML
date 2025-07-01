@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Missing Game</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    #drop-zone {
+      border: 2px dashed #888;
+      padding: 30px;
+      margin-bottom: 20px;
+      background: white;
+      cursor: pointer;
+    }
+
+    #picker-thumbs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .thumb {
+      width: 80px;
+      height: 60px;
+      object-fit: cover;
+      border: 2px solid #ccc;
+      border-radius: 6px;
+      background: #eee;
+      box-shadow: 0 1px 6px #0001;
+    }
+
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
+      justify-items: center;
+      align-items: center;
+      max-width: 900px;
+      margin: 40px auto 20px auto;
+      min-height: 400px;
+    }
+
+    .card {
+      width: 100%;
+      height: 320px;
+      object-fit: cover;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px #0002;
+      background: #eee;
+      max-width: 100%;
+      max-height: 80vh;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    button {
+      margin: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      background: #3498db;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #2980b9;
+    }
+    .game-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+#play-again-btn {
+  display: none;
+}
+  </style>
+</head>
+<body>
+
+  <div id="picker-screen">
+    <h1>Missing Game</h1>
+    <div id="drop-zone">Drop image files here or click to select</div>
+    <input type="file" id="file-input" multiple accept="image/*" style="display:none">
+    <div id="picker-thumbs"></div>
+    <button id="start-btn" style="margin-top:30px;">Start Game</button>
+  </div>
+
+<div id="game-screen" style="display:none;">
+  <div id="grid"></div>
+  <div class="game-buttons">
+    <button onclick="reveal()">Reveal</button>
+    <button onclick="resetGame()">Reset</button>
+    <button id="play-again-btn">Play Again</button>
+  </div>
+</div>
+
+  <script>
+const dropZone = document.getElementById('drop-zone');
+const fileInput = document.getElementById('file-input');
+const grid = document.getElementById('grid');
+const pickerScreen = document.getElementById('picker-screen');
+const gameScreen = document.getElementById('game-screen');
+const startBtn = document.getElementById('start-btn');
+const pickerThumbs = document.getElementById('picker-thumbs');
+const playAgainBtn = document.getElementById('play-again-btn');
+
+let hiddenCardIndex = null;
+let originalCards = [];
+let loadedThumbs = [];
+
+dropZone.addEventListener('click', () => fileInput.click());
+
+dropZone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  dropZone.style.background = '#e0f7fa';
+});
+
+dropZone.addEventListener('dragleave', () => {
+  dropZone.style.background = 'white';
+});
+
+dropZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropZone.style.background = 'white';
+  const files = [...e.dataTransfer.files];
+  loadImages(files);
+});
+
+fileInput.addEventListener('change', () => {
+  const files = [...fileInput.files];
+  loadImages(files);
+});
+
+function loadImages(files) {
+  pickerThumbs.innerHTML = '';
+  grid.innerHTML = '';
+  originalCards = [];
+  loadedThumbs = [];
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      // Thumbnail for picker
+      const thumb = document.createElement('img');
+      thumb.src = e.target.result;
+      thumb.className = 'thumb';
+      pickerThumbs.appendChild(thumb);
+      loadedThumbs.push(thumb);
+
+      // Card for game
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      img.className = 'card';
+      grid.appendChild(img);
+      originalCards.push(img);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+startBtn.onclick = function() {
+  if (originalCards.length === 0) return;
+  pickerScreen.style.display = 'none';
+  gameScreen.style.display = '';
+  playAgainBtn.style.display = 'none';
+  startGame();
+};
+
+function startGame() {
+  if (originalCards.length === 0) return;
+  if (hiddenCardIndex !== null) return;
+  const index = Math.floor(Math.random() * originalCards.length);
+  originalCards[index].classList.add('hidden');
+  hiddenCardIndex = index;
+}
+
+function reveal() {
+  if (hiddenCardIndex !== null) {
+    originalCards[hiddenCardIndex].classList.remove('hidden');
+    hiddenCardIndex = null;
+  }
+  playAgainBtn.style.display = 'block'; // force visible
+}
+
+function resetGame() {
+  grid.innerHTML = '';
+  pickerThumbs.innerHTML = '';
+  hiddenCardIndex = null;
+  originalCards = [];
+  loadedThumbs = [];
+  pickerScreen.style.display = '';
+  gameScreen.style.display = 'none';
+  playAgainBtn.style.display = 'none';
+}
+
+playAgainBtn.onclick = function() {
+  // Show all cards, pick new hidden, hide play again button
+  originalCards.forEach(card => card.classList.remove('hidden'));
+  playAgainBtn.style.display = 'none';
+  startGame();
+};
+
+  </script>
+
+</body>
+</html>
