@@ -16,26 +16,47 @@
         body {
             margin: 0;
             padding: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Alata", -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
             overflow: hidden;
             position: fixed;
-            font-family: "Alata", -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         #gameArea {
             width: 800px;
             height: 600px;
-            border: 2px solid black;
+            border: 2px solid #333;
             position: relative;
             overflow: hidden;
             background-color: #f0f0f0;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(60, 60, 120, 0.18);
         }
 
         .letter {
             position: absolute;
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            border: 2px solid #fff;
+            transition: transform 0.1s;
+        }
+
+        .letter:active {
+            transform: scale(1.1);
         }
 
         #goalLine {
@@ -62,8 +83,11 @@
 
         .stars {
             text-align: center;
-            font-size: 30px;
+            font-size: 48px;
             color: gold;
+            margin-top: 16px;
+            letter-spacing: 6px;
+            text-shadow: 0 2px 8px #f5e400;
         }
 
         #gameOver {
@@ -73,7 +97,30 @@
             left: 50%;
             transform: translate(-50%, -50%);
             font-size: 48px;
-            color: red;
+            color: #fd0000;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 32px 24px;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        #gameOver button {
+            margin-top: 24px;
+            padding: 12px 32px;
+            font-size: 22px;
+            background: linear-gradient(90deg, #fd0000 0%, #f5e400 100%);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(253, 0, 0, 0.18);
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        #gameOver button:hover {
+            background: linear-gradient(90deg, #f5e400 0%, #fd0000 100%);
+            transform: scale(1.05);
         }
 
         .letter {
@@ -109,6 +156,26 @@
             /* Light blue for left index finger */
         }
 
+        .right-ring {
+            background-color: #cc0909;
+            /* Dark blue for right index finger */
+        }
+
+        .left-ring {
+            background-color: #ec7d7d;
+            /* Light blue for left index finger */
+        }
+
+        .right-pinkie {
+            background-color: #9b9101;
+            /* Dark blue for right index finger */
+        }
+
+        .left-pinkie {
+            background-color: #f5e940;
+            /* Light blue for left index finger */
+        }
+
         #menuScreen {
             width: 100%;
             height: 100%;
@@ -116,34 +183,40 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background-color: #f0f0f0;
-        }
-
-        #levelButtons {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 20px;
+            background: transparent;
+            overflow-y: auto;
+            /* Enable vertical scroll */
         }
 
         #levelButtons button {
-            padding: 10px 20px;
-            font-size: 18px;
+            padding: 12px 28px;
+            font-size: 20px;
             cursor: pointer;
+            background: linear-gradient(90deg, #42a5f5 0%, #1a237e 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(66, 165, 245, 0.18);
+            margin: 6px;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        #levelButtons button:hover {
+            background: linear-gradient(90deg, #1a237e 0%, #42a5f5 100%);
+            transform: scale(1.05);
         }
     </style>
 </head>
 
 <body>
     <div id="menuScreen">
-        <h1>Alphabet Attack</h1>
+        <h1>Andy'sAlphabet Attack</h1>
         <h2>Select a Level</h2>
         <div id="levelButtons"></div>
     </div>
     <div id="gameArea" style="display: none;">
         <div id="goalLine"></div>
-        <div id="score">Score: 20</div>
+        <div id="score">Score: 0</div>
         <div id="timer">Time: 120</div>
         <div id="gameOver">GAME OVER</div>
     </div>
@@ -152,42 +225,80 @@
     <script>
         // Level definitions
         const levels = [
-            { duration: 60, initialSpeed: 2000, speedIncrease: 200, letters: ['f', 'j'] },
-            { duration: 60, initialSpeed: 3000, speedIncrease: 200, letters: ['f', 'j', 'd', 'k'] },
-            { duration: 50, initialSpeed: 1600, speedIncrease: 200, letters: ['f', 'j', 'd', 'k', 's', 'l'] },
-            // ... add more levels as needed
+            { group: "F & J", duration: 30, initialSpeed: 3000, fallSpeed: 1, letters: ['f', 'j'] },
+            { group: "F & J", duration: 30, initialSpeed: 2500, fallSpeed: 2, letters: ['f', 'j'] },
+            { group: "F & J", duration: 30, initialSpeed: 2000, fallSpeed: 3, letters: ['f', 'j'] },
+            { group: "F & J", duration: 30, initialSpeed: 1500, fallSpeed: 4, letters: ['f', 'j'] },
+            { group: "F & J", duration: 30, initialSpeed: 1000, fallSpeed: 5, letters: ['f', 'j'] },
+
+            { group: "F J D K", duration: 40, initialSpeed: 3000, fallSpeed: 1, letters: ['f', 'j', 'd', 'k'] },
+            { group: "F J D K", duration: 40, initialSpeed: 2500, fallSpeed: 2, letters: ['f', 'j', 'd', 'k'] },
+            { group: "F J D K", duration: 40, initialSpeed: 2000, fallSpeed: 3, letters: ['f', 'j', 'd', 'k'] },
+            { group: "F J D K", duration: 40, initialSpeed: 1500, fallSpeed: 4, letters: ['f', 'j', 'd', 'k'] },
+            { group: "F J D K", duration: 40, initialSpeed: 1000, fallSpeed: 5, letters: ['f', 'j', 'd', 'k'] },
+
+            { group: "F J D K S L", duration: 50, initialSpeed: 3000, fallSpeed: 1, letters: ['f', 'j', 'd', 'k', 's', 'l'] },
+            { group: "F J D K S L", duration: 50, initialSpeed: 2500, fallSpeed: 2, letters: ['f', 'j', 'd', 'k', 's', 'l'] },
+            { group: "F J D K S L", duration: 50, initialSpeed: 2000, fallSpeed: 3, letters: ['f', 'j', 'd', 'k', 's', 'l'] },
+            { group: "F J D K S L", duration: 50, initialSpeed: 1500, fallSpeed: 4, letters: ['f', 'j', 'd', 'k', 's', 'l'] },
+            { group: "F J D K S L", duration: 50, initialSpeed: 1000, fallSpeed: 5, letters: ['f', 'j', 'd', 'k', 's', 'l'] },
+
+            { group: "F J D K S L A ;", duration: 50, initialSpeed: 3000, fallSpeed: 1, letters: ['f', 'j', 'd', 'k', 's', 'l', 'a', ';'] },
+            { group: "F J D K S L A ;", duration: 50, initialSpeed: 2500, fallSpeed: 2, letters: ['f', 'j', 'd', 'k', 's', 'l', 'a', ';'] },
+            { group: "F J D K S L A ;", duration: 50, initialSpeed: 2000, fallSpeed: 3, letters: ['f', 'j', 'd', 'k', 's', 'l', 'a', ';'] },
+            { group: "F J D K S L A ;", duration: 50, initialSpeed: 1500, fallSpeed: 4, letters: ['f', 'j', 'd', 'k', 's', 'l', 'a', ';'] },
+            { group: "F J D K S L A ;", duration: 50, initialSpeed: 1000, fallSpeed: 5, letters: ['f', 'j', 'd', 'k', 's', 'l', 'a', ';'] },
+
+            { group: "F J D K S L A ; G H", duration: 50, initialSpeed: 3000, fallSpeed: 1, letters: ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';'] },
+            { group: "F J D K S L A ; G H", duration: 50, initialSpeed: 2500, fallSpeed: 2, letters: ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';'] },
+            { group: "F J D K S L A ; G H", duration: 50, initialSpeed: 2000, fallSpeed: 3, letters: ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';'] },
+            { group: "F J D K S L A ; G H", duration: 50, initialSpeed: 1500, fallSpeed: 4, letters: ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';'] },
+            { group: "F J D K S L A ; G H", duration: 50, initialSpeed: 1000, fallSpeed: 5, letters: ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';'] },
+            // ...add more levels as needed
         ];
 
         let currentLevel = 0;
         let score = 20;
+        let totalLettersSpawned = 0;
         let timeLeft;
         let gameSpeed;
         let letters;
+        let fallSpeed;
+        let correctHits = 0;
+        let missedLetters = 0;
+        let wrongKeys = 0;
         let activeLetters = [];
-        let gameActive = true;
-        let letterInterval;
+        let gameActive = false;
+        let letterInterval = null;
+        let gameInterval = null;
+        let timerInterval = null;
 
         function initLevel() {
             const level = levels[currentLevel];
             timeLeft = level.duration;
             gameSpeed = level.initialSpeed;
             letters = level.letters;
+            fallSpeed = level.fallSpeed; // <-- Add this line
             updateTimer();
-            updateGameSpeed();
+            updateScore();
         }
 
         function createLetter() {
             if (!gameActive) return;
-
             const letter = document.createElement('div');
             letter.className = 'letter';
             letter.textContent = letters[Math.floor(Math.random() * letters.length)];
 
-            // Add color coding based on which finger should press the key
-            const rightIndexLetters = ['j', 'h', 'y', 'u', 'n'];
-            const leftIndexLetters = ['f'];
-            const rightMiddleLetters = ['k'];
-            const leftMiddleLetters = ['d'];
+            // Color coding
+            const rightIndexLetters = ['j', 'h', 'y', 'u', 'n', 'm', '7', '8'];
+            const rightMiddleLetters = ['k', 'i', ',', '9'];
+            const rightRingLetters = ['l', 'o', '.', '0'];
+            const rightPinkieLetters = [';', '/', '\'', 'p'];
+
+            const leftIndexLetters = ['f', 'r', 't', 'g', 'v', 'b', '5', '6'];
+            const leftMiddleLetters = ['d', 'e', 'c', '4'];
+            const leftRingLetters = ['s', 'w', 'x', '3'];
+            const leftPinkieLetters = ['a', 'q', 'z', '2', '1'];
 
             if (rightIndexLetters.includes(letter.textContent)) {
                 letter.classList.add('right-index');
@@ -197,23 +308,32 @@
                 letter.classList.add('right-middle');
             } else if (leftMiddleLetters.includes(letter.textContent)) {
                 letter.classList.add('left-middle');
+            } else if (rightRingLetters.includes(letter.textContent)) {
+                letter.classList.add('right-ring');
+            } else if (leftRingLetters.includes(letter.textContent)) {
+                letter.classList.add('left-ring');
+            } else if (rightPinkieLetters.includes(letter.textContent)) {
+                letter.classList.add('right-pinkie');
+            } else if (leftPinkieLetters.includes(letter.textContent)) {
+                letter.classList.add('left-pinkie');
             }
 
-            letter.style.left = Math.random() * 750 + 'px';
+            letter.style.left = Math.random() * 760 + 'px';
             letter.style.top = '0px';
             gameArea.appendChild(letter);
             activeLetters.push(letter);
+            totalLettersSpawned++;
         }
 
         function updateGame() {
             if (!gameActive) return;
             activeLetters.forEach(letter => {
-                let top = parseInt(letter.style.top) + 1;
+                let top = parseInt(letter.style.top) + fallSpeed;
                 letter.style.top = top + 'px';
                 if (top > 550) {
                     letter.remove();
                     activeLetters = activeLetters.filter(l => l !== letter);
-                    score--;
+                    missedLetters++;
                     updateScore();
                 }
             });
@@ -224,65 +344,50 @@
         }
 
         function updateScore() {
-            document.getElementById('score').textContent = `Score: ${score}`;
-            if (score <= 0) {
+            document.getElementById('score').textContent =
+                `Hits: ${correctHits} | Mistakes: ${wrongKeys} | Missed: ${missedLetters}`;
+            if (missedLetters >= 20) { // Game over if missed letters reach 20
                 gameOver();
             }
         }
 
         function gameOver() {
-            gameActive = false; // Stop the game
-            clearInterval(letterInterval); // Stop creating new letters
-            clearInterval(gameInterval); // Stop updating the game
-            clearInterval(timer); // Stop the timer
+            gameActive = false;
+            clearInterval(letterInterval);
+            clearInterval(gameInterval);
+            clearInterval(timerInterval);
 
-            // Clear active letters from the game area
-            const activeLetters = document.querySelectorAll('.letter'); // Select all letter elements
-            activeLetters.forEach(letter => letter.remove()); // Remove each letter from the game area
+            // Remove all letters
+            activeLetters.forEach(letter => letter.remove());
+            activeLetters = [];
 
-            // Reset game variables
-            score = 0; // Reset score
-            timeLeft = levels[currentLevel].duration; // Reset timer to the initial value for the current level
-            updateScore(); // Update the score display
-            updateTimer(); // Update the timer display
-
-            // Show game over message
+            // Show game over message and menu button
             const gameOverDiv = document.getElementById('gameOver');
-            gameOverDiv.textContent = 'GAME OVER'; // Set the game over message
-            gameOverDiv.style.display = 'block'; // Make sure the game over div is visible
-
-            // Clear any existing buttons before adding a new one
-            while (gameOverDiv.firstChild) {
-                gameOverDiv.removeChild(gameOverDiv.firstChild);
-            }
-
-            // Add a button to return to menu
+            gameOverDiv.innerHTML = 'GAME OVER<br>';
             const menuButton = document.createElement('button');
             menuButton.textContent = 'Return to Menu';
-            menuButton.onclick = returnToMenu; // Function to handle returning to the menu
-            gameOverDiv.appendChild(menuButton); // Add the button to the game over div
+            menuButton.onclick = returnToMenu;
+            gameOverDiv.appendChild(menuButton);
+            gameOverDiv.style.display = 'block';
 
-            console.log(gameOverDiv); // Check the element
-            console.log(gameOverDiv.style.display); // Check the display style
+            // Calculate stars based on percentage of correct hits
+            const percent = totalLettersSpawned > 0 ? correctHits / (totalLettersSpawned + wrongKeys) : 0;
+            let stars = Math.round(percent * 5);
+            stars = Math.max(0, Math.min(5, stars));
+            document.querySelector('.stars').textContent = '⭐'.repeat(stars);
         }
-
-
 
         document.addEventListener('keypress', (e) => {
             if (!gameActive) return;
-
             const key = e.key.toLowerCase();
             const matchingLetter = activeLetters.find(letter => letter.textContent === key);
-
             if (matchingLetter) {
                 matchingLetter.remove();
                 activeLetters = activeLetters.filter(l => l !== matchingLetter);
-                score++;
+                correctHits++;
             } else {
-                // Any keypress that doesn't hit a falling letter will reduce score
-                score--;
+                wrongKeys++;
             }
-
             updateScore();
         });
 
@@ -290,87 +395,80 @@
             clearInterval(letterInterval);
             letterInterval = setInterval(createLetter, gameSpeed);
         }
-        letterInterval = setInterval(createLetter, gameSpeed);
-        const gameInterval = setInterval(updateGame, 16);
-
-        const timer = setInterval(() => {
-            if (!gameActive) return;
-
-            timeLeft--;
-            updateTimer();
-
-            if (timeLeft <= 0) {
-                const stars = Math.min(5, Math.floor((score - 20) / 10));
-                document.querySelector('.stars').textContent = '⭐'.repeat(Math.max(0, stars));
-                gameOver();
-            }
-
-            const currentLevelConfig = levels[currentLevel];
-            if (timeLeft % 10 === 0 && gameSpeed > 200) {
-                gameSpeed -= currentLevelConfig.speedIncrease;
-                updateGameSpeed();
-            }
-        }, 1000);
-
-        function createLevelButtons() {
-            const levelButtons = document.getElementById('levelButtons');
-            levels.forEach((level, index) => {
-                const button = document.createElement('button');
-                button.textContent = `Level ${index + 1}`;
-                button.onclick = () => startLevel(index);
-                levelButtons.appendChild(button);
-            });
-        }
 
         function startLevel(levelIndex) {
             currentLevel = levelIndex;
             document.getElementById('menuScreen').style.display = 'none';
             document.getElementById('gameArea').style.display = 'block';
+            document.getElementById('gameOver').style.display = 'none';
+            document.querySelector('.stars').textContent = '';
             initLevel();
             startGame();
         }
 
         function startGame() {
-            gameActive = true; // Start the game
-            score = 20; // Set initial score
-            timeLeft = levels[currentLevel].duration; // Set time left based on the current level
-            activeLetters = []; // Clear any active letters
-            updateScore(); // Update the score display
-            updateTimer(); // Update the timer display
-            letterInterval = setInterval(createLetter, gameSpeed); // Start creating letters
-            gameInterval = setInterval(updateGame, 16); // Start the game update loop
-            timer = setInterval(updateGameTimer, 1000); // Start the timer
-        }
-
-        function updateGameTimer() {
-            if (!gameActive) return;
-
-            timeLeft--;
+            gameActive = true;
+            timeLeft = levels[currentLevel].duration;
+            activeLetters = [];
+            totalLettersSpawned = 0;
+            correctHits = 0;
+            missedLetters = 0;
+            wrongKeys = 0;
+            updateScore();
             updateTimer();
-
-            if (timeLeft <= 0 && gameActive) {
-                const stars = Math.min(5, Math.floor((score - 20) / 10));
-                document.querySelector('.stars').textContent = '⭐'.repeat(Math.max(0, stars));
-                gameOver();
-            }
-
-            const currentLevelConfig = levels[currentLevel];
-            if (timeLeft % 10 === 0 && gameSpeed > 200) {
-                gameSpeed -= currentLevelConfig.speedIncrease;
-                updateGameSpeed();
-            }
+            updateGameSpeed();
+            gameInterval = setInterval(updateGame, 16);
+            timerInterval = setInterval(() => {
+                if (!gameActive) return;
+                timeLeft--;
+                updateTimer();
+                if (timeLeft <= 0) {
+                    gameOver();
+                }
+            }, 1000);
         }
-
 
         function returnToMenu() {
             document.getElementById('gameArea').style.display = 'none';
             document.getElementById('menuScreen').style.display = 'block';
             document.getElementById('gameOver').style.display = 'none';
             document.querySelector('.stars').textContent = '';
+            clearInterval(letterInterval);
+            clearInterval(gameInterval);
+            clearInterval(timerInterval);
+            activeLetters.forEach(letter => letter.remove());
+            activeLetters = [];
         }
 
+        function createLevelButtons() {
+            const levelButtons = document.getElementById('levelButtons');
+            levelButtons.innerHTML = '';
 
-        // Call this function when the page loads to create level buttons
+            // Group levels by topic
+            const groups = {};
+            levels.forEach((level, idx) => {
+                if (!groups[level.group]) groups[level.group] = [];
+                groups[level.group].push({ ...level, index: idx });
+            });
+
+            Object.keys(groups).forEach(groupName => {
+                const groupDiv = document.createElement('div');
+                groupDiv.style.marginBottom = '20px';
+                const groupTitle = document.createElement('h3');
+                groupTitle.textContent = groupName;
+                groupDiv.appendChild(groupTitle);
+
+                groups[groupName].forEach(levelObj => {
+                    const button = document.createElement('button');
+                    button.textContent = `Level ${levelObj.index + 1}`;
+                    button.onclick = () => startLevel(levelObj.index);
+                    groupDiv.appendChild(button);
+                });
+
+                levelButtons.appendChild(groupDiv);
+            });
+        }
+
         createLevelButtons();
 
     </script>
