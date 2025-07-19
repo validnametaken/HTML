@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <!-- #region Inline critical loader CSS -->
+  <meta charset="UTF-8">
+  <!-- #region Inline critical loader CSS -->
 
   <style>
     body {
@@ -10,10 +11,14 @@
       font-family: system-ui, sans-serif;
       background: #f8f8f8;
     }
+
     #loader {
       position: fixed;
-      left: 0; top: 0; width: 100vw; height: 100vh;
-      background: rgba(255,255,255,0.95);
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(255, 255, 255, 0.95);
       color: #222;
       display: flex;
       flex-direction: column;
@@ -23,14 +28,16 @@
       font-family: inherit;
       transition: opacity 0.5s;
     }
+
     #loader.hide {
       opacity: 0;
       pointer-events: none;
     }
+
     #loader-card {
       background: #fff;
       border-radius: 24px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
       padding: 2.5rem 2.5rem 2rem 2.5rem;
       display: flex;
       flex-direction: column;
@@ -38,6 +45,7 @@
       min-width: 260px;
       max-width: 90vw;
     }
+
     .loader-logo {
       width: 64px;
       height: 64px;
@@ -47,6 +55,7 @@
       align-items: center;
       justify-content: center;
     }
+
     .loader-spinner {
       width: 48px;
       height: 48px;
@@ -56,9 +65,13 @@
       animation: spin 1s linear infinite;
       margin-bottom: 2rem;
     }
+
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
+
     #progress-bar-bg {
       width: 60vw;
       max-width: 320px;
@@ -67,16 +80,18 @@
       border-radius: 0.6rem;
       overflow: hidden;
       margin-bottom: 1.2rem;
-      box-shadow: 0 2px 8px rgba(74,144,226,0.08);
+      box-shadow: 0 2px 8px rgba(74, 144, 226, 0.08);
     }
+
     #progress-bar {
       width: 0%;
       height: 100%;
       background: linear-gradient(90deg, #4a90e2 0%, #7ed6df 100%);
       border-radius: 0.6rem;
-      transition: width 0.3s cubic-bezier(.4,2,.6,1), background 0.3s;
+      transition: width 0.3s cubic-bezier(.4, 2, .6, 1), background 0.3s;
       box-shadow: 0 0 8px #4a90e2aa;
     }
+
     #progress-text {
       margin-top: 0.2rem;
       font-size: 1.1rem;
@@ -85,6 +100,7 @@
       letter-spacing: 0.05em;
       text-shadow: 0 1px 2px #fff8;
     }
+
     #loader-title {
       font-size: 1.5rem;
       font-weight: 700;
@@ -93,33 +109,180 @@
       letter-spacing: 0.02em;
       text-align: center;
     }
+
     /* Hide main content until loaded */
     #main-content {
       display: none;
     }
- 
-        body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 1em; background: #f0f8ff; }
-    .chat { margin-bottom: 1em; }
-    .bot, .user { margin: 0.5em 0; }
-    .bot { color: blue; }
-    .user { color: green; }
-    input { width: 100%; padding: 0.5em; font-size: 1em; }
-    .hint { color: orange; }
 
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: auto;
+      padding: 1em;
+      background: #f0f8ff;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      max-height: calc(100vh - 2em);
+    }
+
+    .chat {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 1em;
+      padding: 1em;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .input-container {
+      position: sticky;
+      bottom: 0;
+      background: #f0f8ff;
+      padding: 1em 0;
+      border-top: 1px solid #ddd;
+    }
+
+    .bot,
+    .user {
+      margin: 0.5em 0;
+    }
+
+    .bot {
+      color: blue;
+    }
+
+    .user {
+      color: green;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.5em;
+      font-size: 1em;
+      box-sizing: border-box;
+    }
+
+    .hint {
+      color: orange;
+    }
+
+    .hint2 {
+      color: #ff6600;
+    }
+
+    .answer {
+      color: #cc0000;
+      font-weight: bold;
+    }
+
+    .restart-btn {
+      background: #4a90e2;
+      color: white;
+      border: none;
+      padding: 0.5em 1em;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 1em;
+      font-size: 1em;
+    }
+
+    .restart-btn:hover {
+      background: #357abd;
+    }
+
+    .progress {
+      color: #666;
+      font-size: 0.9em;
+      margin-bottom: 0.5em;
+    }
+
+    .restart-btn {
+      background: #4a90e2;
+      color: white;
+      border: none;
+      padding: 0.5em 1em;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 1em;
+      font-size: 1em;
+    }
+
+    .restart-btn:hover {
+      background: #357abd;
+    }
+
+    .progress {
+      color: #666;
+      font-size: 0.9em;
+      margin-bottom: 0.5em;
+    }
+
+    .hint {
+      color: orange;
+    }
+
+    .answer {
+      color: #cc0000;
+      font-weight: bold;
+    }
+
+    /* Add these CSS classes for better visual distinction */
+    .correct-answer {
+      background: #e8f5e8;
+      border-left: 4px solid #4caf50;
+      padding: 0.5em;
+    }
+
+    .wrong-answer {
+      background: #ffeaea;
+      border-left: 4px solid #f44336;
+      padding: 0.5em;
+    }
+
+    .category-tag {
+      background: #e3f2fd;
+      color: #1976d2;
+      padding: 0.2em 0.5em;
+      border-radius: 12px;
+      font-size: 0.8em;
+    }
+
+    .speaker-btn {
+      background: none;
+      border: none;
+      font-size: 1em;
+      cursor: pointer;
+      margin-left: 0.5em;
+      padding: 0.2em;
+      border-radius: 3px;
+    }
+
+    .speaker-btn:hover {
+      background: #f0f0f0;
+    }
   </style>
-     <!-- #endregion -->
-  
+  <!-- #endregion -->
+
   <title>Chatbot</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- iOS web app meta -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Chatbot">
-<style>
+  <style>
     /* Add main styles here */
-
   </style>
 </head>
+
 <body>
   <!-- #region Preloader -->
   <div id="loader" role="status" aria-live="polite">
@@ -127,8 +290,9 @@
       <div class="loader-logo">
         <!-- Example SVG icon (replace with your logo if desired) -->
         <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-          <circle cx="24" cy="24" r="22" stroke="#4a90e2" stroke-width="4" fill="#eaf6ff"/>
-          <text x="24" y="30" text-anchor="middle" font-size="18" fill="#4a90e2" font-family="Arial" font-weight="bold">★</text>
+          <circle cx="24" cy="24" r="22" stroke="#4a90e2" stroke-width="4" fill="#eaf6ff" />
+          <text x="24" y="30" text-anchor="middle" font-size="18" fill="#4a90e2" font-family="Arial"
+            font-weight="bold">★</text>
         </svg>
       </div>
       <div id="loader-title">Andy is cooking it up, hold on!</div>
@@ -139,33 +303,29 @@
       <span id="progress-text">0%</span>
     </div>
   </div>
-   <!-- #endregion -->
+  <!-- #endregion -->
 
   <!-- Main app content goes here -->
   <div id="main-content">
     <!-- Your app or page content here -->
-       <h2>🗣️ English Chatbot</h2>
-  <div class="chat" id="chat"></div>
-  <input type="text" id="userInput" placeholder="Type your answer..." autocomplete="off" />
+    <div class="chat-container">
+      <h2>🗣️ English Chatbot</h2>
+      <div class="chat" id="chat"></div>
+      <div class="input-container">
+        <input type="text" id="userInput" placeholder="Type your answer..." autocomplete="off" />
+      </div>
+    </div>
   </div>
 
   <script>
     // #region Preloader logic
-    // List your assets here (images, etc.)
-    const assetsToPreload = [
-      // 'img/example1.png',
-      // 'img/example2.jpg',
-      // Add more as needed
-    ];
-
+    const assetsToPreload = [];
     let loaded = 0;
     const progressBar = document.getElementById('progress-bar');
     const progressText = document.getElementById('progress-text');
 
     function updateProgress() {
-      const percent = assetsToPreload.length
-        ? Math.round((loaded / assetsToPreload.length) * 100)
-        : 100;
+      const percent = assetsToPreload.length ? Math.round((loaded / assetsToPreload.length) * 100) : 100;
       progressBar.style.width = percent + '%';
       progressText.textContent = percent + '%';
     }
@@ -183,165 +343,540 @@
       });
     }
 
-    // Show loader, then start preloading after paint
     requestAnimationFrame(() => {
       setTimeout(() => {
         preloadAssets(assetsToPreload, function () {
-          // Fade out loader
           document.getElementById('loader').classList.add('hide');
           setTimeout(() => {
             document.getElementById('loader').style.display = 'none';
             document.getElementById('main-content').style.display = 'block';
-            // Initialize your app here if needed
-          }, 500); // Match transition duration
+          }, 500);
         });
         updateProgress();
       }, 50);
     });
     // #endregion
-// #region Main Script Here
 
+    // #region Main Script
     const chat = document.getElementById("chat");
     const userInput = document.getElementById("userInput");
 
-const steps = [
-  {
-    question: "Hello!",
-    answers: ["hello", "hi", "hey", "sup?"],
-    hint: "Try answering: hello, hi, or hey.",
-    correctResponse: "Nice to meet you!",
-  },
-  {
-    question: "What is your name?",
-    answers: null, // Open-ended
-    hint: null,
-    correctResponse: "Nice to meet you!",
-  },
-  // Add more questions below
-  {
-    question: "What color do you like?",
-    answers: ["blue", "red", "green", "yellow"],
-    hint: "Try answering: Blue, Red, Green, or Yellow.",
-    correctResponse: "Nice choice!",
-  },
-  {
-    question: "Do you have any pets?",
-    answers: ["Nes, I do", "No, I don't"],
-    hint: "Try answering: Yes or No.",
-    correctResponse: "Thanks for sharing!",
-  },
-  {
-    question: "What's your favorite food?",
-    answers: null,
-    hint: null,
-    correctResponse: "Yummy!",
-  },
-    {
-    question: "How is the weather today?",
-    answers: ["it's sunny", "it's rainy", "it's cloudy"],
-    hint: "Try answering: It's sunny, It's rainy, or It's cloudy.",
-    correctResponse: "Great! That's a good way to say it.",
-        followUp: {
-      question: "Do you like this kind of weather?",
-      answers: ["yes", "no"],
-      hint: "Try answering: Yes or No.",
-      correctResponse: "Thanks for sharing!"
+    // Game state
+    let currentStep = 0;
+    let shuffledSteps = [];
+    let score = 0;
+    let attempts = 0;
+    let streak = 0;
+    let totalQuestions = 0;
+    let currentQuestionNumber = 0;
+    let currentDifficulty = 'beginner';
+
+    // Text-to-Speech function
+    function speakText(text, isQuestion = false) {
+      if ('speechSynthesis' in window) {
+        // Cancel any ongoing speech
+        speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.8; // Slightly slower for learning
+        utterance.pitch = 1;
+        utterance.volume = 1;
+
+        // Use a clear English voice if available
+        const voices = speechSynthesis.getVoices();
+        const englishVoice = voices.find(voice =>
+          voice.lang.startsWith('en') && voice.name.includes('Google')
+        ) || voices.find(voice => voice.lang.startsWith('en'));
+
+        if (englishVoice) {
+          utterance.voice = englishVoice;
+        }
+
+        speechSynthesis.speak(utterance);
+      }
     }
-  }
-];
 
-let currentStep = 0;
-let shuffledSteps = [];
 
-// Shuffle function
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-}
+    const difficultyLevels = {
+      beginner: [
+        {
+          question: "Hello!",
+          answers: ["Hello", "Hi", "Hey"],
+          hints: ["Try a greeting. Remember to use proper capitalization!", "Common greetings are: Hello, Hi, or Hey"],
+          answer: "Hello, Hi, or Hey",
+          correctResponse: "Nice to meet you!",
+          category: "Introductions"
+        },
+        {
+          question: "What is your name?",
+          answers: null,
+          hints: ["Tell me your name. Start with 'My name is...' or 'I am...'", "Remember to use proper sentence structure!"],
+          answer: null,
+          correctResponse: "Nice to meet you!",
+          category: "Introductions"
+        },
+        {
+          question: "What color do you like?",
+          answers: ["Blue", "Red", "Green", "Yellow", "Purple", "Orange"],
+          hints: ["Choose a color. Remember to capitalize color names!", "Try one of these: Blue, Red, Green, Yellow, Purple, or Orange"],
+          answer: "Blue, Red, Green, Yellow, Purple, or Orange",
+          correctResponse: "Nice choice!",
+          category: "Preferences"
+        },
+        {
+          question: "How are you today?",
+          answers: ["I am fine", "I am good", "I am great", "I am okay"],
+          hints: ["Answer with 'I am...' followed by how you feel", "Try: 'I am fine', 'I am good', 'I am great', or 'I am okay'"],
+          answer: "I am fine, I am good, I am great, or I am okay",
+          correctResponse: "That's wonderful to hear!",
+          category: "Feelings"
+        },
+        {
+          question: "What is your favorite food?",
+          answers: null,
+          hints: ["Start your answer with 'My favorite food is...'", "Remember to use the exact phrase: 'My favorite food is...'"],
+          answer: "My favorite food is...",
+          correctResponse: "Yummy! That sounds delicious!",
+          category: "Food",
+          validate: function (input) {
+            return input.startsWith("My favorite food is");
+          }
+        },
+        {
+          question: "Do you like pizza?",
+          answers: ["Yes, I do", "No, I don't", "Yes, I like pizza", "No, I don't like pizza"],
+          hints: ["Answer with 'Yes, I do' or 'No, I don't'", "You can also say 'Yes, I like pizza' or 'No, I don't like pizza'"],
+          answer: "Yes, I do or No, I don't",
+          correctResponse: "Thanks for sharing your preference!",
+          category: "Food"
+        },
+        {
+          question: "What day is today?",
+          answers: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+          hints: ["Tell me what day of the week it is", "Choose from: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, or Sunday"],
+          answer: "Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, or Sunday",
+          correctResponse: "Great! You know the days of the week!",
+          category: "Time"
+        },
+        {
+          question: "How old are you?",
+          answers: null,
+          hints: ["Say 'I am [number] years old'", "For example: 'I am 25 years old'"],
+          answer: "I am [number] years old",
+          correctResponse: "Nice! Thank you for telling me your age!",
+          category: "Personal Info",
+          validate: function (input) {
+            return input.toLowerCase().includes("i am") && input.toLowerCase().includes("years old");
+          }
+        },
+        {
+          question: "Where are you from?",
+          answers: null,
+          hints: ["Say 'I am from [country/city]'", "For example: 'I am from Japan' or 'I am from Tokyo'"],
+          answer: "I am from [place]",
+          correctResponse: "Wonderful! It's nice to learn about different places!",
+          category: "Personal Info",
+          validate: function (input) {
+            return input.includes("I am from");
+          }
+        },
+        {
+          question: "Do you have any brothers or sisters?",
+          answers: ["Yes, I do", "No, I don't", "Yes, I have brothers", "Yes, I have sisters", "No, I am an only child"],
+          hints: ["Answer with 'Yes, I do' or 'No, I don't'", "You can also say 'Yes, I have brothers/sisters' or 'No, I am an only child'"],
+          answer: "Yes, I do or No, I don't",
+          correctResponse: "Thank you for sharing about your family!",
+          category: "Family"
+        },
+        {
+          question: "What is your favorite animal?",
+          answers: null,
+          hints: ["Say 'My favorite animal is...'", "For example: 'My favorite animal is a dog'"],
+          answer: "My favorite animal is...",
+          correctResponse: "That's a great choice! Animals are wonderful!",
+          category: "Animals",
+          validate: function (input) {
+            return input.startsWith("My favorite animal is");
+          }
+        },
+        {
+          question: "Can you swim?",
+          answers: ["Yes, I can", "No, I can't", "Yes, I can swim", "No, I cannot swim"],
+          hints: ["Answer with 'Yes, I can' or 'No, I can't'", "You can also say 'Yes, I can swim' or 'No, I cannot swim'"],
+          answer: "Yes, I can or No, I can't",
+          correctResponse: "Good to know about your swimming ability!",
+          category: "Abilities"
+        },
+        {
+          question: "What do you like to do for fun?",
+          answers: null,
+          hints: ["Say 'I like to...' followed by an activity", "For example: 'I like to read books' or 'I like to play games'"],
+          answer: "I like to [activity]",
+          correctResponse: "That sounds like fun! Hobbies are important!",
+          category: "Hobbies",
+          validate: function (input) {
+            return input.includes("I like to");
+          }
+        },
+        {
+          question: "What is the weather like today?",
+          answers: ["It is sunny", "It is rainy", "It is cloudy", "It is cold", "It is hot", "It is windy"],
+          hints: ["Describe the weather using 'It is...'", "Try: 'It is sunny', 'It is rainy', 'It is cloudy', 'It is cold', 'It is hot', or 'It is windy'"],
+          answer: "It is sunny, rainy, cloudy, cold, hot, or windy",
+          correctResponse: "Thank you for telling me about the weather!",
+          category: "Weather"
+        },
+        {
+          question: "Do you like to read books?",
+          answers: ["Yes, I do", "No, I don't", "Yes, I like to read", "No, I don't like to read"],
+          hints: ["Answer with 'Yes, I do' or 'No, I don't'", "You can also say 'Yes, I like to read' or 'No, I don't like to read'"],
+          answer: "Yes, I do or No, I don't",
+          correctResponse: "Reading is a great way to learn new things!",
+          category: "Hobbies"
+        },
+        {
+          question: "What time do you wake up?",
+          answers: null,
+          hints: ["Say 'I wake up at [time]'", "For example: 'I wake up at 7 o'clock' or 'I wake up at 7:30'"],
+          answer: "I wake up at [time]",
+          correctResponse: "That's good to know about your daily routine!",
+          category: "Daily Routine",
+          validate: function (input) {
+            return input.includes("I wake up at");  // Case-sensitive: requires capital "I"
+          }
+        },
+        {
+          question: "Do you like music?",
+          answers: ["Yes, I do", "No, I don't", "Yes, I like music", "No, I don't like music"],
+          hints: ["Answer with 'Yes, I do' or 'No, I don't'", "You can also say 'Yes, I like music' or 'No, I don't like music'"],
+          answer: "Yes, I do or No, I don't",
+          correctResponse: "Music is a wonderful part of life!",
+          category: "Entertainment"
+        },
+        {
+          question: "What is your favorite season?",
+          answers: ["Spring", "Summer", "Fall", "Winter", "Autumn"],
+          hints: ["Choose your favorite season of the year", "The seasons are: Spring, Summer, Fall (or Autumn), and Winter"],
+          answer: "Spring, Summer, Fall, Winter, or Autumn",
+          correctResponse: "Each season has its own beauty!",
+          category: "Seasons"
+        },
+        {
+          question: "Do you have a pet?",
+          answers: ["Yes, I do", "No, I don't", "Yes, I have a pet", "No, I don't have a pet"],
+          hints: ["Answer with 'Yes, I do' or 'No, I don't'", "You can also say 'Yes, I have a pet' or 'No, I don't have a pet'"],
+          answer: "Yes, I do or No, I don't",
+          correctResponse: "Pets can be wonderful companions!",
+          category: "Animals"
+        },
+        {
+          question: "What do you eat for breakfast?",
+          answers: null,
+          hints: ["Say 'I eat...' or 'For breakfast, I eat...'", "For example: 'I eat cereal' or 'For breakfast, I eat toast'"],
+          answer: "I eat... or For breakfast, I eat...",
+          correctResponse: "Breakfast is the most important meal of the day!",
+          category: "Food",
+          validate: function (input) {
+            return input.includes("I eat") || input.includes("for breakfast");
+          }
+        }
+      ]
+      ,
+      intermediate: [
+        {
+          question: "Complete this sentence: Yesterday, I ___ to the store.",
+          answers: ["went"],
+          hints: ["This is past tense. What's the past form of 'go'?", "The past tense of 'go' is 'went'"],
+          answer: "went",
+          correctResponse: "Perfect! 'Went' is the past tense of 'go'. We use past tense for actions that happened before now.",
+          category: "Grammar"
+        },
+        {
+          question: "How old are you? (Use correct grammar)",
+          answers: null,
+          hints: ["Use 'I am ___ years old' not 'I have ___ years'", "The correct form is: 'I am [number] years old'"],
+          answer: "I am [number] years old",
+          correctResponse: "Excellent! You used the correct form with 'am' instead of 'have'.",
+          category: "Grammar",
+          validate: function (input) {
+            return input.includes("I am") && input.includes("years old");  // Requires capital "I"
+          }
+        },
+        {
+          question: "Choose the correct article: I saw ___ elephant at the zoo.",
+          answers: ["an"],
+          hints: ["Use 'a' before consonant sounds, 'an' before vowel sounds", "'Elephant' starts with a vowel sound, so use 'an'"],
+          answer: "an",
+          correctResponse: "Great! We use 'an' before words that start with vowel sounds.",
+          category: "Grammar"
+        }
+      ],
+      advanced: [
+        {
+          question: "Correct this sentence: 'I am agree with you.'",
+          answers: ["I agree with you.", "I agree with you"],
+          hints: ["The verb 'agree' doesn't need 'am' before it", "Just say 'I agree with you' - no 'am' needed"],
+          answer: "I agree with you",
+          correctResponse: "Perfect! 'Agree' is a verb that doesn't need 'to be' (am/is/are) before it.",
+          category: "Common Mistakes"
+        },
+        {
+          question: "Use 'since' or 'for': I have lived here ___ 2020.",
+          answers: ["since"],
+          hints: ["Use 'since' with specific points in time, 'for' with periods of time", "2020 is a specific year, so use 'since'"],
+          answer: "since",
+          correctResponse: "Excellent! We use 'since' with specific points in time like years, dates, or times.",
+          category: "Grammar"
+        }
+      ]
+    };
 
-function showBotMessage(text) {
-  const msg = document.createElement("div");
-  msg.className = "bot";
-  msg.textContent = "🤖 " + text;
-  chat.appendChild(msg);
-}
+    const encouragementMessages = [
+      "Great job! Keep it up! 🌟", "You're doing fantastic! 💪", "Excellent work! 🎉",
+      "Amazing progress! 🚀", "You're getting better! 👏", "Wonderful! 🌈"
+    ];
 
-function showUserMessage(text) {
-  const msg = document.createElement("div");
-  msg.className = "user";
-  msg.textContent = "🧒 " + text;
-  chat.appendChild(msg);
-}
+    const tips = [
+      "💡 Tip: Read English news for 10 minutes daily to improve vocabulary!",
+      "💡 Tip: Practice speaking English in front of a mirror to build confidence!",
+      "💡 Tip: Watch English movies with subtitles to improve listening skills!",
+      "💡 Tip: Keep a vocabulary journal to remember new words!",
+      "💡 Tip: Practice English tongue twisters to improve pronunciation!"
+    ];
 
-function startConversation() {
-  showBotMessage(steps[0].question);
-}
+    function scrollToBottom() {
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function showProgress() {
+      const progress = document.createElement("div");
+      progress.className = "progress";
+      progress.innerHTML = `
+        Question ${currentQuestionNumber} of ${totalQuestions} | 
+        Score: ${score}/${attempts} | 
+        Streak: ${streak} 🔥 | 
+        Level: ${currentDifficulty.charAt(0).toUpperCase() + currentDifficulty.slice(1)}
+      `;
+      chat.appendChild(progress);
+    }
+
+    function showBotMessage(text, className = "bot", speakIt = false) {
+      const msg = document.createElement("div");
+      msg.className = className;
+
+      // Add speaker button for questions
+      if (speakIt) {
+        msg.innerHTML = `🤖 ${text} <button onclick="speakText('${text.replace(/'/g, "\\'")}', true)" class="speaker-btn" title="Listen to question">🔊</button>`;
+      } else {
+        msg.textContent = "🤖 " + text;
+      }
+
+      chat.appendChild(msg);
+      scrollToBottom();
+    }
+
+
+    function showUserMessage(text) {
+      const msg = document.createElement("div");
+      msg.className = "user";
+      msg.textContent = "🧒 " + text;
+      chat.appendChild(msg);
+      scrollToBottom();
+    }
+
+    function showDifficultySelector() {
+      const selector = document.createElement("div");
+      selector.style.textAlign = "center";
+      selector.style.marginTop = "1em";
+      selector.innerHTML = `
+        <p>🎯 Choose your difficulty level:</p>
+        <button onclick="setDifficulty('beginner')" class="restart-btn" style="margin: 0.2em;">Beginner</button>
+        <button onclick="setDifficulty('intermediate')" class="restart-btn" style="margin: 0.2em;">Intermediate</button>
+        <button onclick="setDifficulty('advanced')" class="restart-btn" style="margin: 0.2em;">Advanced</button>
+      `;
+      chat.appendChild(selector);
+      scrollToBottom();
+    }
+
+    function showRestartButton() {
+      const finalScore = attempts > 0 ? Math.round((score / attempts) * 100) : 0;
+      showBotMessage(`🎉 Congratulations! Final Score: ${score}/${attempts} (${finalScore}%)`);
+
+      if (finalScore >= 80) {
+        showBotMessage("🏆 Outstanding! You're ready for the next level!");
+      } else if (finalScore >= 60) {
+        showBotMessage("👍 Good job! Keep practicing to improve!");
+      } else {
+        showBotMessage("💪 Don't give up! Practice makes perfect!");
+      }
+
+      const btnContainer = document.createElement("div");
+      btnContainer.style.textAlign = "center";
+      btnContainer.style.marginTop = "1em";
+      btnContainer.innerHTML = `
+        <button onclick="restartChat()" class="restart-btn" style="margin: 0.2em;">🔄 Same Level</button>
+        <button onclick="changeDifficulty()" class="restart-btn" style="margin: 0.2em;">📈 Change Level</button>
+      `;
+      chat.appendChild(btnContainer);
+      scrollToBottom();
+    }
+
+    window.setDifficulty = function (level) {
+      currentDifficulty = level;
+      restartChat();
+    }
+
+    window.changeDifficulty = function () {
+      chat.innerHTML = "";
+      showDifficultySelector();
+    }
+
+    window.restartChat = function () {
+      // Reset all variables
+      currentStep = 0;
+      score = 0;
+      attempts = 0;
+      streak = 0;
+      currentQuestionNumber = 0;
+
+      // Clear chat
+      chat.innerHTML = "";
+
+      // Get questions for current difficulty
+      const questions = [...difficultyLevels[currentDifficulty]];
+
+      // Reset all step properties
+      questions.forEach(step => {
+        if (step._followUpActive) step._followUpActive = false;
+        step._hintLevel = 0;
+      });
+
+      // Shuffle questions (except first one for consistency)
+      if (questions.length > 1) {
+        const firstQuestion = questions[0];
+        const restQuestions = questions.slice(1);
+        shuffle(restQuestions);
+        shuffledSteps = [firstQuestion, ...restQuestions];
+      } else {
+        shuffledSteps = questions;
+      }
+
+      totalQuestions = shuffledSteps.length;
+      startConversation();
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function startConversation() {
+      currentQuestionNumber = 1;
+      showProgress();
+      showBotMessage(`Welcome to ${currentDifficulty} level English practice! 📚`);
+      setTimeout(() => showBotMessage(shuffledSteps[currentStep].question, "bot", true));
+    }
 
 userInput.addEventListener("keydown", function (e) {
   if (e.key === "Enter") {
-    const input = userInput.value.trim().toLowerCase();
+    const input = userInput.value.trim();
     if (!input) return;
-    showUserMessage(userInput.value);
-    userInput.value = "";
 
-    let step;
-    if (currentStep < 2) {
-      step = steps[currentStep];
-    } else {
-      step = shuffledSteps[currentStep - 2];
-    }
+    // Handle skip command
+    if (input.toLowerCase() === "skip") {
+      showUserMessage(input);
+      userInput.value = "";
+      showBotMessage("No problem! Let's try the next question. 👍");
+      attempts++;
+      currentStep++;
 
-    // Handle follow-up logic
-    if (step._followUpActive) {
-      if (step.followUp.answers === null || step.followUp.answers.includes(input)) {
-        showBotMessage(step.followUp.correctResponse);
-        step._followUpActive = false;
-        currentStep++;
-        // Show next main question
-        if (currentStep < 2 && currentStep < steps.length) {
-          setTimeout(() => showBotMessage(steps[currentStep].question), 1000);
-        } else if (currentStep >= 2 && currentStep - 2 < shuffledSteps.length) {
-          setTimeout(() => showBotMessage(shuffledSteps[currentStep - 2].question), 1000);
-        }
+      if (currentStep < shuffledSteps.length) {
+        currentQuestionNumber++;
+        setTimeout(() => {
+          showProgress();
+          showBotMessage(shuffledSteps[currentStep].question, "bot", true);
+        }, 1500);
       } else {
-        showBotMessage("Hmm... that's not quite right.");
-        showBotMessage("💡 " + step.followUp.hint);
+        setTimeout(() => showRestartButton(), 1000);
       }
       return;
     }
 
-    if (step.answers === null || step.answers.includes(input)) {
-      showBotMessage(step.correctResponse);
-      // If there's a follow-up, ask it next
-      if (step.followUp) {
-        step._followUpActive = true;
-        setTimeout(() => showBotMessage(step.followUp.question), 1000);
-        return;
-      }
-      currentStep++;
+    showUserMessage(input);
+    userInput.value = "";
+    attempts++;
+
+    const step = shuffledSteps[currentStep];
+    if (step._hintLevel === undefined) step._hintLevel = 0;
+
+    // Check answer
+    let isCorrect = false;
+    if (step.answers === null) {
+      isCorrect = true;
+    } else if (step.validate && typeof step.validate === "function") {
+      isCorrect = step.validate(input);
     } else {
-      showBotMessage("Hmm... that's not quite right.");
-      showBotMessage("💡 " + step.hint);
+      isCorrect = step.answers.includes(input);
     }
 
-    // Show next question
-    if (currentStep < 2 && currentStep < steps.length) {
-      setTimeout(() => showBotMessage(steps[currentStep].question), 1000);
-    } else if (currentStep >= 2 && currentStep - 2 < shuffledSteps.length) {
-      setTimeout(() => showBotMessage(shuffledSteps[currentStep - 2].question), 1000);
+    if (isCorrect) {
+      score++;
+      streak++;
+
+      showBotMessage(step.correctResponse);
+
+      // Show encouragement for streaks
+      if (streak >= 3) {
+        const encouragement = encouragementMessages[Math.floor(Math.random() * encouragementMessages.length)];
+        setTimeout(() => showBotMessage(encouragement), 500);
+      }
+
+      step._hintLevel = 0;
+      currentStep++;
+
+      // Show next question or finish
+      if (currentStep < shuffledSteps.length) {
+        currentQuestionNumber++;
+        setTimeout(() => {
+          showProgress();
+          showBotMessage(shuffledSteps[currentStep].question, "bot", true);
+        }, 1500);
+      } else {
+        setTimeout(() => showRestartButton(), 1000);
+      }
+    } else {
+      streak = 0; // Reset streak on wrong answer
+
+      if (step._hintLevel < step.hints.length) {
+        showBotMessage("💡 " + step.hints[step._hintLevel], "hint");
+        step._hintLevel++;
+      } else {
+        if (step.answer) {
+          showBotMessage("📝 The correct answer is: " + step.answer, "answer");
+        } else {
+          showBotMessage("📝 Please try again with a proper sentence.", "answer");
+        }
+        step._hintLevel = 0;
+      }
     }
   }
 });
 
-// Prepare shuffled steps after first two
-shuffledSteps = steps.slice(2);
-shuffle(shuffledSteps);
 
-    startConversation();
 
-  // #endregion
+          // Initialize
+          shuffledSteps = [...difficultyLevels[currentDifficulty]];
+          totalQuestions = shuffledSteps.length;
+
+          // Show difficulty selector on first load
+          setTimeout(() => {
+            showBotMessage("Welcome to English Practice Chatbot! 🎓");
+            showDifficultySelector();
+          }, 500);
+
+    // #endregion
   </script>
 </body>
 </html>
