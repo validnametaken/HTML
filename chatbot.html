@@ -779,102 +779,100 @@
       setTimeout(() => showBotMessage(shuffledSteps[currentStep].question, "bot", true));
     }
 
-userInput.addEventListener("keydown", function (e) {
-  if (e.key === "Enter") {
-    const input = userInput.value.trim();
-    if (!input) return;
+    userInput.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        const input = userInput.value.trim();
+        if (!input) return;
 
-    // Handle skip command
-    if (input.toLowerCase() === "skip") {
-      showUserMessage(input);
-      userInput.value = "";
-      showBotMessage("No problem! Let's try the next question. 👍");
-      attempts++;
-      currentStep++;
+        // Handle skip command
+        if (input.toLowerCase() === "skip") {
+          showUserMessage(input);
+          userInput.value = "";
+          showBotMessage("No problem! Let's try the next question. 👍");
+          attempts++;
+          currentStep++;
 
-      if (currentStep < shuffledSteps.length) {
-        currentQuestionNumber++;
-        setTimeout(() => {
-          showProgress();
-          showBotMessage(shuffledSteps[currentStep].question, "bot", true);
-        }, 1500);
-      } else {
-        setTimeout(() => showRestartButton(), 1000);
-      }
-      return;
-    }
-
-    showUserMessage(input);
-    userInput.value = "";
-    attempts++;
-
-    const step = shuffledSteps[currentStep];
-    if (step._hintLevel === undefined) step._hintLevel = 0;
-
-    // Check answer
-    let isCorrect = false;
-    if (step.answers === null) {
-      isCorrect = true;
-    } else if (step.validate && typeof step.validate === "function") {
-      isCorrect = step.validate(input);
-    } else {
-      isCorrect = step.answers.includes(input);
-    }
-
-    if (isCorrect) {
-      score++;
-      streak++;
-
-      showBotMessage(step.correctResponse);
-
-      // Show encouragement for streaks
-      if (streak >= 3) {
-        const encouragement = encouragementMessages[Math.floor(Math.random() * encouragementMessages.length)];
-        setTimeout(() => showBotMessage(encouragement), 500);
-      }
-
-      step._hintLevel = 0;
-      currentStep++;
-
-      // Show next question or finish
-      if (currentStep < shuffledSteps.length) {
-        currentQuestionNumber++;
-        setTimeout(() => {
-          showProgress();
-          showBotMessage(shuffledSteps[currentStep].question, "bot", true);
-        }, 1500);
-      } else {
-        setTimeout(() => showRestartButton(), 1000);
-      }
-    } else {
-      streak = 0; // Reset streak on wrong answer
-
-      if (step._hintLevel < step.hints.length) {
-        showBotMessage("💡 " + step.hints[step._hintLevel], "hint");
-        step._hintLevel++;
-      } else {
-        if (step.answer) {
-          showBotMessage("📝 The correct answer is: " + step.answer, "answer");
-        } else {
-          showBotMessage("📝 Please try again with a proper sentence.", "answer");
+          if (currentStep < shuffledSteps.length) {
+            currentQuestionNumber++;
+            setTimeout(() => {
+              showProgress();
+              showBotMessage(shuffledSteps[currentStep].question, "bot", true);
+            }, 1500);
+          } else {
+            setTimeout(() => showRestartButton(), 1000);
+          }
+          return;
         }
-        step._hintLevel = 0;
+
+        showUserMessage(input);
+        userInput.value = "";
+        attempts++;
+
+        const step = shuffledSteps[currentStep];
+        if (step._hintLevel === undefined) step._hintLevel = 0;
+
+        // Check answer
+        let isCorrect = false;
+        if (step.answers === null) {
+          isCorrect = true;
+        } else if (step.validate && typeof step.validate === "function") {
+          isCorrect = step.validate(input);
+        } else {
+          isCorrect = step.answers.includes(input);
+        }
+
+        if (isCorrect) {
+          score++;
+          streak++;
+
+          showBotMessage(step.correctResponse);
+
+          // Show encouragement for streaks
+          if (streak >= 3) {
+            const encouragement = encouragementMessages[Math.floor(Math.random() * encouragementMessages.length)];
+            setTimeout(() => showBotMessage(encouragement), 500);
+          }
+
+          step._hintLevel = 0;
+          currentStep++;
+
+          // Show next question or finish
+          if (currentStep < shuffledSteps.length) {
+            currentQuestionNumber++;
+            setTimeout(() => {
+              showProgress();
+              showBotMessage(shuffledSteps[currentStep].question, "bot", true);
+            }, 1500);
+          } else {
+            setTimeout(() => showRestartButton(), 1000);
+          }
+        } else {
+          streak = 0; // Reset streak on wrong answer
+
+          if (step._hintLevel < step.hints.length) {
+            showBotMessage("💡 " + step.hints[step._hintLevel], "hint");
+            step._hintLevel++;
+          } else {
+            if (step.answer) {
+              showBotMessage("📝 The correct answer is: " + step.answer, "answer");
+            } else {
+              showBotMessage("📝 Please try again with a proper sentence.", "answer");
+            }
+            step._hintLevel = 0;
+          }
+        }
       }
-    }
-  }
-});
+    });
 
+    // Initialize
+    shuffledSteps = [...difficultyLevels[currentDifficulty]];
+    totalQuestions = shuffledSteps.length;
 
-
-          // Initialize
-          shuffledSteps = [...difficultyLevels[currentDifficulty]];
-          totalQuestions = shuffledSteps.length;
-
-          // Show difficulty selector on first load
-          setTimeout(() => {
-            showBotMessage("Welcome to English Practice Chatbot! 🎓");
-            showDifficultySelector();
-          }, 500);
+    // Show difficulty selector on first load
+    setTimeout(() => {
+      showBotMessage("Welcome to English Practice Chatbot! 🎓");
+      showDifficultySelector();
+    }, 500);
 
     // #endregion
   </script>
