@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- #region Inline critical loader CSS -->
+
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: #f8f8f8;
+    }
+    #loader {
+      position: fixed;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(255,255,255,0.95);
+      color: #222;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      font-family: inherit;
+      transition: opacity 0.5s;
+    }
+    #loader.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+    #loader-card {
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      padding: 2.5rem 2.5rem 2rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 260px;
+      max-width: 90vw;
+    }
+    .loader-logo {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 1.5rem;
+      /* Example: a simple SVG icon, replace as needed */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .loader-spinner {
+      width: 48px;
+      height: 48px;
+      border: 5px solid #e0e0e0;
+      border-top: 5px solid #4a90e2;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 2rem;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    #progress-bar-bg {
+      width: 60vw;
+      max-width: 320px;
+      height: 1.2rem;
+      background: #e0e7ef;
+      border-radius: 0.6rem;
+      overflow: hidden;
+      margin-bottom: 1.2rem;
+      box-shadow: 0 2px 8px rgba(74,144,226,0.08);
+    }
+    #progress-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #4a90e2 0%, #7ed6df 100%);
+      border-radius: 0.6rem;
+      transition: width 0.3s cubic-bezier(.4,2,.6,1), background 0.3s;
+      box-shadow: 0 0 8px #4a90e2aa;
+    }
+    #progress-text {
+      margin-top: 0.2rem;
+      font-size: 1.1rem;
+      color: #4a90e2;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-shadow: 0 1px 2px #fff8;
+    }
+    #loader-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      color: #222;
+      letter-spacing: 0.02em;
+      text-align: center;
+    }
+    /* Hide main content until loaded */
+    #main-content {
+      display: none;
+    }
+ 
+        body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 1em; background: #f0f8ff; }
+    .chat { margin-bottom: 1em; }
+    .bot, .user { margin: 0.5em 0; }
+    .bot { color: blue; }
+    .user { color: green; }
+    input { width: 100%; padding: 0.5em; font-size: 1em; }
+    .hint { color: orange; }
+
+  </style>
+     <!-- #endregion -->
+  
+  <title>Chatbot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- iOS web app meta -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Chatbot">
+<style>
+    /* Add main styles here */
+
+  </style>
+</head>
+<body>
+  <!-- #region Preloader -->
+  <div id="loader" role="status" aria-live="polite">
+    <div id="loader-card">
+      <div class="loader-logo">
+        <!-- Example SVG icon (replace with your logo if desired) -->
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <circle cx="24" cy="24" r="22" stroke="#4a90e2" stroke-width="4" fill="#eaf6ff"/>
+          <text x="24" y="30" text-anchor="middle" font-size="18" fill="#4a90e2" font-family="Arial" font-weight="bold">★</text>
+        </svg>
+      </div>
+      <div id="loader-title">Andy is cooking it up, hold on!</div>
+      <div class="loader-spinner"></div>
+      <div id="progress-bar-bg">
+        <div id="progress-bar"></div>
+      </div>
+      <span id="progress-text">0%</span>
+    </div>
+  </div>
+   <!-- #endregion -->
+
+  <!-- Main app content goes here -->
+  <div id="main-content">
+    <!-- Your app or page content here -->
+       <h2>🗣️ English Chatbot</h2>
+  <div class="chat" id="chat"></div>
+  <input type="text" id="userInput" placeholder="Type your answer..." autocomplete="off" />
+  </div>
+
+  <script>
+    // #region Preloader logic
+    // List your assets here (images, etc.)
+    const assetsToPreload = [
+      // 'img/example1.png',
+      // 'img/example2.jpg',
+      // Add more as needed
+    ];
+
+    let loaded = 0;
+    const progressBar = document.getElementById('progress-bar');
+    const progressText = document.getElementById('progress-text');
+
+    function updateProgress() {
+      const percent = assetsToPreload.length
+        ? Math.round((loaded / assetsToPreload.length) * 100)
+        : 100;
+      progressBar.style.width = percent + '%';
+      progressText.textContent = percent + '%';
+    }
+
+    function preloadAssets(urls, allDone) {
+      if (urls.length === 0) allDone();
+      urls.forEach(url => {
+        const img = new Image();
+        img.onload = img.onerror = function () {
+          loaded++;
+          updateProgress();
+          if (loaded === urls.length) allDone();
+        };
+        img.src = url;
+      });
+    }
+
+    // Show loader, then start preloading after paint
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        preloadAssets(assetsToPreload, function () {
+          // Fade out loader
+          document.getElementById('loader').classList.add('hide');
+          setTimeout(() => {
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+            // Initialize your app here if needed
+          }, 500); // Match transition duration
+        });
+        updateProgress();
+      }, 50);
+    });
+    // #endregion
+// #region Main Script Here
+
+    const chat = document.getElementById("chat");
+    const userInput = document.getElementById("userInput");
+
+const steps = [
+  {
+    question: "Hello!",
+    answers: ["hello", "hi", "hey", "sup?"],
+    hint: "Try answering: hello, hi, or hey.",
+    correctResponse: "Nice to meet you!",
+  },
+  {
+    question: "What is your name?",
+    answers: null, // Open-ended
+    hint: null,
+    correctResponse: "Nice to meet you!",
+  },
+  // Add more questions below
+  {
+    question: "What color do you like?",
+    answers: ["blue", "red", "green", "yellow"],
+    hint: "Try answering: Blue, Red, Green, or Yellow.",
+    correctResponse: "Nice choice!",
+  },
+  {
+    question: "Do you have any pets?",
+    answers: ["Nes, I do", "No, I don't"],
+    hint: "Try answering: Yes or No.",
+    correctResponse: "Thanks for sharing!",
+  },
+  {
+    question: "What's your favorite food?",
+    answers: null,
+    hint: null,
+    correctResponse: "Yummy!",
+  },
+    {
+    question: "How is the weather today?",
+    answers: ["it's sunny", "it's rainy", "it's cloudy"],
+    hint: "Try answering: It's sunny, It's rainy, or It's cloudy.",
+    correctResponse: "Great! That's a good way to say it.",
+        followUp: {
+      question: "Do you like this kind of weather?",
+      answers: ["yes", "no"],
+      hint: "Try answering: Yes or No.",
+      correctResponse: "Thanks for sharing!"
+    }
+  }
+];
+
+let currentStep = 0;
+let shuffledSteps = [];
+
+// Shuffle function
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+function showBotMessage(text) {
+  const msg = document.createElement("div");
+  msg.className = "bot";
+  msg.textContent = "🤖 " + text;
+  chat.appendChild(msg);
+}
+
+function showUserMessage(text) {
+  const msg = document.createElement("div");
+  msg.className = "user";
+  msg.textContent = "🧒 " + text;
+  chat.appendChild(msg);
+}
+
+function startConversation() {
+  showBotMessage(steps[0].question);
+}
+
+userInput.addEventListener("keydown", function (e) {
+  if (e.key === "Enter") {
+    const input = userInput.value.trim().toLowerCase();
+    if (!input) return;
+    showUserMessage(userInput.value);
+    userInput.value = "";
+
+    let step;
+    if (currentStep < 2) {
+      step = steps[currentStep];
+    } else {
+      step = shuffledSteps[currentStep - 2];
+    }
+
+    // Handle follow-up logic
+    if (step._followUpActive) {
+      if (step.followUp.answers === null || step.followUp.answers.includes(input)) {
+        showBotMessage(step.followUp.correctResponse);
+        step._followUpActive = false;
+        currentStep++;
+        // Show next main question
+        if (currentStep < 2 && currentStep < steps.length) {
+          setTimeout(() => showBotMessage(steps[currentStep].question), 1000);
+        } else if (currentStep >= 2 && currentStep - 2 < shuffledSteps.length) {
+          setTimeout(() => showBotMessage(shuffledSteps[currentStep - 2].question), 1000);
+        }
+      } else {
+        showBotMessage("Hmm... that's not quite right.");
+        showBotMessage("💡 " + step.followUp.hint);
+      }
+      return;
+    }
+
+    if (step.answers === null || step.answers.includes(input)) {
+      showBotMessage(step.correctResponse);
+      // If there's a follow-up, ask it next
+      if (step.followUp) {
+        step._followUpActive = true;
+        setTimeout(() => showBotMessage(step.followUp.question), 1000);
+        return;
+      }
+      currentStep++;
+    } else {
+      showBotMessage("Hmm... that's not quite right.");
+      showBotMessage("💡 " + step.hint);
+    }
+
+    // Show next question
+    if (currentStep < 2 && currentStep < steps.length) {
+      setTimeout(() => showBotMessage(steps[currentStep].question), 1000);
+    } else if (currentStep >= 2 && currentStep - 2 < shuffledSteps.length) {
+      setTimeout(() => showBotMessage(shuffledSteps[currentStep - 2].question), 1000);
+    }
+  }
+});
+
+// Prepare shuffled steps after first two
+shuffledSteps = steps.slice(2);
+shuffle(shuffledSteps);
+
+    startConversation();
+
+  // #endregion
+  </script>
+</body>
+</html>
