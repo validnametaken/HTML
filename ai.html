@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background: #2563eb;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .model-selector {
+            background: white;
+            padding: 0.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .model-selector select {
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            background: white;
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+            word-wrap: break-word;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background: #2563eb;
+            color: white;
+            border-bottom-right-radius: 0.25rem;
+        }
+
+        .message.ai {
+            align-self: flex-start;
+            background: #f3f4f6;
+            color: #374151;
+            border-bottom-left-radius: 0.25rem;
+            white-space: pre-wrap;
+        }
+
+        .message.error {
+            align-self: flex-start;
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .message.loading {
+            align-self: flex-start;
+            background: #f3f4f6;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .model-info {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+            font-style: italic;
+        }
+
+        .chat-input {
+            padding: 1rem;
+            border-top: 1px solid #e5e7eb;
+            background: white;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .chat-input input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .chat-input button {
+            padding: 0.75rem 1.5rem;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+
+        .chat-input button:hover:not(:disabled) {
+            background: #1d4ed8;
+        }
+
+        .chat-input button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .clear-btn {
+            background: #6b7280 !important;
+            margin-left: 0.5rem;
+        }
+
+        .clear-btn:hover:not(:disabled) {
+            background: #4b5563 !important;
+        }
+
+        .toggle-debug {
+            background: #f59e0b !important;
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem !important;
+        }
+
+        .toggle-debug:hover:not(:disabled) {
+            background: #d97706 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-header">
+        <h1>AI Chat Assistant</h1>
+    </div>
+
+    <div class="model-selector">
+        <label for="model-select">Model:</label>
+        <select id="model-select">
+            <option value="">Default</option>
+            <option value="claude-sonnet-4">Claude Sonnet 4</option>
+            <option value="claude-opus-4">Claude Opus 4</option>
+            <option value="gpt-4">GPT-4</option>
+            <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+        </select>
+    </div>
+
+    <div class="chat-container">
+        <div class="chat-messages" id="chat-messages">
+            <div class="message ai">
+                Hello! I'm your AI assistant. How can I help you today?
+            </div>
+        </div>
+
+        <div class="chat-input">
+            <div class="input-container">
+                <input 
+                    type="text" 
+                    id="message-input" 
+                    placeholder="Type your message here..." 
+                    maxlength="1000"
+                >
+                <button id="send-btn">Send</button>
+                <button id="clear-btn" class="clear-btn">Clear</button>
+                <button id="debug-btn" class="toggle-debug">Debug Off</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://js.puter.com/v2/"></script>
+    <script>
+        class ChatInterface {
+            constructor() {
+                this.messagesContainer = document.getElementById('chat-messages');
+                this.messageInput = document.getElementById('message-input');
+                this.sendBtn = document.getElementById('send-btn');
+                this.clearBtn = document.getElementById('clear-btn');
+                this.debugBtn = document.getElementById('debug-btn');
+                this.modelSelect = document.getElementById('model-select');
+                this.debugMode = false;
+                
+                this.init();
+            }
+
+            init() {
+                // Event listeners
+                this.sendBtn.addEventListener('click', () => this.sendMessage());
+                this.clearBtn.addEventListener('click', () => this.clearChat());
+                this.debugBtn.addEventListener('click', () => this.toggleDebug());
+                this.messageInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+
+                // Focus input
+                this.messageInput.focus();
+            }
+
+            toggleDebug() {
+                this.debugMode = !this.debugMode;
+                this.debugBtn.textContent = this.debugMode ? 'Debug On' : 'Debug Off';
+            }
+
+            addMessage(content, type = 'ai', isHtml = false, modelInfo = null) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${type}`;
+                
+                if (isHtml) {
+                    messageDiv.innerHTML = content;
+                } else {
+                    messageDiv.textContent = content;
+                }
+
+                // Add model info if provided
+                if (modelInfo && type === 'ai') {
+                    const infoDiv = document.createElement('div');
+                    infoDiv.className = 'model-info';
+                    infoDiv.textContent = modelInfo;
+                    messageDiv.appendChild(infoDiv);
+                }
+                
+                this.messagesContainer.appendChild(messageDiv);
+                this.scrollToBottom();
+                
+                return messageDiv;
+            }
+
+            // Enhanced function to extract text from response
+            extractResponseText(response) {
+                // If it's already a string, return it
+                if (typeof response === 'string') {
+                    return response;
+                }
+
+                // If it's an object, try different response formats
+                if (typeof response === 'object' && response !== null) {
+                    
+                    // Claude API format (what we saw in debug)
+                    if (response.message && response.message.content && Array.isArray(response.message.content)) {
+                        const textContent = response.message.content.find(item => item.type === 'text');
+                        if (textContent && textContent.text) {
+                            return textContent.text;
+                        }
+                    }
+
+                    // OpenAI API format
+                    if (response.choices && response.choices[0]) {
+                        const choice = response.choices[0];
+                        if (choice.message && choice.message.content) {
+                            return choice.message.content;
+                        }
+                        if (choice.text) return choice.text;
+                    }
+
+                    // Common direct properties
+                    if (response.content) return response.content;
+                    if (response.text) return response.text;
+                    if (response.message) return response.message;
+                    if (response.response) return response.response;
+                    if (response.data) return response.data;
+
+                    // Last resort: stringify the object
+                    return JSON.stringify(response, null, 2);
+                }
+
+                // Fallback
+                return String(response);
+            }
+
+            // Extract model info from response
+            extractModelInfo(response) {
+                if (typeof response === 'object' && response !== null) {
+                    // Claude format
+                    if (response.message && response.message.model) {
+                        const usage = response.usage || response.message.usage;
+                        if (usage) {
+                            return `${response.message.model} • ${usage.input_tokens} in, ${usage.output_tokens} out`;
+                        }
+                        return response.message.model;
+                    }
+
+                    // OpenAI format
+                    if (response.model) {
+                        return response.model;
+                    }
+                }
+                return null;
+            }
+
+            scrollToBottom() {
+                this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+            }
+
+            async sendMessage() {
+                const message = this.messageInput.value.trim();
+                if (!message) return;
+
+                // Disable input while processing
+                this.setInputState(false);
+
+                // Add user message
+                this.addMessage(message, 'user');
+                this.messageInput.value = '';
+
+                // Add loading message
+                const loadingMsg = this.addMessage('Thinking...', 'loading');
+
+                try {
+                    // Get selected model
+                    const selectedModel = this.modelSelect.value;
+                    const options = selectedModel ? { model: selectedModel } : {};
+
+                    // Make AI request
+                    const response = await puter.ai.chat(message, options);
+                    
+                    // Debug logging
+                    if (this.debugMode) {
+                        console.log('Raw AI response:', response);
+                        console.log('Response type:', typeof response);
+                    }
+                    
+                    // Remove loading message
+                    loadingMsg.remove();
+                    
+                    // Extract text and model info from response
+                    const responseText = this.extractResponseText(response);
+                    const modelInfo = this.extractModelInfo(response);
+                    
+                    // Add AI response with model info
+                    this.addMessage(responseText, 'ai', false, modelInfo);
+
+                    // Add debug info if enabled
+                    if (this.debugMode) {
+                        const debugDiv = document.createElement('div');
+                        debugDiv.className = 'message';
+                        debugDiv.style.background = '#fffbeb';
+                        debugDiv.style.border = '1px solid #fde68a';
+                        debugDiv.style.color = '#92400e';
+                        debugDiv.style.fontFamily = 'monospace';
+                        debugDiv.style.fontSize = '0.75rem';
+                        debugDiv.style.alignSelf = 'flex-start';
+                        debugDiv.style.maxWidth = '90%';
+                        debugDiv.innerHTML = `<strong>Debug Info:</strong><br><pre>${JSON.stringify(response, null, 2)}</pre>`;
+                        this.messagesContainer.appendChild(debugDiv);
+                        this.scrollToBottom();
+                    }
+
+                } catch (error) {
+                    console.error('AI Chat Error:', error);
+                    
+                    // Remove loading message
+                    loadingMsg.remove();
+                    
+                    // Show error message
+                    const errorMsg = `Sorry, I encountered an error: ${error.message || 'Unknown error'}`;
+                    this.addMessage(errorMsg, 'error');
+                }
+
+                // Re-enable input
+                this.setInputState(true);
+            }
+
+            setInputState(enabled) {
+                this.messageInput.disabled = !enabled;
+                this.sendBtn.disabled = !enabled;
+                if (enabled) {
+                    this.messageInput.focus();
+                }
+            }
+
+            clearChat() {
+                this.messagesContainer.innerHTML = '';
+                this.addMessage('Hello! I\'m your AI assistant. How can I help you today?', 'ai');
+                this.messageInput.focus();
+            }
+        }
+
+        // Initialize chat when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new ChatInterface();
+        });
+    </script>
+</body>
+</html>
