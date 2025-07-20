@@ -111,8 +111,9 @@
     }
     
     #next-exercise-img {
-        max-width: 150px !important;
-        max-height: 100px !important;
+        max-width: 100% !important;
+        max-height: 70% !important;
+        margin: 5px 0;
     }
     
     #exercise-explanation {
@@ -121,7 +122,8 @@
     }
     
     #next-exercise {
-        font-size: 0.9em;
+        font-size: 2.1em;
+        font-weight: bold;
     }
     
     /* Right column styling */
@@ -188,8 +190,7 @@
     <h1>Exercise Timer (v. 9) </h1>
     <div id="workout">
     <div class="left-column">
-        <div style="font-weight:bold; color:#888;">Next Exercise</div>
-        <div id="next-exercise" style="font-size:1em; color: #555; margin-bottom: 10px;"></div>
+        <div id="next-exercise" margin-bottom: 10px;></div>
         <img id="next-exercise-img" class="exercise-img" style="display:none; max-width:200px; margin-bottom:10px;" alt="Next Exercise Image" />
 
         <div id="current-exercise"></div>
