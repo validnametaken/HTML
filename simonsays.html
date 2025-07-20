@@ -170,10 +170,72 @@ body {
     background: linear-gradient(45deg, #00c853, #2979ff);
 }
 
+.game-mode-settings, .challenge-settings {
+    text-align: center;
+    margin: 20px auto;
+}
+
+.challenge-settings {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#game-mode {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    color: white;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+#game-mode option {
+    background-color: #1a1a1a;
+}
+
+#challenge-length {
+    padding: 8px 15px;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    color: white;
+    width: 80px;
+    margin: 0 10px;
+}
+
+#start-challenge {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: linear-gradient(45deg, #ff6b35, #f7931e);
+    border: none;
+    border-radius: 15px;
+    color: white;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+
     </style>
 </head>
 <body>
     <div id="score">Score: 0</div>
+
+    
+    <!-- Add this after the speed settings -->
+<div class="game-mode-settings">
+    <label for="game-mode">Game Mode:</label>
+    <select id="game-mode">
+        <option value="classic">Classic</option>
+        <option value="reverse">Reverse Challenge</option>
+        <option value="memoryChallenge">Memory Challenge</option>
+    </select>
+</div>
+
     <div class="speed-settings">
         <label for="game-speed">Game Speed:</label>
         <select id="game-speed">
@@ -183,7 +245,13 @@ body {
             <option value="100">Blazing</option>
         </select>
     </div>
-    
+
+<div class="challenge-settings" id="challenge-settings" style="display:none;">
+    <label for="challenge-length">Challenge Length:</label>
+    <input type="number" id="challenge-length" min="5" max="20" value="10">
+    <button id="start-challenge">Start Challenge</button>
+</div>
+
 
     <div class="game-container">
         <div class="button" id="green" data-color="green"></div>
@@ -211,6 +279,12 @@ body {
     }
 };
 
+const GameModes = {
+    CLASSIC: 'classic',
+    REVERSE: 'reverse',
+    MEMORY_CHALLENGE: 'memoryChallenge'
+};
+
 const GameStates = {
     LOADING: 'loading',
     READY: 'ready',
@@ -223,7 +297,11 @@ const gameState = {
     playerSequence: [],
     score: 0,
     gameSpeed: GAME_CONSTANTS.SPEEDS.NORMAL,
-    currentState: GameStates.LOADING
+    currentState: GameStates.LOADING,
+    // Add these new properties:
+    gameMode: GameModes.CLASSIC,
+    challengeLength: 10,
+    memorySequenceShown: false
 };
 
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -434,6 +512,141 @@ document.addEventListener('keydown', (event) => {
         playerTurn(button);
     }
 });
+
+function handleGameModeChange() {
+    const selectedMode = document.getElementById('game-mode').value;
+    const challengeSettings = document.getElementById('challenge-settings');
+    
+    if (selectedMode === 'classic') {
+        challengeSettings.style.display = 'none';
+        gameState.gameMode = GameModes.CLASSIC;
+    } else {
+        challengeSettings.style.display = 'block';
+        gameState.gameMode = selectedMode;
+    }
+}
+
+function startChallenge() {
+    const challengeLength = parseInt(document.getElementById('challenge-length').value);
+    gameState.challengeLength = Math.max(5, Math.min(20, challengeLength));
+    
+    // Generate the full sequence upfront for challenges
+    gameState.sequence = [];
+    for (let i = 0; i < gameState.challengeLength; i++) {
+        const random = GAME_CONSTANTS.COLORS[Math.floor(Math.random() * GAME_CONSTANTS.COLORS.length)];
+        gameState.sequence.push(random);
+    }
+    
+    if (gameState.gameMode === GameModes.REVERSE) {
+        startReverseChallenge();
+    } else if (gameState.gameMode === GameModes.MEMORY_CHALLENGE) {
+        startMemoryChallenge();
+    }
+}
+
+async function startReverseChallenge() {
+    document.body.style.backgroundColor = '#330033'; // Purple tint for reverse mode
+    scoreDisplay.textContent = `Reverse Challenge: Play ${gameState.challengeLength} colors backwards!`;
+    
+    // Show the sequence normally first
+    await playFullSequence();
+    
+    // Now player must input in reverse order
+    gameState.playerSequence = [];
+    gameState.currentState = GameStates.READY;
+    enablePlayerInput();
+}
+
+async function startMemoryChallenge() {
+    document.body.style.backgroundColor = '#003333'; // Teal tint for memory mode
+    scoreDisplay.textContent = `Memory Challenge: Watch ${gameState.challengeLength} colors - ONE TIME ONLY!`;
+    
+    // Show sequence once, then player must repeat it
+    await playFullSequence();
+    
+    scoreDisplay.textContent = `Now repeat the ${gameState.challengeLength} colors!`;
+    gameState.playerSequence = [];
+    gameState.memorySequenceShown = true;
+    gameState.currentState = GameStates.READY;
+    enablePlayerInput();
+}
+
+async function playFullSequence() {
+    gameState.currentState = GameStates.PLAYING;
+    
+    for (let i = 0; i < gameState.sequence.length; i++) {
+        const color = gameState.sequence[i];
+        const button = document.querySelector(`[data-color="${color}"]`);
+        button.classList.add('active');
+        playSound(color);
+        await new Promise(resolve => setTimeout(resolve, gameState.gameSpeed/3));
+        button.classList.remove('active');
+        if (i < gameState.sequence.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, gameState.gameSpeed/4));
+        }
+    }
+}
+
+// Modified playerTurn function for challenge modes
+function playerTurn(button) {
+    if (gameState.currentState !== GameStates.READY) return;
+    
+    const color = button.dataset.color;
+    button.classList.add('active');
+    playSound(color);
+    setTimeout(() => button.classList.remove('active'), gameState.gameSpeed/4);
+    
+    gameState.playerSequence.push(color);
+    
+    let expectedColor;
+    if (gameState.gameMode === GameModes.REVERSE) {
+        // Check against reversed sequence
+        const reverseIndex = gameState.sequence.length - gameState.playerSequence.length;
+        expectedColor = gameState.sequence[reverseIndex];
+    } else {
+        // Normal order (classic and memory challenge)
+        expectedColor = gameState.sequence[gameState.playerSequence.length - 1];
+    }
+    
+    if (color !== expectedColor) {
+        endChallenge(false);
+        return;
+    }
+    
+    // Update progress
+    const progress = gameState.playerSequence.length;
+    const total = gameState.sequence.length;
+    scoreDisplay.textContent = `Progress: ${progress}/${total}`;
+    
+    if (gameState.playerSequence.length === gameState.sequence.length) {
+        endChallenge(true);
+    }
+}
+
+function endChallenge(success) {
+    gameState.currentState = GameStates.GAME_OVER;
+    disablePlayerInput();
+    
+    const finalScore = gameState.playerSequence.length;
+    const modeText = gameState.gameMode === GameModes.REVERSE ? 'Reverse' : 'Memory';
+    
+    if (success) {
+        document.getElementById('final-score').innerHTML = `
+            <h3>🎉 ${modeText} Challenge Complete!</h3>
+            <p>Perfect score: ${finalScore}/${gameState.sequence.length}</p>
+        `;
+    } else {
+        document.getElementById('final-score').innerHTML = `
+            <h3>Challenge Failed</h3>
+            <p>You got ${finalScore}/${gameState.sequence.length} correct</p>
+        `;
+    }
+    
+    document.getElementById('game-over-overlay').style.display = 'flex';
+}
+
+document.getElementById('game-mode').addEventListener('change', handleGameModeChange);
+document.getElementById('start-challenge').addEventListener('click', startChallenge);
 
 document.getElementById('restart-btn').onclick = function() {
     document.getElementById('game-over-overlay').style.display = 'none';

@@ -11,7 +11,7 @@
 
   .base-timer {
   position: relative;
-  width: max(40vw, 40vw, 80vw);
+  width: min(80vw, 95vh); /* Takes smaller of 40% width or 50% height */
   min-width: 200px;
   min-height: 200px;
   margin: 0 auto;
@@ -208,6 +208,7 @@ let timeLimit = getTimeLimit();
 
   function resetTimer() {
     clearInterval(timerInterval);
+     timeLimit = getTimeLimit(); // Add this line
     timePassed = 0;
     timeLeft = timeLimit;
     document.getElementById("base-timer-label").innerHTML = formatTime(timeLeft);
