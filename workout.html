@@ -185,7 +185,7 @@
     </style>
 </head>
 <body>
-    <h1>Exercise Timer (v. 10) </h1>
+    <h1>Exercise Timer (v. 9) </h1>
     <div id="workout">
     <div class="left-column">
         <div style="font-weight:bold; color:#888;">Next Exercise</div>
@@ -361,9 +361,12 @@ const randomPraise = praises[Math.floor(Math.random() * praises.length)];
             nextExerciseImgEl.style.display = 'none';
             const ex = workoutPlan[currentExercise];
             currentExerciseEl.textContent = `${ex.name} (Exercise ${currentExercise + 1} of ${workoutPlan.length})`;
-            exerciseImgEl.src = ex.imgUrl;
-            exerciseImgEl.style.display = '';
-            exerciseExplanationEl.textContent = ex.explanation || '';
+
+ // Show current exercise image and hide next exercise image
+    exerciseImgEl.src = ex.imgUrl;
+    exerciseImgEl.style.display = '';
+    exerciseExplanationEl.textContent = ex.explanation || '';
+
             if (!isBreak) {
                 statusEl.style.color = 'black';
                 timerEl.style.color = 'blue';
@@ -409,6 +412,7 @@ const randomPraise = praises[Math.floor(Math.random() * praises.length)];
             const nextExerciseImgEl = document.getElementById('next-exercise-img');
             if (isBetweenExercises) {
                 // Break between exercises
+                exerciseImgEl.style.display = 'none';
                 statusEl.textContent = "Break between exercises";
                 if (currentExercise < workoutPlan.length) {
                     const nextEx = workoutPlan[currentExercise];
@@ -421,10 +425,11 @@ const randomPraise = praises[Math.floor(Math.random() * praises.length)];
                     nextExerciseImgEl.style.display = 'none';
                 }
             } else {
-                // Break between reps
-                statusEl.textContent = "Break between reps";
-                document.getElementById('next-exercise').textContent = "";
-                nextExerciseImgEl.style.display = 'none';
+        // Break between reps - keep current image, hide next
+        statusEl.textContent = "Break between reps";
+        document.getElementById('next-exercise').textContent = "";
+        nextExerciseImgEl.style.display = 'none';
+        // Current exercise image stays visible
             }
             startTimer(seconds, () => {
                 progressCount++;
