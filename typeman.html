@@ -2,8 +2,7 @@
 <html lang="en" >
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" condent="width=device-width, initial-scale=1">
-    <script type="module" src="script.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Type, man, type!</title>
     <style>
 
@@ -68,31 +67,37 @@ h1{
 
 
 #level-selection-screen {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #fff;
-  display: none;
+    position: fixed; /* Changed from absolute to fixed */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.95);
+    display: none;
+    z-index: 1000;
 }
 
 #menu {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-  text-align: center;
+    list-style: none;
+    padding: 20px;
+    margin: 0;
+    width: 100%;
+    text-align: center;
+    margin-top: 50px;
 }
 
 #menu li {
-  display: inline-block;
-  margin-right: 20px;
-  cursor: pointer;
+    display: inline-block;
+    margin: 10px;
+    cursor: pointer;
+    padding: 10px 20px;
+    background-color: lightblue;
+    border: 1px solid darkblue;
+    border-radius: 5px;
 }
 
 #menu li:hover {
-  background-color: #ccc;
+    background-color: skyblue;
 }
     </style>
 </head>
@@ -114,14 +119,12 @@ h1{
     <div class="statslabel">Current Level:</div>
     <div class="statslabel">Required Speed:</div>
     <div class="statslabel">Time Left (s):</div>
-    <div class="statslabel">Accuracy:</div>
     <div id="lastlabel" class="statslabel">Top Speed:</div>
 
     <div id="speedCurrent" class="stats"></div>
     <div id="level" class="stats"></div>
     <div id="speedMin" class="stats"></div>
     <div id="TimeLeft" class="stats"></div>
-    <div class="stats" id="accuracy"></div>
     <div id="speedMax" class="stats"></div>
 
     <div id="level-selection-screen">
@@ -153,10 +156,7 @@ level = 1;
 timegiven = 0;
 let currentGameLevel = 1;
 let lastLength = 0;
-let correctStrokes = 0;
-let totalStrokes = 0;
-let totalMistakes = 0;
-let totalCharacters = 0;
+
 
 
 
@@ -165,73 +165,113 @@ let totalCharacters = 0;
 // It also checks whether what the user is typing so far and changes the color of input box accordingly.
 var mistakes = 0;
 
+// Simplified typing function (keep this):
 function typing() {
     var quote = document.getElementById("texttotype").innerHTML;
     var typed = youtyped.value;
     
-    // Don't process backspace
     if (event.keyCode === 8) {
         return;
     }
     
-    // Count total characters typed correctly
-    totalCharacters = typed.length;
+
+
     
-    // Check if current character is wrong
     if (quote.slice(0, typed.length) !== typed) {
-        totalMistakes++;
-    }
-    
-    // Calculate accuracy considering both correct chars and mistakes
-    let accuracy = Math.max(0, ((totalCharacters - totalMistakes) / totalCharacters) * 100);
-    document.getElementById("accuracy").innerHTML = accuracy.toFixed(1) + "%";
-
-    lastLength = typed.length;
-  
-  const successButtons = `
-      <div style="margin-top: 20px; background-color: lightgreen; padding: 20px; border-radius: 5px">
-          <button style="padding: 10px 20px; margin: 0 10px; font-size: 16px; cursor: pointer; background-color: skyblue; border: 1px solid darkblue; border-radius: 5px" onclick="retryCurrentLevel()">Try Again</button>
-          <button style="padding: 10px 20px; margin: 0 10px; font-size: 16px; cursor: pointer; background-color: skyblue; border: 1px solid darkblue; border-radius: 5px" onclick="showLevelSelection()">Level Selection</button>
-      </div>
-  `;
-
-  const failButtons = `
-      <div style="margin-top: 20px; background-color: mistyrose; padding: 20px; border-radius: 5px">
-          <button style="padding: 10px 20px; margin: 0 10px; font-size: 16px; cursor: pointer; background-color: skyblue; border: 1px solid darkblue; border-radius: 5px" onclick="retryCurrentLevel()">Try Again</button>
-          <button style="padding: 10px 20px; margin: 0 10px; font-size: 16px; cursor: pointer; background-color: skyblue; border: 1px solid darkblue; border-radius: 5px" onclick="showLevelSelection()">Level Selection</button>
-      </div>
-  `;
-
-  if (quote.slice(0,typed.length) !== typed) {
-    mistakes++;
-    document.getElementById("youtyped").style.backgroundColor = "MistyRose";
-  } else {
-    document.getElementById("youtyped").style.backgroundColor = "";
-  }
-  
-  document.getElementById("accuracy").innerHTML = calculateAccuracy(mistakes, typed.length).toFixed(1) + "%";
-  
-  if (quote === typed) {
-    var currentWPM = parseInt(document.getElementById("speedCurrent").innerHTML);
-    var requiredWPM = parseInt(document.getElementById("speedMin").innerHTML);
-    var currentAccuracy = parseFloat(document.getElementById("accuracy").innerHTML);
-    var requiredAccuracy = 100;
-    
-    if (missions[level - 1].goal.accuracy) {
-      requiredAccuracy = missions[level - 1].goal.accuracy;
-    }
-    
-    if (currentWPM >= requiredWPM && currentAccuracy >= requiredAccuracy) {
-      document.getElementById("speedCurrent").innerHTML = document.getElementById("speedCurrent").innerHTML;
-      document.getElementById("TimeLeft").innerHTML = document.getElementById("TimeLeft").innerHTML;
-      document.getElementById("heading").innerHTML = "Mission Complete!" + successButtons;
+        document.getElementById("youtyped").style.backgroundColor = "MistyRose";
     } else {
-      document.getElementById("heading").innerHTML = "Mission Failed!" + failButtons;
+        document.getElementById("youtyped").style.backgroundColor = "lightgreen";
     }
-    document.getElementById("youtyped").disabled = true;
-    clearInterval(myTimer);
-  }
+    
+    if (quote === typed) {
+        var currentWPM = parseInt(document.getElementById("speedCurrent").innerHTML);
+        var requiredWPM = parseInt(document.getElementById("speedMin").innerHTML);
+        
+        document.removeEventListener("keyup", typing);
+        clearInterval(myTimer);
+        document.getElementById("youtyped").disabled = true;
+        
+        var buttonsContainer = document.createElement('div');
+        buttonsContainer.style.marginTop = '20px';
+        buttonsContainer.style.padding = '20px';
+        buttonsContainer.style.borderRadius = '5px';
+        
+        var tryAgainBtn = document.createElement('button');
+        tryAgainBtn.textContent = 'Try Again';
+        tryAgainBtn.style.padding = '10px 20px';
+        tryAgainBtn.style.margin = '0 10px';
+        tryAgainBtn.style.fontSize = '16px';
+        tryAgainBtn.style.cursor = 'pointer';
+        tryAgainBtn.style.backgroundColor = 'skyblue';
+        tryAgainBtn.style.border = '1px solid darkblue';
+        tryAgainBtn.style.borderRadius = '5px';
+        tryAgainBtn.addEventListener('click', retryCurrentLevel);
+        
+        var levelSelectBtn = document.createElement('button');
+        levelSelectBtn.textContent = 'Level Selection';
+        levelSelectBtn.style.padding = '10px 20px';
+        levelSelectBtn.style.margin = '0 10px';
+        levelSelectBtn.style.fontSize = '16px';
+        levelSelectBtn.style.cursor = 'pointer';
+        levelSelectBtn.style.backgroundColor = 'skyblue';
+        levelSelectBtn.style.border = '1px solid darkblue';
+        levelSelectBtn.style.borderRadius = '5px';
+        levelSelectBtn.addEventListener('click', function() {
+            document.getElementById("level-selection-screen").style.display = 'block';
+        });
+        
+        buttonsContainer.appendChild(tryAgainBtn);
+        buttonsContainer.appendChild(levelSelectBtn);
+        
+        if (currentWPM >= requiredWPM) {
+            buttonsContainer.style.backgroundColor = 'lightgreen';
+            document.getElementById("heading").innerHTML = "Mission Complete!";
+        } else {
+            buttonsContainer.style.backgroundColor = 'mistyrose';
+            document.getElementById("heading").innerHTML = "Mission Failed! Need " + requiredWPM + " WPM, got " + currentWPM + " WPM";
+        }
+        document.getElementById("heading").appendChild(buttonsContainer);
+    }
 }
+
+
+
+
+// Create a new function specifically for the button click:
+function goToLevelSelection() {
+    console.log("Going to level selection...");
+    
+    // Clean up everything
+    clearInterval(myTimer);
+    document.removeEventListener("keyup", typing);
+    document.removeEventListener("keydown", beginGame);
+    
+    // Reset state
+    lost = false;
+    level = 1;
+    timegiven = 0;
+    
+    // Clear all displays
+    document.getElementById("youtyped").value = '';
+    document.getElementById("youtyped").disabled = false;
+    document.getElementById("speedCurrent").innerHTML = '';
+    document.getElementById("speedMax").innerHTML = '';
+    document.getElementById("TimeLeft").innerHTML = "";
+    document.getElementById("speedMin").innerHTML = "";
+    document.getElementById("texttotype").innerHTML = "";
+    document.getElementById("heading").innerHTML = "Select a level to start!";
+    
+    // Create fresh menu and show level selection
+    createLevelMenu();
+    document.getElementById("level-selection-screen").style.display = 'block';
+}
+
+// Keep your existing showLevelSelection function but make sure it works the same way:
+function showLevelSelection() {
+    goToLevelSelection(); // Just call the new function
+}
+
+// Make sure this function still has the event listener setup:
 function initializeGameTimer(missionTime, missionSpeed) {
     document.getElementById("youtyped").addEventListener("keydown", function startOnFirstKey(e) {
         this.removeEventListener("keydown", startOnFirstKey);
@@ -239,22 +279,16 @@ function initializeGameTimer(missionTime, missionSpeed) {
         timegiven = missionTime * 10;
         document.getElementById("TimeLeft").innerHTML = timegiven.toFixed(1);
         document.getElementById("speedMin").innerHTML = missionSpeed + " wpm";
+        // This line is crucial - it adds the typing event listener:
         document.addEventListener("keyup", typing);
     }, { once: true });
 }
 
+
 function retryCurrentLevel() {
-    console.log("1. Starting retry process");
-    console.log("2. Current level:", currentGameLevel);
-    
-
-        // Add this line to reset mistakes counter
-        mistakes = 0;
-
     clearInterval(myTimer);
-    document.removeEventListener("keyup", typing);
+    document.removeEventListener("keyup", typing); // Remove old listener
     document.removeEventListener("keydown", beginGame);
-    console.log("3. Cleared timers and event listeners");
     
     lost = false;
     timegiven = 0;
@@ -262,19 +296,30 @@ function retryCurrentLevel() {
     document.getElementById("youtyped").value = '';
     document.getElementById("speedCurrent").innerHTML = '';
     document.getElementById("speedMax").innerHTML = '';
-    document.getElementById("accuracy").innerHTML = '';
     document.getElementById("TimeLeft").innerHTML = "";
     document.getElementById("speedMin").innerHTML = "";
-    console.log("4. Reset all displays");
     
-    console.log("5. About to start level");
     startLevel(currentGameLevel);
-    console.log("6. Level started");
-    
-    console.log("7. Attempting to enable textarea");
     document.getElementById("youtyped").disabled = false;
     document.getElementById("youtyped").focus();
-    console.log("8. Process complete - textarea state:", document.getElementById("youtyped").disabled);
+
+       maintainFocus();
+}
+
+
+function showLevelSelection() {
+    clearInterval(myTimer);
+    lost = false;
+    level = 1;
+    timegiven = 0;
+    
+    document.getElementById("youtyped").value = '';
+    document.getElementById("speedCurrent").innerHTML = '';
+    document.getElementById("speedMax").innerHTML = '';
+    document.getElementById("TimeLeft").innerHTML = "";
+    document.getElementById("speedMin").innerHTML = "";
+    
+    document.getElementById("level-selection-screen").style.display = 'block';
 }
 
 
@@ -289,21 +334,20 @@ function retryCurrentLevel() {
 
 
 function showLevelSelection() {
-    // Clear existing timers and states
     clearInterval(myTimer);
+    document.removeEventListener("keyup", typing);
     lost = false;
     level = 1;
     timegiven = 0;
     
-    // Reset all displays
     document.getElementById("youtyped").value = '';
     document.getElementById("speedCurrent").innerHTML = '';
     document.getElementById("speedMax").innerHTML = '';
-    document.getElementById("accuracy").innerHTML = '';
     document.getElementById("TimeLeft").innerHTML = "";
     document.getElementById("speedMin").innerHTML = "";
     
-    // Show level selection
+    // Create the menu and show level selection
+    createLevelMenu();
     document.getElementById("level-selection-screen").style.display = 'block';
 }
 
@@ -359,6 +403,12 @@ function timing()
     }
 }
 
+function maintainFocus() {
+    var textarea = document.getElementById("youtyped");
+    if (!textarea.disabled) {
+        textarea.focus();
+    }
+}
 
 
 // Menu system
@@ -387,7 +437,6 @@ var missions = [
       text: 'hello',
       time: 10,
       speed: 2,
-      accuracy: 100
     }
   },
   {
@@ -397,7 +446,6 @@ var missions = [
       text: 'How are you?',
       time: 10,
       speed: 2,
-      accuracy: 100
     }
   },
   {
@@ -407,7 +455,6 @@ var missions = [
       text: '元気ですか？',
       time: 10,
       speed: 2,
-      accuracy: 100
     }
   },
   // ...
@@ -415,22 +462,32 @@ var missions = [
 
 // Start level function
 function startLevel(level) {
-  currentGameLevel = level;
+    currentGameLevel = level;
     console.log('Starting level ' + level);
+    
+    if (!missions[level - 1]) {
+        console.error('Mission not found for level ' + level);
+        return;
+    }
+    
     var missionText = missions[level - 1].goal.text;
     var missionTime = missions[level - 1].goal.time;
     var missionSpeed = missions[level - 1].goal.speed;
     
     document.getElementById("texttotype").innerHTML = missionText;
     document.getElementById("youtyped").disabled = false;
+    document.getElementById("youtyped").value = '';
     document.getElementById("level-selection-screen").style.display = 'none';
     document.getElementById("heading").innerHTML = missions[level - 1].mission;
     document.getElementById("speedMax").innerHTML = "";
+    document.getElementById("level").innerHTML = level;
     
     initializeGameTimer(missionTime, missionSpeed);
-    document.getElementById("youtyped").select();
-}
+    document.getElementById("youtyped").focus();
 
+        maintainFocus();
+    setInterval(maintainFocus, 100); // Keep checking focus every 100ms
+}
 
   </script>
 
