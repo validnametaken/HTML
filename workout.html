@@ -56,6 +56,40 @@
             .exercise-img { max-width: 100%; }
             body { margin: 15px; }
         }
+
+        /* Two-column layout for landscape */
+@media screen and (orientation: landscape) and (max-height: 600px) {
+    #workout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas: 
+            "next-label timer"
+            "next-exercise timer"
+            "next-img current"
+            "current-img current"
+            "explanation status"
+            "progress progress"
+            "buttons buttons";
+        gap: 15px;
+        align-items: start;
+    }
+    
+    .next-exercise-label { grid-area: next-label; }
+    #next-exercise { grid-area: next-exercise; }
+    #next-exercise-img { grid-area: next-img; }
+    #current-exercise { grid-area: current; }
+    #exercise-img { grid-area: current-img; }
+    #exercise-explanation { grid-area: explanation; }
+    #timer { grid-area: timer; font-size: 4em; }
+    #status { grid-area: status; }
+    #progress-bar-container { grid-area: progress; }
+    .button-container { grid-area: buttons; }
+    
+    .exercise-img {
+        max-width: 250px;
+        max-height: 180px;
+    }
+}
     </style>
 </head>
 <body>
