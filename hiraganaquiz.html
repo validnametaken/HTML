@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animal Quiz</title>
+    <title>Hiragana Quiz</title>
     <style>
         * {
             box-sizing: border-box;
@@ -59,7 +59,9 @@
             display: flex;
             justify-content: space-between;
             width: 80%;
-            height: 70%;
+            height: auto;
+            margin-bottom: 10px;
+            /* Add this to reduce space */
         }
 
         .level-column {
@@ -197,10 +199,13 @@
         }
 
         .level-button {
-            height: 4em;
-            width: 100%;
-            font-size: clamp(0.5em, 1em, 1em);
-            padding: 1em; /* Adjust padding dynamically as well */
+    height: clamp(4em, 9vh, 6em);
+    width: 100%;
+    font-size: clamp(0.7rem, 2.5vmin, 6.5rem);
+    padding: clamp(0.3em, 1vmin, 0.8em);
+    line-height: 1.1;
+            padding: 1em;
+            /* Adjust padding dynamically as well */
             margin-bottom: 10px;
             background-color: #f93a13;
             color: white;
@@ -235,6 +240,73 @@
         #changeLevelButton:hover {
             background-color: #ff7426;
         }
+
+        /* Update your existing img styles and add these classes */
+        img {
+            cursor: pointer;
+            max-height: 100%;
+            max-width: 100%;
+            height: auto;
+            width: auto;
+            object-fit: contain;
+            border: 1px solid black;
+            padding: 10px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            /* Add this transition */
+        }
+
+        img.correct-flash {
+            background-color: #4CAF50;
+            transform: scale(1.05);
+            border-color: #4CAF50;
+        }
+
+        img.incorrect-flash {
+            background-color: #f44336;
+            border-color: #f44336;
+        }
+
+        /* Add shake animation */
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        img.incorrect-flash {
+            animation: shake 0.5s;
+        }
+
+        .review-level {
+            width: 50%;
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 60px;
+        }
+
+        .review-button {
+            font-size: 1.1em;
+            /* Slightly larger text */
+            background: linear-gradient(92.83deg, #ff7426 0, #f93a13 100%);
+            /* Different gradient */
+        }
+
+        .review-button:hover {
+            background: linear-gradient(92.83deg, #f93a13 0, #ff7426 100%);
+            /* Reverse gradient on hover */
+        }
     </style>
 </head>
 
@@ -257,6 +329,10 @@
                 <button class="level-button" data-level="9">Level 9:<br> ら　り　る　れ　ろ</button>
                 <button class="level-button" data-level="10">Level 10:<br> わ　を　ん</button>
             </div>
+
+        </div>
+        <div class="review-level">
+            <button class="level-button" data-level="11">Level 11:<br> あ-ん</button>
         </div>
     </div>
 
@@ -271,14 +347,14 @@
     <div id="quiz"></div>
 
     <div>
-        <button class="button-77" id="playSound" onclick="playAnimalSound()">Play Sound</button>
+        <button class="button-77" id="playSound" onclick="playHiraganaSound()">Play Sound</button>
     </div>
 
     <button id="autoPlayToggle" onclick="toggleAutoPlay()">Auto Play: Off</button>
 
     <div id="answerBox"></div>
 
-    <audio id="animalSound" preload="auto">
+    <audio id="hiraganaSound" preload="auto">
         <!-- Fallback audio source for compatibility -->
         <source src="" type="audio/mpeg">
         Your browser does not support the audio element.
@@ -347,7 +423,7 @@
         let selectedHiraganas = [];
         let autoPlay = false;
         const quizContainer = document.getElementById('quiz');
-        const hiraganaSound = document.getElementById('animalSound');
+        const hiraganaSound = document.getElementById('hiraganaSound');
         const answerBox = document.getElementById('answerBox');
         const autoPlayToggleButton = document.getElementById('autoPlayToggle');
 
@@ -363,6 +439,7 @@
                 8: ['ya', 'yu', 'yo'],
                 9: ['ra', 'ri', 'ru', 're', 'ro'],
                 10: ['wa', 'wo', 'n'],
+                11: ['a', 'i', 'u', 'e', 'o', 'ka', 'ki', 'ku', 'ke', 'ko', 'sa', 'shi', 'su', 'se', 'so', 'ta', 'chi', 'tsu', 'te', 'to', 'na', 'ni', 'nu', 'ne', 'no', 'ha', 'hi', 'fu', 'he', 'ho', 'ma', 'mi', 'mu', 'me', 'mo', 'ya', 'yu', 'yo', 'ra', 'ri', 'ru', 're', 'ro', 'wa', 'wo', 'n']
             };
 
             const selectedCharacters = levelDefinitions[level] || [];
@@ -419,13 +496,24 @@
         }
 
         function checkAnswer(selected) {
+            const clickedImg = document.querySelector(`img[alt="${selected}"]`);
+            const correctImg = document.querySelector(`img[alt="${currentQuestion.name}"]`);
+
+
             if (selected === currentQuestion.name) {
                 answerBox.textContent = 'Correct!';
                 answerBox.className = 'correct';
+                clickedImg.classList.add('correct-flash');
                 setTimeout(generateQuestion, 1000);
             } else {
                 answerBox.textContent = 'Try again';
                 answerBox.className = 'incorrect';
+                clickedImg.classList.add('incorrect-flash');
+
+                setTimeout(() => {
+                    clickedImg.classList.remove('incorrect-flash');
+                    correctImg.classList.remove('correct-flash');
+                }, 1000);
             }
         }
 

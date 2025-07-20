@@ -205,8 +205,14 @@
 
             answerBox.textContent = ''; // Clear previous answer
             answerBox.style.display = 'block'; // Ensure answer box is visible
-        }
+        
 
+    if (autoPlay) {
+        setTimeout(() => {
+            playAnimalSound();
+        }, 500); // Small delay to ensure audio is loaded
+    }
+}
         function playAnimalSound() {
             // Check if audio source is set
             if (animalSound.src === '') {
