@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Exercise Timer</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; max-width: 600px; }
+        #workout {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .exercise-media {
+            max-width: 500px;
+            max-height: 500px; /* Fix the 5000px typo */
+            display: block;
+            margin: 10px 0;
+            object-fit: contain;
+            background: #f0f0f0; /* Fallback background */
+        }
+
+        .exercise-media[src=""], .exercise-media:not([src]) {
+            display: none;
+        }
+
+        #timer { font-size: 6em; margin: 20px 0; color: blue; }
+        #current-exercise { font-weight: bold; font-size: 1.2em; }
+        #status { margin-bottom: 20px; font-style: italic; font-size: 2em; }
+        #exercise-explanation { margin-bottom: 20px; font-style: italic; font-size: 4em;}
+        button { padding: 8px 16px; font-size: 1em; }
+        #progress-bar-container {
+            width: 80%;
+            background-color: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 20px;
+            margin-bottom: 20px;
+        }
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #4caf50;
+            transition: width 0.3s ease;
+        }
+        @media (max-width: 768px) {
+            #timer { font-size: 3em; }
+            #exercise-explanation { font-size: 2em; }
+            .exercise-img { max-width: 100%; }
+            body { margin: 15px; }
+        }
+
+
+/* Two-column landscape layout */
+@media screen and (orientation: landscape) {
+    body { 
+        margin: 10px; 
+        max-width: none;
+    }
+    
+    h1 {
+        font-size: 1.2em;
+        margin: 5px 0;
+    }
+    
+    #workout {
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        margin-top: 10px;
+        height: calc(100vh - 60px); /* Use most of screen height */
+    }
+    
+    .left-column {
+        flex: 1.2; /* Slightly wider for images */
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        overflow-y: auto; /* Allow scrolling if needed */
+    }
+    
+    .right-column {
+        flex: 0.8;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+    }
+    
+    /* Left column styling */
+    #current-exercise {
+        font-size: 1.1em;
+        font-weight: bold;
+    }
+    
+        .exercise-media {
+            max-width: 100% !important;
+            max-height: 70% !important;
+            margin: 5px 0;
+        }
+    
+    #next-exercise-img {
+        max-width: 100% !important;
+        max-height: 70% !important;
+        margin: 5px 0;
+    }
+    
+    #exercise-explanation {
+        font-size: 1em !important;
+        margin-bottom: 10px;
+    }
+    
+    #next-exercise {
+        font-size: 2.1em;
+        font-weight: bold;
+    }
+    
+    /* Right column styling */
+    #timer { 
+        font-size: 3em !important; 
+        margin: 0;
+        text-align: center;
+    }
+    
+    #status { 
+        font-size: 1.3em !important; 
+        margin: 0;
+        text-align: center;
+    }
+    
+    #progress-bar-container {
+        width: 100%;
+        height: 20px;
+        margin: 10px 0;
+    }
+    
+    .button-container {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+    
+    button {
+        padding: 10px 15px;
+        font-size: 1em;
+        width: 100%;
+    }
+}
+
+/* For very short landscape screens */
+@media screen and (orientation: landscape) and (max-height: 400px) {
+    #timer { 
+        font-size: 2.2em !important; 
+    }
+    
+    #status { 
+        font-size: 1.1em !important; 
+    }
+    
+    .right-column {
+        gap: 10px;
+        padding: 5px;
+    }
+    
+    button {
+        padding: 6px 10px;
+        font-size: 0.9em;
+    }
+    
+    .exercise-img {
+        max-height: 150px !important;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <h1>Exercise Timer (v. 9) </h1>
+    <div id="workout">
+    <div class="left-column">
+        <div id="next-exercise" margin-bottom: 10px;></div>
+        <img id="next-exercise-img" class="exercise-media" style="display:none; max-width:200px; margin-bottom:10px;" alt="Next Exercise Image" />
+        <video id="next-exercise-video" class="exercise-media" style="display:none; max-width:200px; margin-bottom:10px;" controls muted loop></video>
+
+        <div id="current-exercise"></div>
+        <img id="exercise-img" class="exercise-media" src="" alt="Current Exercise Image" />
+        <video id="exercise-video" class="exercise-media" src="" alt="Current Exercise Video" controls muted loop></video>
+        <div id="exercise-explanation" style="font-style: italic; margin-bottom: 10px;"></div>
+    </div>
+    
+    <div class="right-column">
+        <div id="timer"></div>
+        <div id="status"></div>
+        
+        <div id="progress-bar-container">
+            <div id="progress-bar"></div>
+        </div>
+
+        <div class="button-container">
+            <button id="startBtn">Start</button>
+            <button id="pauseBtn" disabled>Pause</button>
+            <button id="resumeBtn" disabled>Resume</button>
+            <button id="resetBtn" disabled>Reset</button>
+            <button id="skipBtn" disabled>Skip</button>
+        </div>
+    </div>
+</div>
+
+
+    <script>
+        // Define exercise groups
+        const armsExercises = [
+            { name: "Bicep Curls", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 15, imgUrl: "exercise/no1.gif", explanation: "Focus on form." },
+            { name: "Tricep Dips", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 15, imgUrl: "exercise/no2.gif", explanation: "Keep elbows close." },
+            { name: "Hammer Curls", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 15, imgUrl: "exercise/no3.gif", explanation: "Palms face each other." },
+            { name: "Overhead Tricep Extension", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 15, imgUrl: "exercise/no4.gif", explanation: "Extend fully." }
+        ];
+
+        const coreExercises = [
+            { name: "Plank", reps: 1, repDuration: 30, breakBetweenReps: 0, breakBetweenExercises: 15, imgUrl: "exercise/no5.gif", explanation: "Hold strong." },
+            { name: "Crunches", reps: 15, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "exercise/no6.gif", explanation: "Engage your core." },
+            { name: "Leg Raises", reps: 12, repDuration: 8, breakBetweenReps: 3, breakBetweenExercises: 15, imgUrl: "exercise/no7.gif", explanation: "Keep legs straight." },
+            { name: "Russian Twists", reps: 20, repDuration: 3, breakBetweenReps: 1, breakBetweenExercises: 15, imgUrl: "exercise/no1.gif", explanation: "Twist from the core." }
+        ];
+
+        const legsExercises = [
+            { name: "Squats", reps: 12, repDuration: 8, breakBetweenReps: 3, breakBetweenExercises: 15, imgUrl: "exercise/no2.gif", explanation: "Go deep." },
+            { name: "Lunges (Alternating)", reps: 10, repDuration: 10, breakBetweenReps: 3, breakBetweenExercises: 15, imgUrl: "exercise/no3.gif", explanation: "Step forward." },
+            { name: "Calf Raises", reps: 15, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "exercise/no4.gif", explanation: "Full extension." },
+            { name: "Glute Bridges", reps: 15, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "exercise/no5.gif", explanation: "Squeeze glutes." }
+        ];
+
+        const exerciseGroups = [
+            { name: "Arms", exercises: armsExercises, used: [] },
+            { name: "Core", exercises: coreExercises, used: [] },
+            { name: "Legs", exercises: legsExercises, used: [] }
+        ];
+
+        let workoutPlan = []; // This will be dynamically generated
+        let currentGroupIndex = 0;
+        let currentExercise = 0;
+        let currentRep = 1;
+        let isBreak = false;
+        let timer = null;
+        let timeLeft = 0;
+        let paused = false;
+        let progressTotal = 0; // Will be calculated after workoutPlan is generated
+        let progressCount = 0;
+
+        const currentExerciseEl = document.getElementById('current-exercise');
+        const exerciseImgEl = document.getElementById('exercise-img');
+        const exerciseExplanationEl = document.getElementById('exercise-explanation');
+        const timerEl = document.getElementById('timer');
+        const statusEl = document.getElementById('status');
+        const progressBarEl = document.getElementById('progress-bar');
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resumeBtn = document.getElementById('resumeBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const skipBtn = document.getElementById('skipBtn');
+
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const soundBuffers = {};
+
+        async function loadSound(name, url) {
+            try {
+                const response = await fetch(url);
+                const arrayBuffer = await response.arrayBuffer();
+                soundBuffers[name] = await audioContext.decodeAudioData(arrayBuffer);
+            } catch (e) {
+                console.error(`Failed to load sound "${name}" from ${url}:`, e);
+            }
+        }
+
+        async function loadAllSounds() {
+            await Promise.all([
+                loadSound('start', 'exercise/audio_41203856b4.mp3'),
+                loadSound('end', 'exercise/audio_336d55dfa8.mp3'),
+                loadSound('switch', 'exercise/audio_c50d7fecf2.mp3')
+            ]);
+        }
+
+        function playSound(name) {
+            const buffer = soundBuffers[name];
+            if (!buffer) return;
+            const source = audioContext.createBufferSource();
+            source.buffer = buffer;
+            source.connect(audioContext.destination);
+            source.start(0);
+        }
+
+        document.body.addEventListener('touchstart', unlockAudioContext, { once: true });
+        document.body.addEventListener('mousedown', unlockAudioContext, { once: true });
+
+        function unlockAudioContext() {
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+        }
+
+        function formatTime(sec) {
+            const m = Math.floor(sec / 60);
+            const s = sec % 60;
+            return `${m}:${s.toString().padStart(2, '0')}`;
+        }
+
+        function updateProgress() {
+            const percent = (progressCount / progressTotal) * 100;
+            progressBarEl.style.width = percent + '%';
+        }
+
+        function startTimer(seconds, onTick, onComplete) {
+            timeLeft = seconds;
+            timerEl.textContent = formatTime(timeLeft);
+            if (timer) clearInterval(timer);
+            timer = setInterval(() => {
+                if (!paused) {
+                    timeLeft--;
+                    onTick(timeLeft);
+                    timerEl.textContent = formatTime(timeLeft);
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                        onComplete();
+                    }
+                }
+            }, 1000);
+        }
+
+        const praises = ["amazing", "awesome", "incredible", "fantastic", "excellent", "superb", "outstanding"];
+
+        const randomPraise = praises[Math.floor(Math.random() * praises.length)];
+
+        function getRandomExercise(group) {
+            if (group.used.length === group.exercises.length) {
+                group.used = []; // Reset if all exercises have been used
+            }
+            let availableExercises = group.exercises.filter(ex => !group.used.includes(ex));
+            const randomIndex = Math.floor(Math.random() * availableExercises.length);
+            const chosenExercise = availableExercises[randomIndex];
+            group.used.push(chosenExercise);
+            return chosenExercise;
+        }
+
+        function generateWorkoutPlan() {
+            let generatedPlan = [];
+            // Determine how many full cycles of groups we can do
+            const minExercisesInGroup = Math.min(...exerciseGroups.map(g => g.exercises.length));
+            const numCycles = minExercisesInGroup; // Ensure we don't run out of exercises in any group
+
+            for (let cycle = 0; cycle < numCycles; cycle++) {
+                // Iterate through groups in fixed order (Arms, Core, Legs)
+                exerciseGroups.forEach(group => {
+                    generatedPlan.push(getRandomExercise(group));
+                });
+            }
+            return generatedPlan;
+        }
+
+        function nextStep() {
+            const nextExerciseImgEl = document.getElementById('next-exercise-img');
+            if (currentExercise >= workoutPlan.length) {
+                currentExerciseEl.textContent = `Workout Complete! Nobu is ${randomPraise}!`;
+                exerciseImgEl.style.display = 'none';
+                exerciseExplanationEl.textContent = '';
+                timerEl.textContent = "";
+                statusEl.textContent = "";
+                pauseBtn.disabled = true;
+                resumeBtn.disabled = true;
+                skipBtn.disabled = true;
+                resetBtn.disabled = false;
+                startBtn.disabled = true;
+                document.getElementById('next-exercise').textContent = "";
+                nextExerciseImgEl.style.display = 'none';
+                return;
+            }
+            // Clear "next exercise" at the start of a new exercise
+            document.getElementById('next-exercise').textContent = "";
+            nextExerciseImgEl.style.display = 'none';
+            const ex = workoutPlan[currentExercise];
+            currentExerciseEl.textContent = `${ex.name} (Exercise ${currentExercise + 1} of ${workoutPlan.length})`;
+
+            // Show current exercise image and hide next exercise image
+            const exerciseVideoEl = document.getElementById('exercise-video');
+
+            // Hide both initially
+            exerciseImgEl.style.display = 'none';
+            exerciseVideoEl.style.display = 'none';
+            exerciseVideoEl.pause(); // Pause any playing video
+
+            // Determine if it's a video or image
+            if (ex.imgUrl.match(/\.(mp4|mov|webm)$/i)) {
+                exerciseVideoEl.src = ex.imgUrl;
+                exerciseVideoEl.style.display = '';
+                exerciseVideoEl.play();
+            } else {
+                exerciseImgEl.src = ex.imgUrl;
+                exerciseImgEl.style.display = '';
+            }
+            exerciseExplanationEl.textContent = ex.explanation || '';
+
+            if (!isBreak) {
+                statusEl.style.color = 'black';
+                timerEl.style.color = 'blue';
+                statusEl.textContent = `Rep ${currentRep} of ${ex.reps}`;
+                playSound('start'); // Play at the start of every rep
+                startTimer(ex.repDuration, () => {
+                    progressCount++;
+                    updateProgress();
+                }, () => {
+                    if (currentRep < ex.reps) {
+                        playSound('end'); // Play at the end of every rep except the last
+                        // Break between reps
+                        isBreak = true;
+                        statusEl.style.color = 'red';
+                        timerEl.style.color = 'red';
+                        startBreak(ex.breakBetweenReps, false, () => { // <--- false for between reps
+                            isBreak = false;
+                            statusEl.style.color = 'black';
+                            timerEl.style.color = 'blue';
+                            currentRep++;
+                            nextStep();
+                        });
+                    } else {
+                        // Break between exercises
+                        isBreak = true;
+                        statusEl.style.color = 'red';
+                        timerEl.style.color = 'red';
+                        playSound('switch'); // Only play switch sound after last rep
+                        currentRep = 1;
+                        currentExercise++;
+                        startBreak(ex.breakBetweenExercises, true, () => { // <--- true for between exercises
+                            isBreak = false;
+                            statusEl.style.color = 'black';
+                            timerEl.style.color = 'blue';
+                            nextStep();
+                        });
+                    }
+                });
+            }
+        }
+
+        function startBreak(seconds, isBetweenExercises, callback) {
+            const nextExerciseImgEl = document.getElementById('next-exercise-img');
+            const nextExerciseVideoEl = document.getElementById('next-exercise-video');
+            const exerciseVideoEl = document.getElementById('exercise-video'); // Get current video element
+
+            // Hide current exercise media during break
+            exerciseImgEl.style.display = 'none';
+            exerciseVideoEl.style.display = 'none';
+            exerciseVideoEl.pause(); // Pause current video
+
+            if (isBetweenExercises) {
+                // Break between exercises
+                statusEl.textContent = "Break between exercises";
+                if (currentExercise < workoutPlan.length) {
+                    const nextEx = workoutPlan[currentExercise];
+                    document.getElementById('next-exercise').textContent =
+                        `Next: ${nextEx.name} (${nextEx.explanation || ''})`;
+
+                    // Hide both next media elements initially
+                    nextExerciseImgEl.style.display = 'none';
+                    nextExerciseVideoEl.style.display = 'none';
+                    nextExerciseVideoEl.pause(); // Pause any playing video
+
+                    // Determine if next is video or image
+                    if (nextEx.imgUrl.match(/\.(mp4|mov|webm)$/i)) {
+                        nextExerciseVideoEl.src = nextEx.imgUrl;
+                        nextExerciseVideoEl.style.display = '';
+                        nextExerciseVideoEl.play();
+                    } else {
+                        nextExerciseImgEl.src = nextEx.imgUrl;
+                        nextExerciseImgEl.style.display = '';
+                    }
+                } else {
+                    document.getElementById('next-exercise').textContent = "";
+                    nextExerciseImgEl.style.display = 'none';
+                    nextExerciseVideoEl.style.display = 'none';
+                    nextExerciseVideoEl.pause();
+                }
+            } else {
+                // Break between reps - keep current image, hide next
+                statusEl.textContent = "Break between reps";
+                document.getElementById('next-exercise').textContent = "";
+                nextExerciseImgEl.style.display = 'none';
+                nextExerciseVideoEl.style.display = 'none';
+                nextExerciseVideoEl.pause();
+                // Current exercise image stays visible (handled by nextStep not hiding it)
+            }
+            startTimer(seconds, () => {
+                progressCount++;
+                updateProgress();
+            }, () => {
+                callback();
+            });
+        }
+
+        function pauseWorkout() {
+            paused = true;
+            pauseBtn.disabled = true;
+            resumeBtn.disabled = false;
+            skipBtn.disabled = true;
+            statusEl.textContent = "Paused";
+        }
+        function resumeWorkout() {
+            paused = false;
+            pauseBtn.disabled = false;
+            resumeBtn.disabled = true;
+            skipBtn.disabled = false;
+            statusEl.textContent = isBreak ? (currentRep === 1 ? "Break between exercises" : "Break between reps") : `Rep ${currentRep} of ${workoutPlan[currentExercise].reps}`;
+        }
+        
+        function resetWorkout() {
+            if (timer) clearInterval(timer);
+            currentExercise = 0;
+            currentRep = 1;
+            isBreak = false;
+            paused = false;
+            progressCount = 0;
+            updateProgress();
+            currentExerciseEl.textContent = "";
+            exerciseImgEl.style.display = 'none';
+            exerciseExplanationEl.textContent = ''; // Clear explanation on reset
+            timerEl.textContent = "";
+            statusEl.textContent = "";
+            pauseBtn.disabled = true;
+            resumeBtn.disabled = true;
+            resetBtn.disabled = true;
+            startBtn.disabled = false;
+            document.getElementById('next-exercise').textContent = ""; // Clear next exercise on reset
+            document.getElementById('next-exercise-img').style.display = 'none'; // Hide next exercise image on reset
+        }
+
+        startBtn.addEventListener('click', () => {
+            startBtn.disabled = true;
+            pauseBtn.disabled = false;
+            skipBtn.disabled = false;
+            resetBtn.disabled = false;
+            initializeWorkout(); // Re-initialize workout plan on start
+            nextStep();
+        });
+
+        pauseBtn.addEventListener('click', pauseWorkout);
+        resumeBtn.addEventListener('click', resumeWorkout);
+        resetBtn.addEventListener('click', resetWorkout);
+        skipBtn.addEventListener('click', () => {
+            if (timer) clearInterval(timer);
+            isBreak = false;
+            currentRep = 1;
+            currentExercise++;
+            nextStep();
+        });
+
+        // Initialize UI state
+        startBtn.disabled = true;
+        loadAllSounds().then(() => {
+            startBtn.disabled = false;
+            initializeWorkout(); // Call initializeWorkout after sounds are loaded
+        });
+
+        function initializeWorkout() {
+            workoutPlan = generateWorkoutPlan();
+            progressTotal = workoutPlan.reduce((acc, ex, idx) => {
+                const breakBetweenExercises = (idx < workoutPlan.length - 1) ? ex.breakBetweenExercises : 0;
+                return acc + ex.reps * (ex.repDuration + ex.breakBetweenReps) + breakBetweenExercises;
+            }, 0);
+            resetWorkout();
+        }
+    </script>
+</body>
+</html>
