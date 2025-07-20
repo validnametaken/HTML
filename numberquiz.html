@@ -126,12 +126,10 @@ input[type="number"] {
       /* Add this line */
     }
 
-    #game-board div.correct {
-      border: 2px solid green;
-    }
 
     #game-board div.correct:active {
       transform: translateY(2px);
+      border: 2px solid green;
     }
 
     #timer,
@@ -195,6 +193,25 @@ input[type="number"] {
         transform: translateX(0);
       }
     }
+    .game-instructions {
+  text-align: center;
+  font-size: 1.2em;
+  color: #666;
+  margin-bottom: 30px;
+  font-weight: 400;
+  animation: fadeInUp 1s ease-out 0.3s both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
   </style>
 </head>
 
@@ -202,6 +219,7 @@ input[type="number"] {
   <div class="container">
     <div class="container">
       <h1 class="animated-header">Numbers Game</h1>
+        <p class="game-instructions">Select the lowest numbers first!</p>
       <div id="setup-screen">
         <div class="input-group">
           <label for="min-range">Minimum number:</label>
@@ -327,8 +345,11 @@ function handleNumberClick(num, sortedNumbers) {
 function updateUI() {
   document.getElementById('score').innerText = `Score: ${gameState.score}`;
   document.getElementById('timer').innerText = `Time Left: ${gameState.timeLeft}s`;
+  // Also update the initial display
+  if (gameState.timeLeft === INITIAL_TIME) {
+    document.getElementById('timer').innerText = `Time Left: ${INITIAL_TIME}s`;
+  }
 }
-
 function showCongratsScreen() {
   document.getElementById('game-screen').style.display = 'none';
   document.getElementById('congrats-screen').style.display = 'block';
