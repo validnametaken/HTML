@@ -221,21 +221,21 @@
                             // Focus on voice frequencies
                             // With fftSize 1024, each bin represents ~21.5Hz
                             // We'll look at bins from index 4 to 12 (approximately 85Hz to 255Hz)
-                            for (let i = 8; i < 24; i++) {
+                            for (let i = 10; i < 30; i++) {
                                 if (dataArray[i] > maxValue) {
                                     maxValue = dataArray[i];
                                     peakFrequency = i * (audioContext.sampleRate / analyser.fftSize);
                                 }
                                 // Apply stronger weighting to typical voice frequencies
                                 if (peakFrequency >= 85 && peakFrequency <= 255) {
-                                    values += dataArray[i] * 1.5;
+                                    values += dataArray[i] * 2.0; // More weight to voice
                                 } else {
-                                    values += dataArray[i] * 0.5;
+                                    values += dataArray[i] * 0.2; // Less weight to non-voice
                                 }
                             }
 
                             const offset = 25;
-                            const average = 20 * Math.log10((values / 16) || 1) + offset;
+                            const average = 20 * Math.log10((values / 20) || 1) + offset;
 
                             // Only add values that are likely to be voice
                             if (peakFrequency >= 85 && peakFrequency <= 255) {
