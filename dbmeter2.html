@@ -118,7 +118,7 @@
 </head>
 
 <body>
-    <div class="title" id="title">Andy's dB Meter</div>
+    <div class="title" id="title">Andy's dB Meter (ver. 1)</div>
     <audio id="audioClip" src="alarm.mp3"></audio>
     <div class="meter">
         <div class="volume" id="volume"></div>
@@ -221,7 +221,7 @@
                             // Focus on voice frequencies
                             // With fftSize 1024, each bin represents ~21.5Hz
                             // We'll look at bins from index 4 to 12 (approximately 85Hz to 255Hz)
-                            for (let i = 10; i < 30; i++) {
+                            for (let i = 2; i < 30; i++) {
                                 if (dataArray[i] > maxValue) {
                                     maxValue = dataArray[i];
                                     peakFrequency = i * (audioContext.sampleRate / analyser.fftSize);
@@ -234,8 +234,8 @@
                                 }
                             }
 
-                            const offset = 25;
-                            const average = 20 * Math.log10((values / 20) || 1) + offset;
+                            const offset = 35;
+                            const average = 20 * Math.log10((values / 32) || 1) + offset;
 
                             // Only add values that are likely to be voice
                             if (peakFrequency >= 85 && peakFrequency <= 255) {
