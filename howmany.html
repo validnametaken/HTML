@@ -130,12 +130,20 @@
   <meta name="apple-mobile-web-app-title" content="How Many?">
   <style>
     /* Add main styles here */
+            @font-face {
+            font-family: 'Alata';
+            src: local('Alata'),
+                url('selfintro/Alata-Regular.ttf') format('truetype');
+            font-display: swap;
+            font-weight: 400;
+        }
+
     html,
     body {
       margin: 0;
       padding: 0;
       height: 100%;
-      font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: "Alata", -apple-system, BlinkMacSystemFont, sans-serif;
       background: #222;
       overflow-x: hidden;
     }
@@ -185,7 +193,6 @@
       height: 100%;
       pointer-events: none;
       z-index: 2;
-      border: 2px solid rgb(212, 0, 255);
       box-sizing: border-box;
     }
 
@@ -197,7 +204,6 @@
       transition: left 2s linear;
       will-change: left;
       user-select: none;
-      border: 2px solid red;
     }
 
     #answer-area {
