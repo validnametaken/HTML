@@ -278,6 +278,13 @@
 
     <script>
         // Define exercise groups
+        const warmupExercises = [
+            { name: "Hip Twists", reps: 1, repDuration: 20, breakBetweenReps: 1, breakBetweenExercises: 5, imgUrl: "Jumping Jacks", explanation: "Get your heart rate up!" },
+            { name: "Arm Circles", reps: 1, repDuration: 20, breakBetweenReps: 1, breakBetweenExercises: 5, imgUrl: "Arm Circles", explanation: "Loosen up your shoulders." },
+            { name: "Step Jacks", reps: 1, repDuration: 20, breakBetweenReps: 1, breakBetweenExercises: 5, imgUrl: "Jumping Jacks", explanation: "Get your heart rate up!" },
+            { name: "Walking High Knees", reps: 1, repDuration: 20, breakBetweenReps: 1, breakBetweenExercises: 10, imgUrl: "High Knees", explanation: "Drive your knees up!" }
+        ];
+
         const armsExercises = [
             { name: "Push-ups", reps: 5, repDuration: 5, breakBetweenReps: 1, breakBetweenExercises: 15, imgUrl: "https://img.freepik.com/free-vector/push-up-demostration_1133-392.jpg", explanation: "Focus on form." },
             { name: "Pike Push-up", reps: 5, repDuration: 5, breakBetweenReps: 1, breakBetweenExercises: 15, imgUrl: "Tricep curls", explanation: "Keep elbows close." },
@@ -645,7 +652,8 @@
         });
 
         function initializeWorkout() {
-            workoutPlan = generateWorkoutPlan();
+            const mainPlan = generateWorkoutPlan(); // Generate the main workout plan
+            workoutPlan = [...warmupExercises, ...mainPlan]; // Warmup first, then main
             progressTotal = workoutPlan.reduce((acc, ex, idx) => {
                 const breakBetweenExercises = (idx < workoutPlan.length - 1) ? ex.breakBetweenExercises : 0;
                 return acc + ex.reps * (ex.repDuration + ex.breakBetweenReps) + breakBetweenExercises;
