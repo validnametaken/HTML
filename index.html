@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Enables fullscreen when launched from Home Screen -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <!-- Optional: control the status bar style -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Optional: custom name shown on the Home Screen -->
+    <meta name="apple-mobile-web-app-title" content="Andy's Index">
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+    <title>Andy's HTML Index</title>
+    <style>
+        /* Lego-inspired colors */
+        :root {
+            --lego-white: #e7e7e7;
+            --lego-black: rgb(50, 50, 50);
+            --lego-blue: #0097A7;
+            --lego-red: #ff3535;
+            --lego-green: #05b130;
+            --lego-orange: #FFA07A;
+            --lego-purple: #7A288A;
+            --lego-yellow: #ddb100;
+            --lego-coral: #f769b0;
+            --lego-gray: #454F55;
+            --lego-brown: #814101;
+            --lego-pink: #e79d9d;
+            --lego-turquoise: #00bcd4;
+            --lego-light-blue: #81D4FA;
+            --lego-light-green: #A5D6A7;
+            --lego-light-red: #FF5252;
+            --lego-light-orange: #FFAB40;
+            --lego-light-purple: #AB47BC;
+            --lego-light-yellow: #FFD600;
+            --lego-light-coral: #FF8A80;
+            --lego-light-gray: #B0BEC5;
+            --lego-light-brown: #BC8F8F;
+            --lego-light-pink: #F06292;
+            --lego-light-turquoise: #00BCD4;
+            
+        }
+
+        body#index {
+            margin: 0;
+            /* add this line */
+            padding: 0;
+            /* add this line */
+            font-family: Arial, sans-serif;
+            background-color: var(--lego-black);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            background: linear-gradient(135deg, #232526 0%, #414345 100%);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .lego-button {
+            font-family: 'Bangers', Arial, sans-serif;
+            letter-spacing: 2px;
+            font-size: calc(1vw + 3vh);
+            font-weight: 600;
+            color: var(--lego-white);
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            aspect-ratio: 130/60;
+            background-color: var(--lego-black);
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 0 0 #222, 0 8px 16px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            display: flex;
+            /* <-- Use flex for centering */
+            align-items: center;
+            /* <-- Vertical centering */
+            justify-content: center;
+            /* <-- Horizontal centering */
+            text-decoration: none;
+            /* Removes underline */
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+
+        .lego-button:hover {
+            background-color: var(--lego-red);
+            transform: scale(1.04);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18), 0 4px 0 0 #222;
+        }
+
+        .lego-button:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 0 #222, 0 4px 8px rgba(0, 0, 0, 0.10);
+        }
+
+        h1 {
+            font-family: 'Bangers', Arial, sans-serif;
+            letter-spacing: 2px;
+            font-size: calc(4.5vw + 4vh);
+            color: var(--lego-white);
+        }
+
+        .lego-button a {
+            color: var(--lego-white);
+            text-decoration: none;
+            /* remove underline */
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            justify-content: center;
+            align-items: center;
+            padding: 0 5%;
+        }
+
+        .link-list {
+            list-style: none;
+            padding: 0;
+            /* make sure padding is 0 */
+            margin: 0;
+            /* make sure margin is 0 */
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-column-gap: 10%;
+            /* gap between columns */
+            grid-row-gap: 10%;
+            /* gap between rows */
+        }
+
+        .link-list li {
+            display: grid;
+            place-items: center;
+        }
+
+        h1 {
+            grid-column: 1 / -1;
+            text-align: center;
+        }
+
+        @media (max-width: 1000px) {
+            .link-list {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 700px) {
+            .link-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body id="index">
+    <div class="container">
+        <h1>Andy's HTML Index</h1>
+        <ul class="link-list">
+
+            <li>
+                <a href="animalquiz.html" class="lego-button" style="background-color: var(--lego-red);">Animal Quiz</a>
+            </li>
+            <li>
+                <a href="hiraganaquiz.html" class="lego-button" style="background-color: var(--lego-green);">Hiragana Quiz</a>
+            </li>
+            <li>
+                <a href="simonsays.html" class="lego-button" style="background-color: var(--lego-brown);">Simon Says</a>
+            </li>
+            <li>
+                <a href="howmany.html" class="lego-button" style="background-color: var(--lego-light-yellow);">How Many</a>
+            </li>
+            <li>
+                <a href="numberquiz.html" class="lego-button" style="background-color: var(--lego-light-gray);">Number Quiz</a>
+            </li>
+                        <li>
+                <a href="missinggame.html" class="lego-button" style="background-color: var(--lego-blue);">Missing Game</a>
+            </li>
+            <li>
+                <a href="dinos.html" class="lego-button" style="background-color: var(--lego-purple);">Dino Timeline</a>
+            </li>
+            <li>
+                <a href="spinner3.html" class="lego-button" style="background-color: var(--lego-yellow);">Spinner</a>
+            </li>
+            <li>
+                <a href="timer.html" class="lego-button" style="background-color: var(--lego-coral);">Timer</a>
+            </li>
+            <li>
+                <a href="dbmeter.html" class="lego-button" style="background-color: var(--lego-gray);">dB Meter</a>
+            </li>
+            <li>
+                <a href="workout.html" class="lego-button" style="background-color: var(--lego-pink);">Nobu's Stretching</a>
+            </li>
+            <li>
+                <a href="selfintro.html" class="lego-button" style="background-color: var(--lego-turquoise);">Self-intro</a>
+            </li>
+            <li>
+                <a href="DatesTracker.html" class="lego-button" style="background-color: var(--lego-orange);">Dates Tracker</a>
+            </li>
+                        <li>
+                <a href="alphabetattack.html" class="lego-button" style="background-color: var(--lego-light-orange);">Alphabet Attack</a>
+            </li>
+            <li>
+                <a href="typeman.html" class="lego-button" style="background-color: var(--lego-blue);">Typeman</a>
+            </li>
+                        <li>
+                <a href="workout2.html" class="lego-button" style="background-color: var(--lego-light-brown);">Andy's Workout</a>
+            </li>
+            <!-- Add more files here -->
+        </ul>
+    </div>
+</body>
+
+</html>
