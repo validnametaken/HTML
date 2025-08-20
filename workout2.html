@@ -279,6 +279,7 @@
     <script>
         // Define exercise groups
         const warmupExercises = [
+            { name: "Get ready!", reps: 1, repDuration: 3, breakBetweenReps: 2, breakBetweenExercises: 5, imgUrl: "Get Ready", explanation: "Get Ready!" },
             { name: "Hip Twists", reps: 1, repDuration: 20, breakBetweenReps: 2, breakBetweenExercises: 5, imgUrl: "Hip Twists", explanation: "Get your heart rate up!" },
             { name: "Arm Circles", reps: 1, repDuration: 20, breakBetweenReps: 2, breakBetweenExercises: 5, imgUrl: "Arm Circles", explanation: "Loosen up your shoulders." },
             { name: "Step Jacks", reps: 1, repDuration: 20, breakBetweenReps: 2, breakBetweenExercises: 5, imgUrl: "Step Jacks", explanation: "Get your heart rate up!" },
@@ -411,7 +412,7 @@
 
         function getRandomExercise(group) {
             if (group.used.length === group.exercises.length) {
-                group.used = []; // Reset if all exercises have been used
+                group.used = []; // Reset if all exercises in this group have been used
             }
             let availableExercises = group.exercises.filter(ex => !group.used.includes(ex));
             const randomIndex = Math.floor(Math.random() * availableExercises.length);
@@ -425,6 +426,11 @@
             // Determine how many full cycles of groups we can do
             const minExercisesInGroup = Math.min(...exerciseGroups.map(g => g.exercises.length));
             const numCycles = minExercisesInGroup; // Ensure we don't run out of exercises in any group
+
+            // Reset all group trackers
+            exerciseGroups.forEach(group => {
+                group.used = [];
+            });
 
             for (let cycle = 0; cycle < numCycles; cycle++) {
                 // Iterate through groups in fixed order (Arms, Core, Legs)
@@ -588,22 +594,22 @@
             });
         }
 
-function pauseWorkout() {
-    paused = true;
-    pauseBtn.disabled = true;
-    resumeBtn.disabled = false;
-    skipBtn.disabled = true;
-    resetBtn.disabled = false; // Enable reset when paused
-    statusEl.textContent = "Paused";
-}
+        function pauseWorkout() {
+            paused = true;
+            pauseBtn.disabled = true;
+            resumeBtn.disabled = false;
+            skipBtn.disabled = true;
+            resetBtn.disabled = false; // Enable reset when paused
+            statusEl.textContent = "Paused";
+        }
 
-function resumeWorkout() {
-    paused = false;
-    pauseBtn.disabled = false;
-    resumeBtn.disabled = true;
-    skipBtn.disabled = false;
-    statusEl.textContent = isBreak ? (currentRep === 1 ? "Break between exercises" : "Break between reps") : `Rep ${currentRep} of ${workoutPlan[currentExercise].reps}`;
-}
+        function resumeWorkout() {
+            paused = false;
+            pauseBtn.disabled = false;
+            resumeBtn.disabled = true;
+            skipBtn.disabled = false;
+            statusEl.textContent = isBreak ? (currentRep === 1 ? "Break between exercises" : "Break between reps") : `Rep ${currentRep} of ${workoutPlan[currentExercise].reps}`;
+        }
         function resetWorkout() {
             if (timer) clearInterval(timer);
             currentExercise = 0;
