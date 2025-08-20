@@ -237,7 +237,7 @@
 </head>
 
 <body>
-    <h1>Exercise Timer (v. 1) </h1>
+    <h1>Exercise Timer (v. 2) </h1>
     <div id="workout">
         <div class="left-column">
             <div id="next-exercise" margin-bottom: 10px;></div>
@@ -281,25 +281,25 @@
         const warmupExercises = [
             { name: "Get ready!", reps: 1, repDuration: 3, breakBetweenReps: 2, breakBetweenExercises: 5, imgUrl: "Get Ready", explanation: "Get Ready!" },
             { name: "Hip Twists", reps: 1, repDuration: 20, breakBetweenReps: 2, breakBetweenExercises: 5, imgUrl: "Hip Twists", explanation: "Get your heart rate up!" },
-            { name: "Arm Circles", reps: 1, repDuration: 20, breakBetweenReps: 2, breakBetweenExercises: 5, imgUrl: "Arm Circles", explanation: "Loosen up your shoulders." },
+            { name: "Arm Circles", reps: 2, repDuration: 15, breakBetweenReps: 2, breakBetweenExercises: 5, imgUrl: "Arm Circles", explanation: "Loosen up your shoulders." },
             { name: "Step Jacks", reps: 1, repDuration: 20, breakBetweenReps: 2, breakBetweenExercises: 5, imgUrl: "Step Jacks", explanation: "Get your heart rate up!" },
             { name: "Walking High Knees", reps: 1, repDuration: 20, breakBetweenReps: 2, breakBetweenExercises: 10, imgUrl: "Walking High Knees", explanation: "Drive your knees up!" }
         ];
 
         const armsExercises = [
             { name: "Push-ups", reps: 5, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "https://img.freepik.com/free-vector/push-up-demostration_1133-392.jpg", explanation: "Focus on form." },
-            { name: "Pike Push-up", reps: 5, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Pike Push-up", explanation: "Keep elbows close." },
+            { name: "Self-arm wrestling", reps: 8, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Self-arm wrestling", explanation: "Push as hard as you can." },
             { name: "Push-up to Plank", reps: 10, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Push-up to Plank", explanation: "Palms face each other." },
             { name: "Down Under", reps: 5, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Down Unders", explanation: "Palms face each other." },
             { name: "Tricep Dips", reps: 5, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "tricep dips", explanation: "Keep back straight." }
         ];
 
         const coreExercises = [
-            { name: "Plank", reps: 1, repDuration: 30, breakBetweenReps: 0, breakBetweenExercises: 15, imgUrl: "plank", explanation: "Hold strong." },
+            { name: "Rotating Plank", reps: 1, repDuration: 60, breakBetweenReps: 0, breakBetweenExercises: 15, imgUrl: "plank", explanation: "Hold strong." },
             { name: "Inchworms", reps: 10, repDuration: 8, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Inchworms", explanation: "Engage your core." },
             { name: "Standing bicycle crunch (Alternating)", reps: 10, repDuration: 4, breakBetweenReps: 0, breakBetweenExercises: 15, imgUrl: "Standing bicycle crunch", explanation: "Keep legs straight." },
             { name: "ab-rolls", reps: 5, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "ab-rolls", explanation: "Twist from the core." },
-            { name: "Dog-bird", reps: 5, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Dog-bird", explanation: "Engage your core." }
+            { name: "Dog-bird", reps: 10, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Dog-bird", explanation: "Engage your core." }
 
         ];
 
@@ -307,7 +307,7 @@
             { name: "Squats", reps: 10, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "squats", explanation: "Go deep." },
             { name: "Lunges (Alternating)", reps: 10, repDuration: 10, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "lunges", explanation: "Step forward." },
             { name: "Calf Raises", reps: 15, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Calf Raises", explanation: "Full extension." },
-            { name: "Glute Bridges", reps: 15, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Glute Bridges", explanation: "Squeeze glutes." }
+            { name: "Glute Bridges", reps: 14, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Glute Bridges", explanation: "Squeeze glutes." }
         ];
 
         const exerciseGroups = [
