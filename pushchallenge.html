@@ -366,6 +366,41 @@
         #replay-level-btn:hover {
             box-shadow: 0 5px 15px rgba(127, 140, 141, 0.4);
         }
+
+        /* Touch controls styling */
+.touch-controls {
+    display: grid;
+    grid-template-columns: repeat(3, 60px);
+    grid-template-rows: repeat(3, 60px);
+    gap: 5px;
+    margin: 20px auto;
+}
+
+.touch-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(52, 152, 219, 0.9);
+    border: none;
+    color: white;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.1s, background-color 0.2s;
+}
+
+.touch-btn:active {
+    transform: scale(0.95);
+    background: rgba(41, 128, 185, 0.9);
+}
+
+.touch-btn.hidden {
+    visibility: hidden;
+}
     </style>
 </head>
 
@@ -402,6 +437,17 @@
             <button id="reset-level">Reset Level</button>
         </div>
         <div id="game"></div>
+        <div class="touch-controls">
+    <button class="touch-btn hidden"></button>
+    <button class="touch-btn" id="up-btn">⬆️</button>
+    <button class="touch-btn hidden"></button>
+    <button class="touch-btn" id="left-btn">⬅️</button>
+    <button class="touch-btn hidden"></button>
+    <button class="touch-btn" id="right-btn">➡️</button>
+    <button class="touch-btn hidden"></button>
+    <button class="touch-btn" id="down-btn">⬇️</button>
+    <button class="touch-btn hidden"></button>
+</div>
         <p>Use arrow keys to move. Push boxes (🟠) onto goals (🟡)!</p>
 
         <!-- Level completion overlay -->
@@ -793,6 +839,17 @@
         document.getElementById('reset-level').addEventListener('click', () => {
             loadLevel(currentLevelIndex);
         });
+
+        // Add touch control event listeners
+document.getElementById('up-btn').addEventListener('click', () => movePlayer(0, -1));
+document.getElementById('down-btn').addEventListener('click', () => movePlayer(0, 1));
+document.getElementById('left-btn').addEventListener('click', () => movePlayer(-1, 0));
+document.getElementById('right-btn').addEventListener('click', () => movePlayer(1, 0));
+
+// Prevent scrolling when touching the buttons on mobile
+document.querySelectorAll('.touch-btn').forEach(btn => {
+    btn.addEventListener('touchstart', (e) => e.preventDefault());
+});
 
         // Initialize the game
         loadLevel(0);
