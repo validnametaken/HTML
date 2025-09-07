@@ -415,6 +415,8 @@ function startGame() {
     if (audioContext.state === 'suspended') {
         audioContext.resume();
     }
+    
+    // Reset game state
     document.body.style.backgroundColor = 'black';
     updateGameSpeed();
     gameState.sequence = [];
@@ -422,7 +424,31 @@ function startGame() {
     gameState.score = 0;
     gameState.currentState = GameStates.READY;
     scoreDisplay.textContent = `Score: ${gameState.score}`;
-    addToSequence();
+    
+    // Update game mode from selector
+    gameState.gameMode = document.getElementById('game-mode').value;
+    
+    // Handle different game modes
+    if (gameState.gameMode === GameModes.CLASSIC) {
+        addToSequence();
+    } else {
+        startChallenge();
+    }
+}
+
+// Update handleGameModeChange function
+function handleGameModeChange() {
+    const selectedMode = document.getElementById('game-mode').value;
+    const challengeSettings = document.getElementById('challenge-settings');
+    const startButton = document.getElementById('start-btn');
+    
+    if (selectedMode === GameModes.CLASSIC) {
+        challengeSettings.style.display = 'none';
+        startButton.style.display = 'block';
+    } else {
+        challengeSettings.style.display = 'block';
+        startButton.style.display = 'none';
+    }
 }
 
 function addToSequence() {
@@ -455,22 +481,89 @@ function playerTurn(button) {
     
     gameState.playerSequence.push(color);
 
-    if (gameState.playerSequence[gameState.playerSequence.length - 1] !== gameState.sequence[gameState.playerSequence.length - 1]) {
+    if (gameState.gameMode === GameModes.CLASSIC) {
+        handleClassicMode(color);
+    } else {
+        handleChallengeMode(color);
+    }
+}
+
+// Add these new helper functions
+function handleClassicMode(color) {
+    const currentIndex = gameState.playerSequence.length - 1;
+    const expectedColor = gameState.sequence[currentIndex];
+    
+    if (color !== expectedColor) {
+        // Game over for classic mode
         gameState.currentState = GameStates.GAME_OVER;
-    // Show overlay instead of alert
-    document.getElementById('final-score').textContent = `Your score: ${gameState.score}`;
-    document.getElementById('game-over-overlay').style.display = 'flex';
-    return;
+        document.getElementById('final-score').innerHTML = `
+            <h3>Game Over!</h3>
+            <p>You made it to level ${gameState.score + 1}</p>
+            <p>Final Score: ${gameState.score}</p>
+        `;
+        document.getElementById('game-over-overlay').style.display = 'flex';
+        return;
     }
 
+    // Player got the color right
     if (gameState.playerSequence.length === gameState.sequence.length) {
-        disablePlayerInput();
-        gameState.playerSequence = [];
+        // Completed the sequence successfully
         gameState.score++;
         scoreDisplay.textContent = `Score: ${gameState.score}`;
+        gameState.playerSequence = [];
+        
+        // Add delay before starting next sequence
         setTimeout(() => {
             addToSequence();
         }, 1000);
+    }
+}
+
+function endChallenge(success) {
+    gameState.currentState = GameStates.GAME_OVER;
+    disablePlayerInput();
+    
+    const finalScore = gameState.playerSequence.length;
+    const modeText = gameState.gameMode === GameModes.REVERSE ? 'Reverse' : 'Memory';
+    
+    // Only show challenge-specific messages for challenge modes
+    if (gameState.gameMode !== GameModes.CLASSIC) {
+        if (success) {
+            document.getElementById('final-score').innerHTML = `
+                <h3>🎉 ${modeText} Challenge Complete!</h3>
+                <p>Perfect score: ${finalScore}/${gameState.sequence.length}</p>
+            `;
+        } else {
+            document.getElementById('final-score').innerHTML = `
+                <h3>${modeText} Challenge Failed</h3>
+                <p>You got ${finalScore}/${gameState.sequence.length} correct</p>
+            `;
+        }
+    }
+    
+    document.getElementById('game-over-overlay').style.display = 'flex';
+}
+
+function handleChallengeMode(color) {
+    let expectedColor;
+    if (gameState.gameMode === GameModes.REVERSE) {
+        const reverseIndex = gameState.sequence.length - gameState.playerSequence.length;
+        expectedColor = gameState.sequence[reverseIndex];
+    } else {
+        expectedColor = gameState.sequence[gameState.playerSequence.length - 1];
+    }
+    
+    if (color !== expectedColor) {
+        endChallenge(false);
+        return;
+    }
+    
+    if (gameState.playerSequence.length === gameState.sequence.length) {
+        endChallenge(true);
+    } else {
+        const progress = gameState.playerSequence.length;
+        const total = gameState.sequence.length;
+        scoreDisplay.textContent = `Progress: ${progress}/${total}`;
     }
 }
 
@@ -630,16 +723,19 @@ function endChallenge(success) {
     const finalScore = gameState.playerSequence.length;
     const modeText = gameState.gameMode === GameModes.REVERSE ? 'Reverse' : 'Memory';
     
-    if (success) {
-        document.getElementById('final-score').innerHTML = `
-            <h3>🎉 ${modeText} Challenge Complete!</h3>
-            <p>Perfect score: ${finalScore}/${gameState.sequence.length}</p>
-        `;
-    } else {
-        document.getElementById('final-score').innerHTML = `
-            <h3>Challenge Failed</h3>
-            <p>You got ${finalScore}/${gameState.sequence.length} correct</p>
-        `;
+    // Only show challenge-specific messages for challenge modes
+    if (gameState.gameMode !== GameModes.CLASSIC) {
+        if (success) {
+            document.getElementById('final-score').innerHTML = `
+                <h3>🎉 ${modeText} Challenge Complete!</h3>
+                <p>Perfect score: ${finalScore}/${gameState.sequence.length}</p>
+            `;
+        } else {
+            document.getElementById('final-score').innerHTML = `
+                <h3>${modeText} Challenge Failed</h3>
+                <p>You got ${finalScore}/${gameState.sequence.length} correct</p>
+            `;
+        }
     }
     
     document.getElementById('game-over-overlay').style.display = 'flex';

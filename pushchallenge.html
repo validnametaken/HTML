@@ -401,6 +401,28 @@
 .touch-btn.hidden {
     visibility: hidden;
 }
+
+.touch-controls {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    user-select: none;
+    touch-action: none; /* Prevent all browser touch actions */
+}
+
+.touch-btn {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation; /* Optimize for touch */
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    user-select: none;
+}
+
+/* Improve visual feedback for touch */
+.touch-btn:active {
+    background: rgba(41, 128, 185, 1);
+    transform: scale(0.95);
+}
+
     </style>
 </head>
 
@@ -840,16 +862,45 @@
             loadLevel(currentLevelIndex);
         });
 
-        // Add touch control event listeners
-document.getElementById('up-btn').addEventListener('click', () => movePlayer(0, -1));
-document.getElementById('down-btn').addEventListener('click', () => movePlayer(0, 1));
-document.getElementById('left-btn').addEventListener('click', () => movePlayer(-1, 0));
-document.getElementById('right-btn').addEventListener('click', () => movePlayer(1, 0));
+// Add this code after the existing event listeners, before the loadLevel(0) call
 
-// Prevent scrolling when touching the buttons on mobile
+// Enhanced touch controls
 document.querySelectorAll('.touch-btn').forEach(btn => {
-    btn.addEventListener('touchstart', (e) => e.preventDefault());
+    // Handle both touch and mouse events
+    btn.addEventListener('touchstart', handleTouchStart, { passive: false });
+    btn.addEventListener('touchend', handleTouchEnd, { passive: false });
+    
+    function handleTouchStart(e) {
+        e.preventDefault(); // Prevent scrolling
+        const direction = btn.id.split('-')[0];
+        switch(direction) {
+            case 'up':
+                movePlayer(0, -1);
+                break;
+            case 'down':
+                movePlayer(0, 1);
+                break;
+            case 'left':
+                movePlayer(-1, 0);
+                break;
+            case 'right':
+                movePlayer(1, 0);
+                break;
+        }
+        btn.style.transform = 'scale(0.95)';
+    }
+    
+    function handleTouchEnd(e) {
+        e.preventDefault();
+        btn.style.transform = 'scale(1)';
+    }
 });
+
+// Prevent default touch behavior on the game area
+document.getElementById('game').addEventListener('touchmove', (e) => {
+    e.preventDefault();
+}, { passive: false });
+
 
         // Initialize the game
         loadLevel(0);
