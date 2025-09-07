@@ -448,10 +448,15 @@
 }
 
 #game {
+    display: grid;
+    gap: 0px;
+    margin: 20px auto;
+    padding: 15px;
+    background: #ecf0f1;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    box-sizing: border-box;
     max-width: 100%;
-    overflow-x: auto;
-    margin: 10px auto;
-    transform-origin: top center;
 }
 /* Mobile-specific styles */
 @media (max-width: 480px) {
@@ -477,13 +482,23 @@
     }
 
     #game {
-        transform: scale(0.8);
+        padding: 10px;
+        transform: none; /* Remove the fixed scale */
+        width: fit-content; /* Allow natural sizing */
         margin: 0 auto;
     }
 
+        .game-container {
+        width: 100%;
+        overflow-x: hidden;
+        padding: 5px;
+    }
+
+
     .cell {
-        width: 40px; /* Slightly smaller cells */
-        height: 40px;
+        width: 35px; /* Smaller cells */
+        height: 35px;
+        min-width: 35px;
     }
 
     .touch-controls {
@@ -526,6 +541,12 @@
     .controls button {
         padding: 6px 12px;
         font-size: 11px;
+    }
+
+        .cell {
+        width: 30px; /* Even smaller cells */
+        height: 30px;
+        min-width: 30px;
     }
 }
 
@@ -590,7 +611,7 @@ body {
         <button class="touch-btn hidden"></button>
     </div>
 </div>
-        <p>Use arrow keys to move. Push boxes (🟠) onto goals (🟡)! V3</p>
+        <p>Use arrow keys to move. Push boxes (🟠) onto goals (🟡)! V4</p>
 
         <!-- Level completion overlay -->
         <div id="completion-overlay">
