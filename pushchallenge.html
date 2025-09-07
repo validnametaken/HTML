@@ -367,6 +367,17 @@
             box-shadow: 0 5px 15px rgba(127, 140, 141, 0.4);
         }
 
+.game-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
         /* Touch controls styling */
 .touch-controls {
     display: grid;
@@ -407,6 +418,17 @@
     -webkit-user-select: none; /* Safari */
     user-select: none;
     touch-action: none; /* Prevent all browser touch actions */
+        position: sticky;
+    top: 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 60px);
+    grid-template-rows: repeat(3, 60px);
+    gap: 5px;
+    margin: 0;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    backdrop-filter: blur(5px);
 }
 
 .touch-btn {
@@ -421,6 +443,57 @@
 .touch-btn:active {
     background: rgba(41, 128, 185, 1);
     transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+    .game-container {
+        flex-direction: column;
+    }
+    
+    .touch-controls {
+        position: fixed;
+        bottom: 20px;
+        right: 20px; /* Position to right side */
+        transform: scale(0.8); /* Make controls slightly smaller */
+        z-index: 100;
+        background: rgba(255, 255, 255, 0.6); /* More transparent */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        margin: 0; /* Remove margin */
+        border-radius: 20px;
+        width: fit-content;
+    }
+
+    .touch-btn {
+        width: 50px; /* Smaller buttons */
+        height: 50px;
+        font-size: 20px;
+    }
+
+    #game {
+        margin-bottom: 20px; /* Reduce bottom margin */
+        transform-origin: top center;
+        max-width: 100%;
+        overflow: auto;
+    }
+
+    body {
+        overflow-y: auto; /* Allow scrolling */
+        height: auto;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+    .touch-controls {
+        transform: scale(0.7); /* Even smaller on very small screens */
+        right: 10px;
+        bottom: 10px;
+    }
+
+    #game {
+        transform: scale(0.9);
+        transform-origin: top center;
+    }
 }
 
     </style>
@@ -458,19 +531,21 @@
             <button id="next-level">Next Level</button>
             <button id="reset-level">Reset Level</button>
         </div>
-        <div id="game"></div>
-        <div class="touch-controls">
-    <button class="touch-btn hidden"></button>
-    <button class="touch-btn" id="up-btn">⬆️</button>
-    <button class="touch-btn hidden"></button>
-    <button class="touch-btn" id="left-btn">⬅️</button>
-    <button class="touch-btn hidden"></button>
-    <button class="touch-btn" id="right-btn">➡️</button>
-    <button class="touch-btn hidden"></button>
-    <button class="touch-btn" id="down-btn">⬇️</button>
-    <button class="touch-btn hidden"></button>
+<div class="game-container">
+    <div id="game"></div>
+    <div class="touch-controls">
+        <button class="touch-btn hidden"></button>
+        <button class="touch-btn" id="up-btn">⬆️</button>
+        <button class="touch-btn hidden"></button>
+        <button class="touch-btn" id="left-btn">⬅️</button>
+        <button class="touch-btn hidden"></button>
+        <button class="touch-btn" id="right-btn">➡️</button>
+        <button class="touch-btn hidden"></button>
+        <button class="touch-btn" id="down-btn">⬇️</button>
+        <button class="touch-btn hidden"></button>
+    </div>
 </div>
-        <p>Use arrow keys to move. Push boxes (🟠) onto goals (🟡)! V1</p>
+        <p>Use arrow keys to move. Push boxes (🟠) onto goals (🟡)! V2</p>
 
         <!-- Level completion overlay -->
         <div id="completion-overlay">
