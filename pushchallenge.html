@@ -863,49 +863,45 @@ body {
             return null;
         }
 
-        function movePlayer(dx, dy) {
-            const { x, y } = findPlayer();
-            const targetX = x + dx;
-            const targetY = y + dy;
+       function movePlayer(dx, dy) {
+    const { x, y } = findPlayer();
+    const targetX = x + dx;
+    const targetY = y + dy;
 
-            // Get actual level dimensions
-            const levelHeight = level.length;
-            const levelWidth = level[0] ? level[0].length : 0;
+    const levelHeight = level.length;
+    const levelWidth = level[0] ? level[0].length : 0;
 
-            // Check bounds explicitly
-            if (targetX < 0 || targetX >= levelWidth || targetY < 0 || targetY >= levelHeight) return;
+    if (targetX < 0 || targetX >= levelWidth || targetY < 0 || targetY >= levelHeight) return;
 
-            const next = level[targetY][targetX];
+    const next = level[targetY][targetX];
 
-            if (next === 1) return; // wall
+    if (next === 1) return; // wall
 
-            // box or box on goal
-            if (next === 2 || next === 5) {
-                const beyondX = x + dx * 2;
-                const beyondY = y + dy * 2;
+    // box or box on goal
+    if (next === 2 || next === 5) {
+        const beyondX = x + dx * 2;
+        const beyondY = y + dy * 2;
 
-                // Check bounds for box destination
-                if (beyondX < 0 || beyondX >= levelWidth || beyondY < 0 || beyondY >= levelHeight) return;
+        if (beyondX < 0 || beyondX >= levelWidth || beyondY < 0 || beyondY >= levelHeight) return;
 
-                const beyond = level[beyondY][beyondX];
+        const beyond = level[beyondY][beyondX];
 
-                // Only allow pushing if destination is floor or goal
-                if (beyond === 0 || beyond === 3) {
-                    // Move box
-                    level[beyondY][beyondX] = beyond === 3 ? 5 : 2;
-                    level[targetY][targetX] = next === 5 ? 3 : 0;
-                } else return; // Can't push box (blocked)
-            }
+        // Only allow pushing if destination is floor or goal
+        if (beyond === 0 || beyond === 3) {
+            // Move box
+            level[beyondY][beyondX] = beyond === 3 ? 5 : 2; // Box to new position
+            level[targetY][targetX] = next === 5 ? 3 : 0;   // Restore goal or floor where box was
+        } else return;
+    }
 
-            // Move player
-            const current = level[y][x];
-            level[y][x] = current === 6 ? 3 : 0;
-            level[targetY][targetX] = next === 3 ? 6 : 4;
+    // Move player
+    const current = level[y][x];
+    level[y][x] = current === 6 ? 3 : 0;  // Restore goal or floor where player was
+    level[targetY][targetX] = next === 3 || next === 5 ? 6 : 4;  // Player to new position
 
-            draw();
-            checkWin();
-        }
-
+    draw();
+    checkWin();
+}
 
         function checkWin() {
             const levelHeight = level.length;
