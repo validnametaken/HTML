@@ -484,6 +484,8 @@
     #game {
         transform: scale(0.6);
         margin: 0 auto;
+        transform-origin: left center;
+        max-width: 150%;
     }
 
     .cell {
@@ -514,7 +516,10 @@
 /* iPhone SE and other small devices */
 @media (max-width: 375px) {
     #game {
-        transform: scale(0.4);
+        transform: scale(0.5);
+        transform-origin: left center;
+        max-width: 450%;
+        
     }
 
     .touch-controls {
@@ -595,7 +600,7 @@ body {
         <button class="touch-btn hidden"></button>
     </div>
 </div>
-        <p>Use arrow keys to move. Push boxes (🟠) onto goals (🟡)! V4</p>
+        <p>Use arrow keys to move. Push boxes (🟠) onto goals (🟡)! V5</p>
 
         <!-- Level completion overlay -->
         <div id="completion-overlay">
