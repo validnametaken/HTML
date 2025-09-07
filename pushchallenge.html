@@ -482,23 +482,13 @@
     }
 
     #game {
-        padding: 10px;
-        transform: none; /* Remove the fixed scale */
-        width: fit-content; /* Allow natural sizing */
+        transform: scale(0.3);
         margin: 0 auto;
     }
 
-        .game-container {
-        width: 100%;
-        overflow-x: hidden;
-        padding: 5px;
-    }
-
-
     .cell {
-        width: 35px; /* Smaller cells */
-        height: 35px;
-        min-width: 35px;
+        width: 40px; /* Slightly smaller cells */
+        height: 40px;
     }
 
     .touch-controls {
@@ -541,12 +531,6 @@
     .controls button {
         padding: 6px 12px;
         font-size: 11px;
-    }
-
-        .cell {
-        width: 30px; /* Even smaller cells */
-        height: 30px;
-        min-width: 30px;
     }
 }
 
@@ -611,7 +595,7 @@ body {
         <button class="touch-btn hidden"></button>
     </div>
 </div>
-        <p>Use arrow keys to move. Push boxes (🟠) onto goals (🟡)! V4</p>
+        <p>Use arrow keys to move. Push boxes (🟠) onto goals (🟡)! V3</p>
 
         <!-- Level completion overlay -->
         <div id="completion-overlay">
