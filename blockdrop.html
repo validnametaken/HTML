@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Block Drop — Tetris‑inspired</title>
+  <title>Block Drop V1</title>
   <style>
     :root {
       --bg: #0f1221;
@@ -113,7 +113,16 @@
       cursor: pointer;
       transition: transform .06s ease, filter .2s ease;
       width: 100%;
+          touch-action: manipulation;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
     }
+
+    .section {
+    touch-action: manipulation;
+}
 
     .btn:hover {
       filter: brightness(1.1);
@@ -787,6 +796,34 @@
       };
       btn.addEventListener('click', () => map[act] && map[act]());
     });
+
+    // Add this near the bottom of the script, before the reset() call:
+
+// Touch controls in sidebar
+document.querySelectorAll('.section [data-act]').forEach(btn => {
+    const act = btn.getAttribute('data-act');
+    const map = {
+        left: () => { if (current && running) move(-1) },
+        right: () => { if (current && running) move(1) },
+        down: () => { if (current && running) softDrop() },
+        drop: () => { if (current && running) hardDrop() },
+        rotL: () => { if (current && running) rotate(-1) },
+        rotR: () => { if (current && running) rotate(1) },
+        hold: () => { if (current && running) holdSwap() },
+        pause: () => togglePause()
+    };
+    
+    // Add both click and touch events
+    btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        map[act] && map[act]();
+    });
+    
+    btn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        map[act] && map[act]();
+    });
+});
 
     // Start
     reset();
