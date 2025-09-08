@@ -120,6 +120,17 @@
     -webkit-tap-highlight-color: transparent;
     }
 
+.sidebar:last-child .section .btn {
+    padding: 30px 40px;
+    margin-top: 10px;
+    font-size: 20px;
+}
+
+.sidebar:last-child .section .grid {
+    gap: 16px;
+    margin-top: 16px;
+}
+
     .section {
     touch-action: manipulation;
 }
@@ -314,17 +325,14 @@
           • Use Hold to escape tight spots.
         </div>
       </div>
-      <div class="section">
-        <h3>About</h3>
-        <div class="legend">This open‑source single‑file build is designed for easy copy‑paste and classroom use. No
-          assets, no frameworks.</div>
+
 
             <!-- Add new touch controls section -->
     <div class="section">
         <h3>Touch Controls</h3>
-        <div class="grid" style="grid-template-columns: repeat(3, 1fr); gap: 8px;">
-            <button class="btn" data-act="rotL">↺</button>
-            <button class="btn" data-act="hold">Hold</button>
+        <div class="grid" style="grid-template-columns: repeat(1, 1fr); gap: 8px;">
+  
+            
             <button class="btn" data-act="rotR">↻</button>
         </div>
         <div class="grid" style="grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px;">
@@ -333,7 +341,8 @@
             <button class="btn" data-act="right">▶</button>
         </div>
         <div class="grid" style="grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px;">
-            <button class="btn" data-act="drop">Drop</button>
+          <button class="btn" data-act="hold">Hold</button>  
+          <button class="btn" data-act="drop">Drop</button>
             <button class="btn" data-act="pause">Pause</button>
         </div>  
       </div>
