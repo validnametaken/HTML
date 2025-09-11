@@ -501,6 +501,8 @@
     let dropTimer = 0, dropInterval = 1000; // ms
     let last = 0;
     let running = false; let muted = true; // muted true (no sounds bundled) but toggleable for future sfx
+let animationId = null;  // Add this line where other state variables are declared
+
 
     // ====== Drawing ======
     function drawCell(ctx, x, y, color, size = BLOCK) {
@@ -678,10 +680,16 @@
       current = createPiece(id);
       current.x = 3; current.y = -2; current.rot = 0;
       canHold = true;
-      if (collide(current)) {
+      // Check if can drop to visible area
+      let tempY = current.y;
+      while (!collide(current, 0, 1)) {
+        current.y++;
+      }
+      if (current.y < 0) {
         gameOver();
         return;
       }
+      current.y = -2; // reset for animation
       drawNext();
     }
 
@@ -719,27 +727,41 @@
       drawHold(); drawNext();
     }
 
-    function gameOver() {
-      running = false;
-      overlay.hidden = false; overlayTitle.textContent = 'Game Over'; overlayText.innerHTML = 'Press <code>New</code> to play again.';
+function gameOver() {
+    running = false;
+    current = null;
+    overlay.hidden = false;
+    overlayTitle.textContent = 'Game Over';
+    overlayText.innerHTML = 'Press <code>New</code> to play again.';
+    if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
     }
+    drawBoard(); // One final draw to show the last state
+}
 
-    function reset() {
-      grid = makeMatrix(COLS, ROWS, null);
-      score = 0;
-      lines = 0;
-      level = 1;
-      dropInterval = 1000;
-      queue = [];
-      hold = null;
-      canHold = true;
-      running = true;
-      last = 0;
-      overlay.hidden = true;
-      spawn();
-      updateHUD();
-      requestAnimationFrame(loop);
+
+
+
+function reset() {
+    if (animationId) {
+        cancelAnimationFrame(animationId);  // Cancel any existing animation
     }
+    grid = makeMatrix(COLS, ROWS, null);
+    score = 0;
+    lines = 0;
+    level = 1;
+    dropInterval = 1000;
+    queue = [];
+    hold = null;
+    canHold = true;
+    running = true;
+    last = 0;
+    overlay.hidden = true;
+    spawn();
+    updateHUD();
+    animationId = requestAnimationFrame(loop);
+}
 
     function togglePause(force) {
       // Only allow pause toggle if game is running or already paused
@@ -759,14 +781,25 @@
     }
 
     // ====== Loop ======
-    function loop(t) {
-      if (!running) return;
-      if (!last) last = t; const dt = t - last; last = t;
-      dropTimer += dt;
-      if (dropTimer > dropInterval) { dropTimer = 0; softDrop(); }
-      drawBoard();
-      requestAnimationFrame(loop);
+function loop(t) {
+    if (!running || !current) {
+        if (animationId) {
+            cancelAnimationFrame(animationId);
+            animationId = null;
+        }
+        return;
     }
+    if (!last) last = t;
+    const dt = t - last;
+    last = t;
+    dropTimer += dt;
+    if (dropTimer > dropInterval) {
+        dropTimer = 0;
+        softDrop();
+    }
+    drawBoard();
+    animationId = requestAnimationFrame(loop);
+}
 
     // ====== Input ======
     const keys = new Map([
