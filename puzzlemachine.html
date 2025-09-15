@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Mini Incredible Machine — Two Balls Touch</title>
+<style>
+  body { font-family: system-ui, -apple-system, Roboto, "Segoe UI", sans-serif; margin:0; display:flex; height:100vh; }
+  #sidebar { width:230px; background:#111; color:#fff; padding:12px; box-sizing:border-box; overflow-y:auto; }
+  #sidebar h2 { margin:6px 0 12px; font-size:16px; }
+  .tool { display:block; width:100%; margin:6px 0; padding:8px; border-radius:8px; background:#222; color:#fff; border:1px solid #333; cursor:pointer; text-align:left;}
+  .tool.active { background:linear-gradient(180deg,#2b6,#1a4); color:#012; }
+  #controls { margin-top:12px; }
+  button { margin:6px 4px 0 0; padding:8px 10px; border-radius:6px; border:0; cursor:pointer; }
+  #canvas-wrap { flex:1; position:relative; background:linear-gradient(#cce,#eef); display:flex; align-items:center; justify-content:center; }
+  canvas { background:transparent; display:block; border-left:1px solid rgba(0,0,0,0.1); }
+  #message { position:absolute; top:14px; left:50%; transform:translateX(-50%); background:rgba(255,255,255,0.9); padding:8px 12px; border-radius:8px; font-weight:600; display:none; }
+  #hint { margin-top:10px; font-size:13px; color:#ddd; }
+  .row { display:flex; gap:6px; flex-wrap:wrap; }
+  label { font-size:13px; display:block; margin-top:8px; }
+  #levelTitle { font-weight:bold; margin-top:10px; }
+</style>
+</head>
+<body>
+  <div id="sidebar">
+    <h2>Toolbox</h2>
+    <div id="tools">
+      <button class="tool" data-tool="ramp">▣ Ramp</button>
+      <button class="tool" data-tool="block">■ Block</button>
+      <button class="tool" data-tool="rotator">↻ Rotator</button>
+      <button class="tool" data-tool="spring">⇌ Spring</button>
+      <button class="tool" data-tool="conveyor">⇉ Conveyor</button>
+      <button class="tool" data-tool="fan">🌀 Fan</button>
+      <button class="tool" data-tool="lever">— Lever</button>
+      <button class="tool" data-tool="domino">▮ Domino</button>
+      <button class="tool" data-tool="portal">◎ Portal</button>
+    </div>
+    <div id="controls">
+      <div class="row">
+        <button id="modeBtn">▶ Play</button>
+        <button id="resetBtn">⟲ Reset</button>
+        <button id="nextLevelBtn">⏭ Next</button>
+      </div>
+      <label>Gravity: <input id="gravity" type="range" min="0" max="2" step="0.05" value="1"></label>
+      <div id="levelTitle"></div>
+      <div id="hint">Click a tool, then click the canvas to place. Drag in edit mode.</div>
+    </div>
+  </div>
+  <div id="canvas-wrap">
+    <div id="message"></div>
+    <canvas id="world" width="900" height="600"></canvas>
+  </div>
+<script src="https://unpkg.com/matter-js@0.19.0/build/matter.min.js"></script>
+<script>
+(()=> {
+  const { Engine, Render, Runner, World, Bodies, Body, Constraint, Composite, Mouse, MouseConstraint, Events, Vector } = Matter;
+
+  const engine = Engine.create();
+  const world = engine.world;
+  const canvas = document.getElementById('world');
+  const render = Render.create({
+    canvas, engine,
+    options:{ width:canvas.width, height:canvas.height, wireframes:false, background:'transparent' }
+  });
+  Render.run(render);
+  const runner = Runner.create();
+
+  const sidebar = document.getElementById('sidebar');
+  const tools = document.querySelectorAll('.tool');
+  const modeBtn = document.getElementById('modeBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const nextLevelBtn = document.getElementById('nextLevelBtn');
+  const gravitySlider = document.getElementById('gravity');
+  const messageEl = document.getElementById('message');
+  const levelTitle = document.getElementById('levelTitle');
+
+  let activeTool=null, mode='edit', placed=[], ballCount=0;
+  let mouseConstraint;
+  let currentLevel=0;
+  let currentToolCounts = {};
+
+  const walls=[
+    Bodies.rectangle(450,-10,1000,40,{isStatic:true,render:{fillStyle:'#444'}}),
+    Bodies.rectangle(-10,300,40,620,{isStatic:true,render:{fillStyle:'#444'}}),
+    Bodies.rectangle(910,300,40,620,{isStatic:true,render:{fillStyle:'#444'}})
+  ];
+  const ocean = Bodies.rectangle(450,650,1000,100,{isStatic:true,isSensor:true,render:{fillStyle:'#00f'}});
+  World.add(world,walls);
+  World.add(world,ocean);
+
+  // Tools
+  tools.forEach(t=>t.addEventListener('click',()=>{
+    tools.forEach(x=>x.classList.remove('active'));
+    t.classList.add('active'); activeTool=t.dataset.tool;
+  }));
+
+  const mouse=Mouse.create(render.canvas);
+  function enableEditMouse(){
+    if(mouseConstraint) World.remove(world,mouseConstraint);
+    mouseConstraint=MouseConstraint.create(engine,{mouse,constraint:{stiffness:0.2,render:{visible:false}}});
+    World.add(world,mouseConstraint);
+  }
+  function disableEditMouse(){ if(mouseConstraint) World.remove(world,mouseConstraint); mouseConstraint=null; }
+  enableEditMouse();
+
+  function showMessage(text,timeout=3000){
+    messageEl.innerText=text; messageEl.style.display='block';
+    if(timeout) setTimeout(()=>messageEl.style.display='none',timeout);
+  }
+
+  function updateToolUI(){
+    tools.forEach(tool => {
+      const toolType = tool.dataset.tool;
+      const limit = levels[currentLevel].toolLimits ? levels[currentLevel].toolLimits[toolType] : Infinity;
+      const count = currentToolCounts[toolType] || 0;
+      const originalText = tool.innerText.split(' ')[0]; // e.g., "➤"
+      tool.innerText = `${originalText} ${toolType.charAt(0).toUpperCase() + toolType.slice(1)} (${count}/${limit === Infinity ? '∞' : limit})`;
+      if (count >= limit) {
+        tool.style.opacity = '0.4';
+        tool.style.pointerEvents = 'none';
+      } else {
+        tool.style.opacity = '1';
+        tool.style.pointerEvents = 'auto';
+      }
+    });
+  }
+
+  // Parts factory with nicer graphics
+  function makePart(part){
+    if (levels[currentLevel].toolLimits && levels[currentLevel].toolLimits[part.type] !== undefined) {
+      const currentCount = currentToolCounts[part.type] || 0;
+      if (currentCount >= levels[currentLevel].toolLimits[part.type]) {
+        showMessage(`Limit reached for ${part.type}`);
+        return;
+      }
+    }
+    let b;
+    switch(part.type){
+      case 'ball':
+        b=Bodies.circle(part.x,part.y,16,{restitution:0.5,label:'playerBall',
+          render:{fillStyle:'#f44',strokeStyle:'#000',lineWidth:2}});
+        ballCount++; break;
+      case 'ramp':
+        b=Bodies.rectangle(part.x,part.y,140,20,{isStatic:true,angle:part.angle||0,label:'ramp',
+          render:{fillStyle:'#964B00'}}); break;
+      case 'block':
+        b=Bodies.rectangle(part.x,part.y,80,40,{isStatic:true,label:'block',
+          render:{fillStyle:'#666',strokeStyle:'#000',lineWidth:1}}); break;
+      case 'rotator':
+        b=Bodies.rectangle(part.x,part.y,120,20,{density:0.002,label:'rotator',
+          render:{fillStyle:'#fc0'}});
+        const pivot=Constraint.create({pointA:{x:part.x,y:part.y},bodyB:b,pointB:{x:0,y:0},length:0,stiffness:1});
+        World.add(world,[b,pivot]);
+        b.motorSpeed=part.speed||0.2;
+        placed.push({type:'rotator',body:b,constraint:pivot});
+        currentToolCounts['rotator'] = (currentToolCounts['rotator'] || 0) + 1;
+        return;
+      case 'spring':
+        const fixed=Bodies.circle(part.x,part.y,5,{isStatic:true,render:{fillStyle:'#0f0'}});
+        const box=Bodies.rectangle(part.x+60,part.y,40,20,{density:0.004,render:{fillStyle:'#bbb'}});
+        const spring=Constraint.create({bodyA:fixed,bodyB:box,stiffness:0.02,length:80,
+          render:{strokeStyle:'#0f0',lineWidth:3}});
+        World.add(world,[fixed,box,spring]);
+        placed.push({type:'spring',body:box,constraint:spring});
+        currentToolCounts['spring'] = (currentToolCounts['spring'] || 0) + 1;
+        return;
+      case 'conveyor':
+        b=Bodies.rectangle(part.x,part.y,120,20,{isStatic:true,label:'conveyor',
+          render:{fillStyle:'#88f'}});
+        b.conveyorDir=part.dir||1; break;
+      case 'fan':
+        b=Bodies.rectangle(part.x,part.y,40,40,{isStatic:true,label:'fan',
+          render:{fillStyle:'#0ff'}});
+        b.fanDir=part.dir||'right'; b.fanAngle=0; break;
+      case 'lever':
+        b=Bodies.rectangle(part.x,part.y,160,20,{density:0.004,label:'lever',
+          render:{fillStyle:'#c93'}});
+        const pivot2=Constraint.create({pointA:{x:part.x,y:part.y},bodyB:b,length:0,stiffness:1});
+        World.add(world,[b,pivot2]);
+        placed.push({type:'lever',body:b,constraint:pivot2});
+        currentToolCounts['lever'] = (currentToolCounts['lever'] || 0) + 1;
+        return;
+      case 'domino':
+        b=Bodies.rectangle(part.x,part.y,20,60,{density:0.002,label:'domino',
+          render:{fillStyle:'#333'}}); break;
+      case 'portal':
+        b=Bodies.circle(part.x,part.y,20,{isStatic:true,isSensor:true,label:'portal',
+          render:{fillStyle:'#f0f'}});
+        if(!window.portals) window.portals=[];
+        window.portals.push(b);
+        break;
+    }
+    World.add(world,b); placed.push({type:part.type,body:b});
+    currentToolCounts[part.type] = (currentToolCounts[part.type] || 0) + 1;
+  }
+
+  // Placement in edit mode
+  render.canvas.addEventListener('mouseup',evt=>{
+    if(mode!=='edit'||!activeTool) return;
+    const rect=render.canvas.getBoundingClientRect();
+    const x=(evt.clientX-rect.left)*(render.canvas.width/rect.width);
+    const y=(evt.clientY-rect.top)*(render.canvas.height/rect.height);
+    makePart({type:activeTool,x,y});
+    updateToolUI();
+  });
+
+  function motorsTick(){
+    for(const p of placed){
+      if(p.type==='rotator'&&p.body){ Body.setAngularVelocity(p.body,p.body.motorSpeed||0.2); }
+      if(p.type==='conveyor'){
+        Composite.allBodies(world).forEach(o=>{
+          if(o.isStatic) return;
+          if(Matter.Bounds.overlaps(o.bounds,p.body.bounds)){
+            Body.applyForce(o,o.position,{x:0.0005*(p.body.conveyorDir||1),y:0});
+          }
+        });
+      }
+      if(p.type==='fan'){
+        p.body.fanAngle=(p.body.fanAngle+0.2)%Math.PI*2;
+        p.body.render.fillStyle = `hsl(${(Date.now()/20)%360},80%,60%)`;
+        Composite.allBodies(world).forEach(o=>{
+          if(o.label==='playerBall'&&Matter.Bounds.overlaps(o.bounds,p.body.bounds)){
+            const dir=p.body.fanDir;
+            if(dir==='right') Body.applyForce(o,o.position,{x:0.002,y:0});
+            if(dir==='left') Body.applyForce(o,o.position,{x:-0.002,y:0});
+          }
+        });
+      }
+    }
+    // portals shimmer and teleport
+    if(window.portals&&window.portals.length===2){
+      const [p1,p2]=window.portals;
+      p1.render.fillStyle=`hsl(${(Date.now()/10)%360},80%,60%)`;
+      p2.render.fillStyle=`hsl(${(Date.now()/10+180)%360},80%,60%)`;
+      Composite.allBodies(world).forEach(o=>{
+        if(o.label==='playerBall'){
+          if(Matter.Bounds.overlaps(o.bounds,p1.bounds)) Body.setPosition(o,p2.position);
+          if(Matter.Bounds.overlaps(o.bounds,p2.bounds)) Body.setPosition(o,p1.position);
+        }
+      });
+    }
+  }
+
+  function collisionHandler(event){
+    for(let pair of event.pairs){
+      const a=pair.bodyA,b=pair.bodyB;
+      if((a.label==='playerBall' && b === ocean) || (b.label==='playerBall' && a === ocean)){
+        showMessage('💧 Game Over — ball fell into the ocean!',4000); stopPlay(); return;
+      }
+      if(a.label==='playerBall'&&b.label==='playerBall'){
+        showMessage('🎉 Success — balls touched!',4000); stopPlay(); return;
+      }
+    }
+  }
+
+  function startPlay(){ mode='play'; modeBtn.innerText='⏸ Edit'; disableEditMouse();
+    Events.on(engine,'beforeUpdate',motorsTick); Runner.run(runner,engine); Events.on(engine,'collisionStart',collisionHandler); }
+  function stopPlay(){ mode='edit'; modeBtn.innerText='▶ Play'; enableEditMouse();
+    Events.off(engine,'beforeUpdate',motorsTick); Runner.stop(runner); Events.off(engine,'collisionStart',collisionHandler); }
+
+  modeBtn.addEventListener('click',()=>{ mode==='edit'?startPlay():stopPlay(); });
+  resetBtn.addEventListener('click',()=>loadLevel(currentLevel));
+  gravitySlider.addEventListener('input',()=>{engine.world.gravity.y=Number(gravitySlider.value);});
+  nextLevelBtn.addEventListener('click',()=>{ loadLevel((currentLevel+1)%levels.length); });
+
+  // Levels
+  const levels=[
+    {name:'Level 1: First Touch',parts:[
+      {type:'ball',x:200,y:100},
+      {type:'ball',x:700,y:100},
+      {type:'ramp',x:300,y:400,angle:-0.4},
+      {type:'ramp',x:600,y:400,angle:0.4}
+    ], toolLimits: {ball: 2, ramp: 2, block: 0, rotator: 1, spring: 0, conveyor: 1, fan: 0, lever: 1, domino: 0, portal: 0}},
+    {name:'Level 2: Fan Trick',parts:[
+      {type:'ball',x:150,y:300},
+      {type:'ball',x:750,y:300},
+      {type:'fan',x:300,y:500,dir:'right'},
+      {type:'block',x:500,y:550}
+    ], toolLimits: {ball: 2, ramp: 0, block: 1, rotator: 0, spring: 0, conveyor: 0, fan: 1, lever: 0, domino: 0, portal: 0}}
+  ];
+
+  function clearWorld(){
+    Composite.allBodies(world).forEach(b=>{ if(!walls.includes(b)) World.remove(world,b); });
+    Composite.allConstraints(world).forEach(c=>{ World.remove(world,c); });
+    placed=[]; ballCount=0; window.portals=[]; currentToolCounts = {};
+  }
+
+  function loadLevel(n){
+    clearWorld(); currentLevel=n; levelTitle.innerText=levels[n].name;
+    World.add(world,ocean);
+    for(const p of levels[n].parts){ makePart(p); }
+    updateToolUI();
+    stopPlay();
+  }
+
+  // init
+  engine.world.gravity.y=Number(gravitySlider.value);
+  Runner.stop(runner);
+  loadLevel(0);
+
+})();
+</script>
+</body>
+</html>

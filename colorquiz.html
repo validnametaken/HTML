@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guess the Missing Color</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 20px;
+    background: #f0f8ff;
+  }
+
+  h1 {
+    color: #333;
+  }
+
+  #game-container {
+    display: inline-block;
+    margin-top: 20px;
+    position: relative;
+  }
+
+  img {
+    border: 2px solid #333;
+    border-radius: 15px;
+    width: 400px;
+    height: auto;
+    display: block;
+    transition: opacity 0.5s ease;
+    opacity: 1;
+  }
+
+  button {
+    padding: 10px 25px;
+    font-size: 16px;
+    margin-top: 15px;
+    cursor: pointer;
+    border-radius: 8px;
+    border: none;
+    background: #4CAF50;
+    color: white;
+    transition: background 0.3s ease;
+  }
+
+  button:hover {
+    background: #45a049;
+  }
+
+  #category {
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-size: 18px;
+  }
+</style>
+</head>
+<body>
+  <h1>Guess the Missing Color!</h1>
+  <div id="game-container">
+    <img id="gameImage" src="" alt="Guess the color">
+    <p id="category"></p>
+    <button id="nextBtn">Next Image</button>
+  </div>
+
+  <script>
+    const challengeSets = [
+      { name: 'Pig', category: 'Animal', nocolor: 'pig-nocolor.jpg', color: 'pig-color.jpg' },
+      { name: 'Apple', category: 'Fruit', nocolor: 'apple-nocolor.jpg', color: 'apple-color.jpg' },
+      { name: 'Frog', category: 'Animal', nocolor: 'frog-nocolor.jpg', color: 'frog-color.jpg' },
+      { name: 'Carrot', category: 'Vegetable', nocolor: 'carrot-nocolor.jpg', color: 'carrot-color.jpg' },
+      { name: 'Peacock', category: 'Animal', nocolor: 'peacock-nocolor.jpg', color: 'peacock-color.jpg' }
+    ];
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    const challenges = shuffle([...challengeSets]);
+    let currentIndex = -1;
+    let showingColor = false;
+
+    const imgEl = document.getElementById('gameImage');
+    const categoryEl = document.getElementById('category');
+
+    function fadeImage(newSrc, newCategory) {
+      imgEl.style.opacity = 0; // fade out
+      setTimeout(() => {
+        imgEl.src = newSrc;
+        categoryEl.textContent = newCategory;
+        imgEl.style.opacity = 1; // fade in
+      }, 500); // match the CSS transition
+    }
+
+    function loadNext() {
+      if (!showingColor) {
+        currentIndex++;
+        if (currentIndex >= challenges.length) {
+          alert("You've completed all challenges! 🎉");
+          currentIndex = 0; // reset for replay
+        }
+        const currentSet = challenges[currentIndex];
+        fadeImage(currentSet.nocolor, `Category: ${currentSet.category}`);
+        showingColor = true;
+      } else {
+        const currentSet = challenges[currentIndex];
+        fadeImage(currentSet.color, `Category: ${currentSet.category} (Full Color!)`);
+        showingColor = false;
+      }
+    }
+
+    // Initial load
+    loadNext();
+    document.getElementById('nextBtn').addEventListener('click', loadNext);
+  </script>
+</body>
+</html>
