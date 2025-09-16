@@ -20,16 +20,25 @@
     display: inline-block;
     margin-top: 20px;
     position: relative;
-  }
-
-  img {
-    border: 2px solid #333;
-    border-radius: 15px;
     width: 400px;
     height: auto;
-    display: block;
-    transition: opacity 0.5s ease;
-    opacity: 1;
+  }
+
+  #game-container img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 400px;
+    height: auto;
+    border: 2px solid #333;
+    border-radius: 15px;
+    opacity: 0;
+    transition: opacity 1s ease;
+  }
+
+  #overlayImage {
+    transition: opacity 2s ease;
+    opacity: 0; /* hidden at start */
   }
 
   button {
@@ -50,7 +59,7 @@
 
   #category {
     font-weight: bold;
-    margin-bottom: 10px;
+    margin-top: 420px; /* space below images */
     font-size: 18px;
   }
 </style>
@@ -58,18 +67,19 @@
 <body>
   <h1>Guess the Missing Color!</h1>
   <div id="game-container">
-    <img id="gameImage" src="" alt="Guess the color">
-    <p id="category"></p>
-    <button id="nextBtn">Next Image</button>
+    <img id="baseImage" src="" alt="Base image">
+    <img id="overlayImage" src="" alt="Overlay image">
   </div>
+  <p id="category"></p>
+  <button id="nextBtn">Next</button>
 
   <script>
     const challengeSets = [
-      { name: 'Pig', category: 'Animal', nocolor: 'pig-nocolor.jpg', color: 'pig-color.jpg' },
-      { name: 'Apple', category: 'Fruit', nocolor: 'apple-nocolor.jpg', color: 'apple-color.jpg' },
-      { name: 'Frog', category: 'Animal', nocolor: 'frog-nocolor.jpg', color: 'frog-color.jpg' },
-      { name: 'Carrot', category: 'Vegetable', nocolor: 'carrot-nocolor.jpg', color: 'carrot-color.jpg' },
-      { name: 'Peacock', category: 'Animal', nocolor: 'peacock-nocolor.jpg', color: 'peacock-color.jpg' }
+      { name: 'Bear', category: 'Animal', nocolor: '/colorquiz/bearnocolor.jpg', color: '/colorquiz/bear.jpg' },
+      { name: 'Clownfish', category: 'Animal', nocolor: '/colorquiz/clownfishnocolor.jpg', color: '/colorquiz/clownfish.jpg' },
+      // { name: 'Frog', category: 'Animal', nocolor: 'frog-nocolor.jpg', color: 'frog-color.jpg' },
+      // { name: 'Carrot', category: 'Vegetable', nocolor: 'carrot-nocolor.jpg', color: 'carrot-color.jpg' },
+      // { name: 'Peacock', category: 'Animal', nocolor: 'peacock-nocolor.jpg', color: 'peacock-color.jpg' }
     ];
 
     function shuffle(array) {
@@ -84,38 +94,57 @@
     let currentIndex = -1;
     let showingColor = false;
 
-    const imgEl = document.getElementById('gameImage');
+    const baseEl = document.getElementById('baseImage');
+    const overlayEl = document.getElementById('overlayImage');
     const categoryEl = document.getElementById('category');
+    const nextBtn = document.getElementById('nextBtn');
 
-    function fadeImage(newSrc, newCategory) {
-      imgEl.style.opacity = 0; // fade out
-      setTimeout(() => {
-        imgEl.src = newSrc;
-        categoryEl.textContent = newCategory;
-        imgEl.style.opacity = 1; // fade in
-      }, 500); // match the CSS transition
-    }
+function loadNextChallenge() {
+  currentIndex++;
+  if (currentIndex >= challenges.length) {
+    alert("You've completed all challenges! 🎉");
+    currentIndex = 0;
+  }
 
-    function loadNext() {
+  const currentSet = challenges[currentIndex];
+
+  // Immediately hide overlay so no flash of color shows
+  overlayEl.style.transition = "none";   // turn off transition
+  overlayEl.style.opacity = 0;
+  overlayEl.offsetHeight;                // force reflow
+  overlayEl.style.transition = "opacity 2s ease"; // restore transition
+
+  // Hide base, then set src, then fade in
+  baseEl.style.opacity = 0;
+  baseEl.src = currentSet.nocolor;
+  baseEl.onload = () => {
+    baseEl.style.opacity = 1; // fade in nocolor image
+  };
+
+  overlayEl.src = currentSet.color;
+
+  categoryEl.textContent = `Category: ${currentSet.category}`;
+  nextBtn.textContent = "Reveal Color";
+  showingColor = false;
+}
+
+
+    function handleButtonClick() {
       if (!showingColor) {
-        currentIndex++;
-        if (currentIndex >= challenges.length) {
-          alert("You've completed all challenges! 🎉");
-          currentIndex = 0; // reset for replay
-        }
-        const currentSet = challenges[currentIndex];
-        fadeImage(currentSet.nocolor, `Category: ${currentSet.category}`);
+        // Reveal phase: fade in overlay
+        overlayEl.style.opacity = 1;
+        categoryEl.textContent = `Category: ${challenges[currentIndex].category} — It's a ${challenges[currentIndex].name}!`;
+        nextBtn.textContent = "Next Image";
         showingColor = true;
       } else {
-        const currentSet = challenges[currentIndex];
-        fadeImage(currentSet.color, `Category: ${currentSet.category} (Full Color!)`);
-        showingColor = false;
+        // Next challenge
+        loadNextChallenge();
       }
     }
 
-    // Initial load
-    loadNext();
-    document.getElementById('nextBtn').addEventListener('click', loadNext);
+    // Init
+    loadNextChallenge();
+    nextBtn.addEventListener('click', handleButtonClick);
   </script>
 </body>
 </html>
