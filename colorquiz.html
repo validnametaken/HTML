@@ -20,20 +20,23 @@
     display: inline-block;
     margin-top: 20px;
     position: relative;
-    width: 400px;
-    height: auto;
+    width: 100%;
+    height: 60vh;
+    border-color: red;
   }
 
   #game-container img {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 400px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(90vw, 90vh);
     height: auto;
     border: 2px solid #333;
     border-radius: 15px;
     opacity: 0;
     transition: opacity 1s ease;
+    border-color: green;
   }
 
   #overlayImage {
@@ -59,8 +62,8 @@
 
   #category {
     font-weight: bold;
-    margin-top: 420px; /* space below images */
-    font-size: 18px;
+    margin-top: 20px; /* space below images */
+    font-size: 3vw;
   }
 </style>
 </head>
@@ -75,8 +78,8 @@
 
   <script>
     const challengeSets = [
-      { name: 'Bear', category: 'Animal', nocolor: '/colorquiz/bearnocolor.jpg', color: '/colorquiz/bear.jpg' },
-      { name: 'Clownfish', category: 'Animal', nocolor: '/colorquiz/clownfishnocolor.jpg', color: '/colorquiz/clownfish.jpg' },
+      { name: 'Brown', category: 'Animal', nocolor: '/colorquiz/bearnocolor.jpg', color: '/colorquiz/bear.jpg' },
+      { name: 'Orange', category: 'Animal', nocolor: '/colorquiz/clownfishnocolor.jpg', color: '/colorquiz/clownfish.jpg' },
       // { name: 'Frog', category: 'Animal', nocolor: 'frog-nocolor.jpg', color: 'frog-color.jpg' },
       // { name: 'Carrot', category: 'Vegetable', nocolor: 'carrot-nocolor.jpg', color: 'carrot-color.jpg' },
       // { name: 'Peacock', category: 'Animal', nocolor: 'peacock-nocolor.jpg', color: 'peacock-color.jpg' }
@@ -123,7 +126,7 @@ function loadNextChallenge() {
 
   overlayEl.src = currentSet.color;
 
-  categoryEl.textContent = `Category: ${currentSet.category}`;
+  categoryEl.textContent = `What color is missing?`;
   nextBtn.textContent = "Reveal Color";
   showingColor = false;
 }
@@ -133,7 +136,7 @@ function loadNextChallenge() {
       if (!showingColor) {
         // Reveal phase: fade in overlay
         overlayEl.style.opacity = 1;
-        categoryEl.textContent = `Category: ${challenges[currentIndex].category} — It's a ${challenges[currentIndex].name}!`;
+        categoryEl.textContent = `${challenges[currentIndex].name}!`;
         nextBtn.textContent = "Next Image";
         showingColor = true;
       } else {
