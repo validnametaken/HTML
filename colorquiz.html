@@ -65,16 +65,58 @@
     margin-top: 20px; /* space below images */
     font-size: 3vw;
   }
+
+  /* Modal styles */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 400px;
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  .modal-content h2 {
+    margin-top: 0;
+  }
+
+  .modal-content button {
+    margin: 10px;
+  }
 </style>
 </head>
 <body>
-  <h1>Guess the Missing Color!</h1>
+  <h1>Color Quiz</h1>
   <div id="game-container">
     <img id="baseImage" src="" alt="Base image">
     <img id="overlayImage" src="" alt="Overlay image">
   </div>
   <p id="category"></p>
   <button id="nextBtn">Next</button>
+
+  <!-- Completion Modal -->
+  <div id="completionModal" class="modal">
+    <div class="modal-content">
+      <h2>Congratulations! 🎉</h2>
+      <p>You've completed all the challenges!</p>
+      <p>Would you like to try again?</p>
+      <button id="tryAgainBtn">Try Again</button>
+      <button id="closeModalBtn">Close</button>
+    </div>
+  </div>
 
   <script>
     const challengeSets = [
@@ -105,8 +147,9 @@
 function loadNextChallenge() {
   currentIndex++;
   if (currentIndex >= challenges.length) {
-    alert("You've completed all challenges! 🎉");
-    currentIndex = 0;
+    // Show completion modal instead of alert
+    completionModal.style.display = "block";
+    return;
   }
 
   const currentSet = challenges[currentIndex];
@@ -148,6 +191,21 @@ function loadNextChallenge() {
     // Init
     loadNextChallenge();
     nextBtn.addEventListener('click', handleButtonClick);
+
+    // Modal elements and buttons
+    const completionModal = document.getElementById('completionModal');
+    const tryAgainBtn = document.getElementById('tryAgainBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+
+    tryAgainBtn.addEventListener('click', () => {
+      completionModal.style.display = 'none';
+      currentIndex = -1;
+      loadNextChallenge();
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+      completionModal.style.display = 'none';
+    });
   </script>
 </body>
 </html>
