@@ -1,92 +1,114 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alata&display=swap">
+  <head>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sniglet&display=swap"
+      rel="stylesheet"
+    />
     <title>Games</title>
     <style>
-        body {
-            font-family: "Alata", -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
-            color: #333;
-            margin: 0;
-            min-height: 100vh;
-        }
-        h1 {
-            text-align: center;
-            color: #007bff;
-            margin-top: 32px;
-            font-size: 2.5em;
-            letter-spacing: 2px;
-        }
-        .subtitle {
-            text-align: center;
-            color: #555;
-            margin-bottom: 24px;
-            font-size: 1.2em;
-        }
-        table {
-            width: 90%;
-            max-width: 900px;
-            margin: 30px auto;
-            border-collapse: separate;
-            box-shadow: 0 8px 32px rgba(0, 123, 255, 0.08);
-            background-color: #fff;
-            border-radius: 18px;
-            overflow: hidden;
-             border-radius: 18px;
+      body {
+        margin: 0;
+        min-height: 100vh;
+        /* My backgrund style */
+        background-color: #1e1e2f;
+        color: white;
+        font-family: "Sniglet", system-ui;
+        background-image: radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.02) 1px,
+            transparent 1px
+          ),
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cstyle%3Etext%7Bfont-family:Sniglet,Arial,Helvetica,sans-serif;font-size:4px;fill:white;fill-opacity:0.015;%7D%3C/style%3E%3Ctext x='57' y='50'%3EEnjoy%3C/text%3E%3Ctext x='51' y='25'%3EFrederiksen%3C/text%3E%3Ctext x='54' y='75'%3EWelcome%3C/text%3E%3Ctext x='33' y='50'%3EAndy%3C/text%3E%3Ctext x='85' y='50'%3EPlus%3C/text%3E%3C/svg%3E");
+        background-repeat: repeat, repeat;
+        background-size: 25px 25px, 100px 100px;
+        background-position: 0 0, 0 0;
+      }
+
+      @font-face {
+        font-family: "Sniglet";
+        src: url("Sniglet-Regular.ttf") format("truetype");
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+      h1 {
+        text-align: center;
+        color: #007bff;
+        margin-top: 32px;
+        font-size: 2.5em;
+        letter-spacing: 2px;
+      }
+      .subtitle {
+        text-align: center;
+        color: #555;
+        margin-bottom: 24px;
+        font-size: 1.2em;
+      }
+      table {
+        width: 90%;
+        max-width: 900px;
+        margin: 30px auto;
+        border-collapse: separate;
+        box-shadow: 0 8px 32px rgba(0, 123, 255, 0.08);
+        background-color: #fff;
+        border-radius: 18px;
+        overflow: hidden;
+        border-radius: 18px;
         overflow: hidden;
         border-spacing: 0 12px; /* Adds vertical space between rows */
-        }
-        th, td {
-            padding: 18px 16px;
-            border-bottom: 8px solid #f3f2f2;
-            text-align: left;
-            font-size: 1.08em;
-        }
-        th {
-            background-color: #007bff;
-            color: white;
-            font-size: 1.1em;
-            letter-spacing: 1px;
-        }
-        tr:last-child td {
-            border-bottom: none;
-        }
-        td:first-child {
-            width: 60%;
-        }
-        td:last-child {
-            width: 40%;
-        }
-        img {
-            max-width: 120px;
-            height: auto;
-            border-radius: 10px;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-        }
-        img:hover {
-            transform: scale(1.08);
-            box-shadow: 0 4px 16px rgba(0,123,255,0.13);
-        }
-        a {
-            color: #007bff;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-        a:hover {
-            text-decoration: underline;
-            color: #0056b3;
-        }
-        tr {
-            transition: background 0.18s;
-        }
-        tr:hover {
-            background: #f0f8ff;
-        }
+      }
+      th,
+      td {
+        padding: 18px 16px;
+        border-bottom: 8px solid #f3f2f2;
+        text-align: left;
+        font-size: 1.08em;
+      }
+      th {
+        background-color: #007bff;
+        color: white;
+        font-size: 1.1em;
+        letter-spacing: 1px;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      td:first-child {
+        width: 60%;
+      }
+      td:last-child {
+        width: 40%;
+      }
+      img {
+        max-width: 120px;
+        height: auto;
+        border-radius: 10px;
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+      }
+      img:hover {
+        transform: scale(1.08);
+        box-shadow: 0 4px 16px rgba(0, 123, 255, 0.13);
+      }
+      a {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+      }
+      a:hover {
+        text-decoration: underline;
+        color: #0056b3;
+      }
+      tr {
+        transition: background 0.18s;
+      }
+      tr:hover {
+        background: #f0f8ff;
+      }
 
-            .game-title {
+      .game-title {
         display: block;
         text-align: center;
         font-size: 1.35em;
@@ -94,102 +116,150 @@
         color: #007bff;
         margin-bottom: 6px;
         letter-spacing: 1px;
-    }
-    .game-desc {
+      }
+      .game-desc {
         display: block;
         text-align: center;
         font-size: 1em;
         color: #555;
         font-weight: 400;
-    }
+      }
 
-
-        @media (max-width: 700px) {
-            table, tr, td {
-                display: block;
-                width: 100%;
-            }
-            td {
-                padding: 14px 8px;
-            }
-            img {
-                max-width: 100%;
-                margin: 10px 0;
-            }
+      @media (max-width: 700px) {
+        table,
+        tr,
+        td {
+          display: block;
+          width: 100%;
         }
-        @font-face {
-            font-family: 'Alata';
-            src: url('selfintro/Alata-Regular.ttf') format('truetype');
-            font-weight: 400;
-            font-style: normal;
-            font-display: swap;
+        td {
+          padding: 14px 8px;
         }
+        img {
+          max-width: 100%;
+          margin: 10px 0;
+        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Games</h1>
     <div class="subtitle">A collection of fun and educational games</div>
     <table>
-        <tr class="game-row">
-            <td>
-                <span class="game-title"><a href="simonsays.html">Simon Says</a></span>
-                <span class="game-desc">A memory challenge! Can you remember the color patterns? This is a nice game to practice the short-term memory and have a lot of fun. Can you get 10?</span>
-            </td>
-            <td><img src="noahlist/simonsayspic.jpg" alt="Simon Says"></td>
-        </tr>
-        <tr class="game-row">
-            <td>
-                <span class="game-title"><a href="numberquiz.html">Number Speed</a></span>
-                <span class="game-desc">Quick thinking! Picking the numbers from the lowest to highest is simple, but now it's on a timer. Can you get 10?</span>
-            </td>
-            <td><img src="noahlist/numberquizpic.jpg" alt="Number Speed"></td>
-        </tr>
+      <tr class="game-row">
+        <td>
+          <span class="game-title"
+            ><a href="simonsays.html">Simon Says</a></span
+          >
+          <span class="game-desc"
+            >A memory challenge! Can you remember the color patterns? This is a
+            nice game to practice the short-term memory and have a lot of fun.
+            Can you get 10?</span
+          >
+        </td>
+        <td>
+          <a href="simonsays.html"
+            ><img src="noahlist/simonsayspic.jpg" alt="Simon Says"
+          /></a>
+        </td>
+      </tr>
+      <tr class="game-row">
+        <td>
+          <span class="game-title"
+            ><a href="numberquiz.html">Number Speed</a></span
+          >
+          <span class="game-desc"
+            >Quick thinking! Picking the numbers from the lowest to highest is
+            simple, but now it's on a timer. Can you get 10?</span
+          >
+        </td>
+        <td>
+          <a href="numberquiz.html"
+            ><img src="noahlist/numberquizpic.jpg" alt="Number Speed"
+          /></a>
+        </td>
+      </tr>
 
-                <tr class="game-row">
-            <td>
-                <span class="game-title"><a href="blockdrop.html">Block Drop</a></span>
-                <span class="game-desc">The blocks are dropping. Put them in the right place!</span>
-            </td>
-            <td><img src="noahlist/blockdrop.jpg" alt="Block Drop"></td>
-        </tr>
+      <tr class="game-row">
+        <td>
+          <span class="game-title"
+            ><a href="blockdrop.html">Block Drop</a></span
+          >
+          <span class="game-desc"
+            >The blocks are dropping. Put them in the right place!</span
+          >
+        </td>
+        <td>
+          <a href="blockdrop.html"
+            ><img src="noahlist/blockdrop.jpg" alt="Block Drop"
+          /></a>
+        </td>
+      </tr>
 
-
-        <tr class="game-row">
-            <td>
-                <span class="game-title"><a href="alphabetattack.html">Alphabet Attack</a></span>
-                <span class="game-desc">Touch-typing practice! To write really fast nothing beats touch-typing, and this are fun drills to master finger placement.</span>
-            </td>
-            <td><img src="noahlist/alphabetattackpic.jpg" alt="Alphabet Attack"></td>
-        </tr>
-
-        <tr class="game-row">
-            <td>
-                <span class="game-title"><a href="pushchallenge.html">Push Challenge</a></span>
-                <span class="game-desc">A maze puzzle! Push colors to their correct location to complete the map. Sounds easy? Why don't you try it then.</span>
-            </td>
-            <td><img src="noahlist/pushchallengepic.jpg" alt="PushChallenge"></td>
-        </tr>
-        <tr class="game-row">
-            <td>
-                <span class="game-title"><a href="hiraganaquiz.html">Hiragana Quiz</a></span>
-                <span class="game-desc">A small educational game to practice hiragana with the help of audio.</span>
-            </td>
-            <td><img src="noahlist/hiraganaquizpic.jpg" alt="Hiragana Quiz"></td>
-        </tr>
-        <tr class="game-row">
-            <td>
-                <span class="game-title"><a href="howmany.html">How Many Animals</a></span>
-                <span class="game-desc">A fun activity for smaller children to count animals running across the screen.</span>
-            </td>
-            <td><img src="noahlist/howmanypic.jpg" alt="How Many?"></td>
-        </tr>
-                <tr class="game-row">
-            <td>
-                <span class="game-title"><a href="animalquiz.html">Animal Quiz</a></span>
-                <span class="game-desc">A fun activity for smaller children to recognize the sounds of different animals.</span>
-            </td>
-            <td><img src="noahlist/animalquizpic.jpg" alt="Animal Quiz"></td>
-        </tr>
+      <tr class="game-row">
+        <td>
+          <span class="game-title"
+            ><a href="pushchallenge.html">Push Challenge</a></span
+          >
+          <span class="game-desc"
+            >A maze puzzle! Push colors to their correct location to complete
+            the map. Sounds easy? Why don't you try it then.</span
+          >
+        </td>
+        <td>
+          <a href="pushchallenge.html"
+            ><img src="noahlist/pushchallengepic.jpg" alt="PushChallenge"
+          /></a>
+        </td>
+      </tr>
+      <tr class="game-row">
+        <td>
+          <span class="game-title"
+            ><a href="hiraganaquiz.html">Hiragana Quiz</a></span
+          >
+          <span class="game-desc"
+            >A small educational game to practice hiragana with the help of
+            audio.</span
+          >
+        </td>
+        <td>
+          <a href="hiraganaquiz.html"
+            ><img src="noahlist/hiraganaquizpic.jpg" alt="Hiragana Quiz"
+          /></a>
+        </td>
+      </tr>
+      <tr class="game-row">
+        <td>
+          <span class="game-title"
+            ><a href="howmany.html">How Many Animals</a></span
+          >
+          <span class="game-desc"
+            >A fun activity for smaller children to count animals running across
+            the screen.</span
+          >
+        </td>
+        <td>
+          <a href="howmany.html"
+            ><img src="noahlist/howmanypic.jpg" alt="How Many?"
+          /></a>
+        </td>
+      </tr>
+      <tr class="game-row">
+        <td>
+          <span class="game-title"
+            ><a href="animalquiz.html">Animal Quiz</a></span
+          >
+          <span class="game-desc"
+            >A fun activity for smaller children to recognize the sounds of
+            different animals.</span
+          >
+        </td>
+        <td>
+          <a href="animalquiz.html"
+            ><img src="noahlist/animalquizpic.jpg" alt="Animal Quiz"
+          /></a>
+        </td>
+      </tr>
     </table>
-</body>
+  </body>
 </html>

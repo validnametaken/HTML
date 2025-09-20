@@ -1,790 +1,843 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <!-- #region Inline critical loader CSS -->
-
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sniglet&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        body {
-            margin: 0;
-            font-family: system-ui, sans-serif;
-            background: #f8f8f8;
-        }
+      body {
+        margin: 0;
+        font-family: system-ui, sans-serif;
+        /* My backgrund style */
+        background-color: #1e1e2f;
+        color: white;
+        font-family: "Sniglet", system-ui;
+        background-image: radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.02) 1px,
+            transparent 1px
+          ),
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cstyle%3Etext%7Bfont-family:Sniglet,Arial,Helvetica,sans-serif;font-size:4px;fill:white;fill-opacity:0.015;%7D%3C/style%3E%3Ctext x='57' y='50'%3EEnjoy%3C/text%3E%3Ctext x='51' y='25'%3EFrederiksen%3C/text%3E%3Ctext x='54' y='75'%3EWelcome%3C/text%3E%3Ctext x='33' y='50'%3EAndy%3C/text%3E%3Ctext x='85' y='50'%3EPlus%3C/text%3E%3C/svg%3E");
+        background-repeat: repeat, repeat;
+        background-size: 25px 25px, 100px 100px;
+        background-position: 0 0, 0 0;
+      }
 
-        #loader {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(255, 255, 255, 0.95);
-            color: #222;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            font-family: inherit;
-            transition: opacity 0.5s;
-        }
+      @font-face {
+        font-family: "Sniglet";
+        src: url("Sniglet-Regular.ttf") format("truetype");
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
 
-        #loader.hide {
-            opacity: 0;
-            pointer-events: none;
-        }
+      #loader {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(255, 255, 255, 0.95);
+        color: #222;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        font-family: inherit;
+        transition: opacity 0.5s;
+      }
 
-        #loader-card {
-            background: #fff;
-            border-radius: 24px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-            padding: 2.5rem 2.5rem 2rem 2.5rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-width: 260px;
-            max-width: 90vw;
-        }
+      #loader.hide {
+        opacity: 0;
+        pointer-events: none;
+      }
 
-        .loader-logo {
-            width: 64px;
-            height: 64px;
-            margin-bottom: 1.5rem;
-            /* Example: a simple SVG icon, replace as needed */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+      #loader-card {
+        background: #fff;
+        border-radius: 24px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        padding: 2.5rem 2.5rem 2rem 2.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 260px;
+        max-width: 90vw;
+      }
 
-        .loader-spinner {
-            width: 48px;
-            height: 48px;
-            border: 5px solid #e0e0e0;
-            border-top: 5px solid #4a90e2;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 2rem;
-        }
+      .loader-logo {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 1.5rem;
+        /* Example: a simple SVG icon, replace as needed */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
+      .loader-spinner {
+        width: 48px;
+        height: 48px;
+        border: 5px solid #e0e0e0;
+        border-top: 5px solid #4a90e2;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 2rem;
+      }
 
-        #progress-bar-bg {
-            width: 60vw;
-            max-width: 320px;
-            height: 1.2rem;
-            background: #e0e7ef;
-            border-radius: 0.6rem;
-            overflow: hidden;
-            margin-bottom: 1.2rem;
-            box-shadow: 0 2px 8px rgba(74, 144, 226, 0.08);
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
         }
+      }
 
-        #progress-bar {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, #4a90e2 0%, #7ed6df 100%);
-            border-radius: 0.6rem;
-            transition: width 0.3s cubic-bezier(.4, 2, .6, 1), background 0.3s;
-            box-shadow: 0 0 8px #4a90e2aa;
-        }
+      #progress-bar-bg {
+        width: 60vw;
+        max-width: 320px;
+        height: 1.2rem;
+        background: #e0e7ef;
+        border-radius: 0.6rem;
+        overflow: hidden;
+        margin-bottom: 1.2rem;
+        box-shadow: 0 2px 8px rgba(74, 144, 226, 0.08);
+      }
 
-        #progress-text {
-            margin-top: 0.2rem;
-            font-size: 1.1rem;
-            color: #4a90e2;
-            font-weight: 600;
-            letter-spacing: 0.05em;
-            text-shadow: 0 1px 2px #fff8;
-        }
+      #progress-bar {
+        width: 0%;
+        height: 100%;
+        background: linear-gradient(90deg, #4a90e2 0%, #7ed6df 100%);
+        border-radius: 0.6rem;
+        transition: width 0.3s cubic-bezier(0.4, 2, 0.6, 1), background 0.3s;
+        box-shadow: 0 0 8px #4a90e2aa;
+      }
 
-        #loader-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1.2rem;
-            color: #222;
-            letter-spacing: 0.02em;
-            text-align: center;
-        }
+      #progress-text {
+        margin-top: 0.2rem;
+        font-size: 1.1rem;
+        color: #4a90e2;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-shadow: 0 1px 2px #fff8;
+      }
 
-        /* Hide main content until loaded */
-        #main-content {
-            display: none;
-        }
+      #loader-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1.2rem;
+        color: #222;
+        letter-spacing: 0.02em;
+        text-align: center;
+      }
+
+      /* Hide main content until loaded */
+      #main-content {
+        display: none;
+      }
     </style>
     <!-- #endregion -->
 
     <title>Push Challenge</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">    <!-- iOS web app meta -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Push Challenge">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <!-- iOS web app meta -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Push Challenge" />
     <style>
-        /* Add main styles here */
-        html,
-        body {
-            overflow: hidden;
-            /* Prevent scrollbars */
-            height: 100vh;
-            /* Full viewport height */
-            margin: 0;
-            padding: 0;
+      /* Add main styles here */
+      html,
+      body {
+        overflow: hidden;
+        /* Prevent scrollbars */
+        height: 100vh;
+        /* Full viewport height */
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 10px;
+        /* Reduced from 20px */
+        box-sizing: border-box;
+        /* Include padding in height calculation */
+
+        /* My backgrund style */
+        background-color: #1e1e2f;
+        color: white;
+        font-family: "Sniglet", system-ui;
+        background-image: radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.02) 1px,
+            transparent 1px
+          ),
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cstyle%3Etext%7Bfont-family:Sniglet,Arial,Helvetica,sans-serif;font-size:4px;fill:white;fill-opacity:0.015;%7D%3C/style%3E%3Ctext x='57' y='50'%3EEnjoy%3C/text%3E%3Ctext x='51' y='25'%3EFrederiksen%3C/text%3E%3Ctext x='54' y='75'%3EWelcome%3C/text%3E%3Ctext x='33' y='50'%3EAndy%3C/text%3E%3Ctext x='85' y='50'%3EPlus%3C/text%3E%3C/svg%3E");
+        background-repeat: repeat, repeat;
+        background-size: 25px 25px, 100px 100px;
+        background-position: 0 0, 0 0;
+      }
+
+      h1 {
+        color: #2c3e50;
+        font-weight: 300;
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      #game {
+        display: grid;
+        grid-template-columns: repeat(10, 45px);
+        grid-template-rows: repeat(10, 45px);
+        gap: 0px;
+        /* Remove the gap completely */
+        margin: 20px 0;
+        padding: 15px;
+        background: #ecf0f1;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .cell {
+        width: 45px;
+        height: 45px;
+        box-sizing: border-box;
+        background: #f0f0f0;
+        border: 1px solid #ddd;
+      }
+
+      .wall {
+        background: linear-gradient(
+            90deg,
+            #4a4a4a 0%,
+            #3a3a3a 50%,
+            #4a4a4a 100%
+          ),
+          linear-gradient(0deg, #3a3a3a 0%, #4a4a4a 50%, #3a3a3a 100%);
+        box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.2),
+          inset -1px -1px 2px rgba(0, 0, 0, 0.4);
+        border: 1px solid #222;
+      }
+
+      .floor {
+        background: #f0f0f0;
+      }
+
+      .goal {
+        background: gold;
+      }
+
+      .box {
+        background: #ff9800;
+        border-radius: 4px;
+      }
+
+      .player {
+        background: #2196f3;
+        border-radius: 50%;
+      }
+
+      .box.goal {
+        background: #4caf50;
+      }
+
+      .player.goal {
+        background: #2196f3;
+        box-shadow: 0 0 0 2px #ffeb3b;
+      }
+
+      .controls {
+        margin: 20px 0;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 15px 25px;
+        border-radius: 25px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+      }
+
+      button {
+        padding: 12px 20px;
+        font-size: 14px;
+        font-weight: 500;
+        border: none;
+        border-radius: 20px;
+        background: linear-gradient(145deg, #3498db, #2980b9);
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 3px 10px rgba(52, 152, 219, 0.3);
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      button:disabled {
+        background: linear-gradient(145deg, #bdc3c7, #95a5a6);
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      #level-info {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2c3e50;
+        background: linear-gradient(145deg, #ecf0f1, #bdc3c7);
+        padding: 8px 16px;
+        border-radius: 15px;
+        box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Instructions styling */
+      p {
+        color: #7f8c8d;
+        font-size: 16px;
+        text-align: center;
+        margin-top: 15px;
+        background: rgba(255, 255, 255, 0.8);
+        padding: 10px 20px;
+        border-radius: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      /* Level completion overlay - keep existing styles but enhance */
+      #completion-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(44, 62, 80, 0.9);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        backdrop-filter: blur(5px);
+      }
+
+      #completion-card {
+        background: linear-gradient(145deg, #ffffff, #f8f9fa);
+        border-radius: 25px;
+        padding: 3rem 2.5rem;
+        text-align: center;
+        box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+        max-width: 90vw;
+        animation: slideIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateY(-100px) scale(0.8);
+          opacity: 0;
         }
 
+        to {
+          transform: translateY(0) scale(1);
+          opacity: 1;
+        }
+      }
+
+      #completion-title {
+        font-size: 2.5rem;
+        background: linear-gradient(145deg, #3498db, #9b59b6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+        font-weight: 700;
+      }
+
+      #completion-message {
+        font-size: 1.2rem;
+        color: #7f8c8d;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+      }
+
+      #completion-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      #completion-buttons button {
+        padding: 15px 30px;
+        font-size: 16px;
+        border-radius: 25px;
+        min-width: 140px;
+        font-weight: 600;
+      }
+
+      #next-level-btn {
+        background: linear-gradient(145deg, #27ae60, #2ecc71);
+      }
+
+      #next-level-btn:hover {
+        box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+      }
+
+      #replay-level-btn {
+        background: linear-gradient(145deg, #95a5a6, #7f8c8d);
+      }
+
+      #replay-level-btn:hover {
+        box-shadow: 0 5px 15px rgba(127, 140, 141, 0.4);
+      }
+
+      .game-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        width: 100%;
+        max-width: 100vw;
+        margin: 0 auto;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+
+      /* Touch controls styling */
+      .touch-controls {
+        display: grid;
+        grid-template-columns: repeat(3, 60px);
+        grid-template-rows: repeat(3, 60px);
+        gap: 5px;
+        margin: 20px auto;
+      }
+
+      .touch-btn {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: rgba(52, 152, 219, 0.9);
+        border: none;
+        color: white;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transition: transform 0.1s, background-color 0.2s;
+      }
+
+      .touch-btn:active {
+        transform: scale(0.95);
+        background: rgba(41, 128, 185, 0.9);
+      }
+
+      .touch-btn.hidden {
+        visibility: hidden;
+      }
+
+      .touch-controls {
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        user-select: none;
+        touch-action: none; /* Prevent all browser touch actions */
+        position: sticky;
+        top: 20px;
+        display: grid;
+        grid-template-columns: repeat(3, 60px);
+        grid-template-rows: repeat(3, 60px);
+        gap: 5px;
+        margin: 0;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        backdrop-filter: blur(5px);
+      }
+
+      .touch-btn {
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation; /* Optimize for touch */
+        cursor: pointer;
+        -webkit-touch-callout: none;
+        user-select: none;
+      }
+
+      /* Improve visual feedback for touch */
+      .touch-btn:active {
+        background: rgba(41, 128, 185, 1);
+        transform: scale(0.95);
+      }
+
+      #game {
+        display: grid;
+        gap: 0px;
+        margin: 20px auto;
+        padding: 15px;
+        background: #ecf0f1;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        box-sizing: border-box;
+        max-width: 150%;
+      }
+      /* Mobile-specific styles */
+      @media (max-width: 480px) {
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            margin: 0;
-            padding: 10px;
-            /* Reduced from 20px */
-            box-sizing: border-box;
-            /* Include padding in height calculation */
+          padding: 5px;
         }
 
         h1 {
-            color: #2c3e50;
-            font-weight: 300;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          font-size: 1.8rem;
+          margin: 10px 0;
         }
-
-        #game {
-            display: grid;
-            grid-template-columns: repeat(10, 45px);
-            grid-template-rows: repeat(10, 45px);
-            gap: 0px;
-            /* Remove the gap completely */
-            margin: 20px 0;
-            padding: 15px;
-            background: #ecf0f1;
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-
-
-
-        .cell {
-            width: 45px;
-            height: 45px;
-            box-sizing: border-box;
-            background: #f0f0f0;
-            border: 1px solid #ddd;
-        }
-
-        .wall {
-            background:
-                linear-gradient(90deg, #4a4a4a 0%, #3a3a3a 50%, #4a4a4a 100%),
-                linear-gradient(0deg, #3a3a3a 0%, #4a4a4a 50%, #3a3a3a 100%);
-            box-shadow:
-                inset 1px 1px 2px rgba(255, 255, 255, 0.2),
-                inset -1px -1px 2px rgba(0, 0, 0, 0.4);
-            border: 1px solid #222;
-        }
-
-        .floor {
-            background: #f0f0f0;
-        }
-
-        .goal {
-            background: gold;
-        }
-
-        .box {
-            background: #ff9800;
-            border-radius: 4px;
-        }
-
-        .player {
-            background: #2196f3;
-            border-radius: 50%;
-        }
-
-        .box.goal {
-            background: #4caf50;
-        }
-
-        .player.goal {
-            background: #2196f3;
-            box-shadow: 0 0 0 2px #ffeb3b;
-        }
-
 
         .controls {
-            margin: 20px 0;
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 15px 25px;
-            border-radius: 25px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
+          flex-wrap: wrap;
+          justify-content: center;
+          padding: 10px;
+          gap: 8px;
         }
 
         button {
-            padding: 12px 20px;
-            font-size: 14px;
-            font-weight: 500;
-            border: none;
-            border-radius: 20px;
-            background: linear-gradient(145deg, #3498db, #2980b9);
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 3px 10px rgba(52, 152, 219, 0.3);
+          padding: 8px 15px;
+          font-size: 12px;
         }
 
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        #game {
+          transform: scale(0.6);
+          margin: 0 auto;
+          transform-origin: left center;
+          max-width: 150%;
         }
 
-        button:active {
-            transform: translateY(0);
+        .cell {
+          width: 40px; /* Slightly smaller cells */
+          height: 40px;
         }
 
-        button:disabled {
-            background: linear-gradient(145deg, #bdc3c7, #95a5a6);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        .touch-controls {
+          position: static; /* Place controls in normal flow */
+          transform: none;
+          background: rgba(255, 255, 255, 0.8);
+          margin: 10px auto;
+          padding: 10px;
+          width: fit-content;
+          display: grid;
+          grid-template-columns: repeat(3, 50px);
+          grid-template-rows: repeat(3, 50px);
+          gap: 5px;
         }
 
-        #level-info {
-            font-size: 18px;
-            font-weight: 600;
-            color: #2c3e50;
-            background: linear-gradient(145deg, #ecf0f1, #bdc3c7);
-            padding: 8px 16px;
-            border-radius: 15px;
-            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1);
+        .touch-btn {
+          width: 50px;
+          height: 50px;
+          font-size: 18px;
+        }
+      }
+
+      /* iPhone SE and other small devices */
+      @media (max-width: 375px) {
+        #game {
+          transform: scale(0.5);
+          transform-origin: left center;
+          max-width: 450%;
         }
 
-        /* Instructions styling */
-        p {
-            color: #7f8c8d;
-            font-size: 16px;
-            text-align: center;
-            margin-top: 15px;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 10px 20px;
-            border-radius: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        .touch-controls {
+          grid-template-columns: repeat(3, 45px);
+          grid-template-rows: repeat(3, 45px);
         }
 
-        /* Level completion overlay - keep existing styles but enhance */
-        #completion-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(44, 62, 80, 0.9);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            backdrop-filter: blur(5px);
+        .touch-btn {
+          width: 45px;
+          height: 45px;
+          font-size: 16px;
         }
 
-        #completion-card {
-            background: linear-gradient(145deg, #ffffff, #f8f9fa);
-            border-radius: 25px;
-            padding: 3rem 2.5rem;
-            text-align: center;
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
-            max-width: 90vw;
-            animation: slideIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        .controls button {
+          padding: 6px 12px;
+          font-size: 11px;
         }
+      }
 
-        @keyframes slideIn {
-            from {
-                transform: translateY(-100px) scale(0.8);
-                opacity: 0;
-            }
+      /* Fix scrolling on mobile */
+      body {
+        min-height: 100vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
 
-            to {
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
-        }
-
-        #completion-title {
-            font-size: 2.5rem;
-            background: linear-gradient(145deg, #3498db, #9b59b6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 1rem;
-            font-weight: 700;
-        }
-
-        #completion-message {
-            font-size: 1.2rem;
-            color: #7f8c8d;
-            margin-bottom: 2rem;
-            line-height: 1.6;
-        }
-
-        #completion-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        #completion-buttons button {
-            padding: 15px 30px;
-            font-size: 16px;
-            border-radius: 25px;
-            min-width: 140px;
-            font-weight: 600;
-        }
-
-        #next-level-btn {
-            background: linear-gradient(145deg, #27ae60, #2ecc71);
-        }
-
-        #next-level-btn:hover {
-            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
-        }
-
-        #replay-level-btn {
-            background: linear-gradient(145deg, #95a5a6, #7f8c8d);
-        }
-
-        #replay-level-btn:hover {
-            box-shadow: 0 5px 15px rgba(127, 140, 141, 0.4);
-        }
-
-.game-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    width: 100%;
-    max-width: 100vw;
-    margin: 0 auto;
-    padding: 10px;
-    box-sizing: border-box;
-}
-
-        /* Touch controls styling */
-.touch-controls {
-    display: grid;
-    grid-template-columns: repeat(3, 60px);
-    grid-template-rows: repeat(3, 60px);
-    gap: 5px;
-    margin: 20px auto;
-}
-
-.touch-btn {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: rgba(52, 152, 219, 0.9);
-    border: none;
-    color: white;
-    font-size: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.1s, background-color 0.2s;
-}
-
-.touch-btn:active {
-    transform: scale(0.95);
-    background: rgba(41, 128, 185, 0.9);
-}
-
-.touch-btn.hidden {
-    visibility: hidden;
-}
-
-.touch-controls {
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-    user-select: none;
-    touch-action: none; /* Prevent all browser touch actions */
-        position: sticky;
-    top: 20px;
-    display: grid;
-    grid-template-columns: repeat(3, 60px);
-    grid-template-rows: repeat(3, 60px);
-    gap: 5px;
-    margin: 0;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
-    backdrop-filter: blur(5px);
-}
-
-.touch-btn {
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation; /* Optimize for touch */
-    cursor: pointer;
-    -webkit-touch-callout: none;
-    user-select: none;
-}
-
-/* Improve visual feedback for touch */
-.touch-btn:active {
-    background: rgba(41, 128, 185, 1);
-    transform: scale(0.95);
-}
-
-#game {
-    display: grid;
-    gap: 0px;
-    margin: 20px auto;
-    padding: 15px;
-    background: #ecf0f1;
-    border-radius: 12px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    box-sizing: border-box;
-    max-width: 150%;
-}
-/* Mobile-specific styles */
-@media (max-width: 480px) {
-    body {
-        padding: 5px;
-    }
-
-    h1 {
-        font-size: 1.8rem;
-        margin: 10px 0;
-    }
-
-    .controls {
-        flex-wrap: wrap;
-        justify-content: center;
-        padding: 10px;
-        gap: 8px;
-    }
-
-    button {
-        padding: 8px 15px;
-        font-size: 12px;
-    }
-
-    #game {
-        transform: scale(0.6);
-        margin: 0 auto;
-        transform-origin: left center;
-        max-width: 150%;
-    }
-
-    .cell {
-        width: 40px; /* Slightly smaller cells */
-        height: 40px;
-    }
-
-    .touch-controls {
-        position: static; /* Place controls in normal flow */
-        transform: none;
-        background: rgba(255, 255, 255, 0.8);
-        margin: 10px auto;
-        padding: 10px;
-        width: fit-content;
-        display: grid;
-        grid-template-columns: repeat(3, 50px);
-        grid-template-rows: repeat(3, 50px);
-        gap: 5px;
-    }
-
-    .touch-btn {
-        width: 50px;
-        height: 50px;
-        font-size: 18px;
-    }
-}
-
-/* iPhone SE and other small devices */
-@media (max-width: 375px) {
-    #game {
-        transform: scale(0.5);
-        transform-origin: left center;
-        max-width: 450%;
-        
-    }
-
-    .touch-controls {
-        grid-template-columns: repeat(3, 45px);
-        grid-template-rows: repeat(3, 45px);
-    }
-
-    .touch-btn {
-        width: 45px;
-        height: 45px;
-        font-size: 16px;
-    }
-
-    .controls button {
-        padding: 6px 12px;
-        font-size: 11px;
-    }
-}
-
-/* Fix scrolling on mobile */
-body {
-    min-height: 100vh;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
-/* Add space at bottom for controls */
-#main-content {
-    padding-bottom: 20px;
-}
-
+      /* Add space at bottom for controls */
+      #main-content {
+        padding-bottom: 20px;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <!-- #region Preloader -->
     <div id="loader" role="status" aria-live="polite">
-        <div id="loader-card">
-            <div class="loader-logo">
-                <!-- Example SVG icon (replace with your logo if desired) -->
-                <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                    <circle cx="24" cy="24" r="22" stroke="#4a90e2" stroke-width="4" fill="#eaf6ff" />
-                    <text x="24" y="30" text-anchor="middle" font-size="18" fill="#4a90e2" font-family="Arial"
-                        font-weight="bold">📦</text>
-                </svg>
-            </div>
-            <div id="loader-title">Loading Push Challenges...</div>
-            <div class="loader-spinner"></div>
-            <div id="progress-bar-bg">
-                <div id="progress-bar"></div>
-            </div>
-            <span id="progress-text">0%</span>
+      <div id="loader-card">
+        <div class="loader-logo">
+          <!-- Example SVG icon (replace with your logo if desired) -->
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <circle
+              cx="24"
+              cy="24"
+              r="22"
+              stroke="#4a90e2"
+              stroke-width="4"
+              fill="#eaf6ff"
+            />
+            <text
+              x="24"
+              y="30"
+              text-anchor="middle"
+              font-size="18"
+              fill="#4a90e2"
+              font-family="Arial"
+              font-weight="bold"
+            >
+              📦
+            </text>
+          </svg>
         </div>
+        <div id="loader-title">Loading Push Challenges...</div>
+        <div class="loader-spinner"></div>
+        <div id="progress-bar-bg">
+          <div id="progress-bar"></div>
+        </div>
+        <span id="progress-text">0%</span>
+      </div>
     </div>
     <!-- #endregion -->
 
-
     <!-- Main app content goes here -->
     <div id="main-content">
-        <h1>Push Challenge</h1>
-        <div class="controls">
-            <button id="prev-level">Previous Level</button>
-            <span id="level-info">Level 1</span>
-            <button id="next-level">Next Level</button>
-            <button id="reset-level">Reset Level</button>
+      <h1>Push Challenge</h1>
+      <div class="controls">
+        <button id="prev-level">Previous Level</button>
+        <span id="level-info">Level 1</span>
+        <button id="next-level">Next Level</button>
+        <button id="reset-level">Reset Level</button>
+      </div>
+      <div class="game-container">
+        <div id="game"></div>
+        <div class="touch-controls">
+          <button class="touch-btn hidden"></button>
+          <button class="touch-btn" id="up-btn">⬆️</button>
+          <button class="touch-btn hidden"></button>
+          <button class="touch-btn" id="left-btn">⬅️</button>
+          <button class="touch-btn hidden"></button>
+          <button class="touch-btn" id="right-btn">➡️</button>
+          <button class="touch-btn hidden"></button>
+          <button class="touch-btn" id="down-btn">⬇️</button>
+          <button class="touch-btn hidden"></button>
         </div>
-<div class="game-container">
-    <div id="game"></div>
-    <div class="touch-controls">
-        <button class="touch-btn hidden"></button>
-        <button class="touch-btn" id="up-btn">⬆️</button>
-        <button class="touch-btn hidden"></button>
-        <button class="touch-btn" id="left-btn">⬅️</button>
-        <button class="touch-btn hidden"></button>
-        <button class="touch-btn" id="right-btn">➡️</button>
-        <button class="touch-btn hidden"></button>
-        <button class="touch-btn" id="down-btn">⬇️</button>
-        <button class="touch-btn hidden"></button>
-    </div>
-</div>
-        <p>Use arrow keys to move. Push boxes (🟠) onto goals (🟡)! V5</p>
+      </div>
+      <p>Use arrow keys to move. Push boxes (🟠) onto goals (🟡)! V5</p>
 
-        <!-- Level completion overlay -->
-        <div id="completion-overlay">
-            <div id="completion-card">
-                <div id="completion-title">🎉 Level Complete! 🎉</div>
-                <div id="completion-message">Great job! You solved the puzzle!</div>
-                <div id="completion-buttons">
-                    <button id="next-level-btn">Next Level</button>
-                    <button id="replay-level-btn">Replay Level</button>
-                </div>
-            </div>
+      <!-- Level completion overlay -->
+      <div id="completion-overlay">
+        <div id="completion-card">
+          <div id="completion-title">🎉 Level Complete! 🎉</div>
+          <div id="completion-message">Great job! You solved the puzzle!</div>
+          <div id="completion-buttons">
+            <button id="next-level-btn">Next Level</button>
+            <button id="replay-level-btn">Replay Level</button>
+          </div>
         </div>
+      </div>
     </div>
-
 
     <script>
-        // #region Preloader logic
-        // List your assets here (images, etc.)
-        const assetsToPreload = [
-            // 'img/example1.png',
-            // 'img/example2.jpg',
-            // Add more as needed
-        ];
+      // #region Preloader logic
+      // List your assets here (images, etc.)
+      const assetsToPreload = [
+        // 'img/example1.png',
+        // 'img/example2.jpg',
+        // Add more as needed
+      ];
 
-        let loaded = 0;
-        const progressBar = document.getElementById('progress-bar');
-        const progressText = document.getElementById('progress-text');
+      let loaded = 0;
+      const progressBar = document.getElementById("progress-bar");
+      const progressText = document.getElementById("progress-text");
 
-        function updateProgress() {
-            const percent = assetsToPreload.length
-                ? Math.round((loaded / assetsToPreload.length) * 100)
-                : 100;
-            progressBar.style.width = percent + '%';
-            progressText.textContent = percent + '%';
-        }
+      function updateProgress() {
+        const percent = assetsToPreload.length
+          ? Math.round((loaded / assetsToPreload.length) * 100)
+          : 100;
+        progressBar.style.width = percent + "%";
+        progressText.textContent = percent + "%";
+      }
 
-        function preloadAssets(urls, allDone) {
-            if (urls.length === 0) allDone();
-            urls.forEach(url => {
-                const img = new Image();
-                img.onload = img.onerror = function () {
-                    loaded++;
-                    updateProgress();
-                    if (loaded === urls.length) allDone();
-                };
-                img.src = url;
-            });
-        }
-
-        // Show loader, then start preloading after paint
-        requestAnimationFrame(() => {
-            setTimeout(() => {
-                preloadAssets(assetsToPreload, function () {
-                    // Fade out loader
-                    document.getElementById('loader').classList.add('hide');
-                    setTimeout(() => {
-                        document.getElementById('loader').style.display = 'none';
-                        document.getElementById('main-content').style.display = 'block';
-                        // Initialize your app here if needed
-                    }, 500); // Match transition duration
-                });
-                updateProgress();
-            }, 50);
+      function preloadAssets(urls, allDone) {
+        if (urls.length === 0) allDone();
+        urls.forEach((url) => {
+          const img = new Image();
+          img.onload = img.onerror = function () {
+            loaded++;
+            updateProgress();
+            if (loaded === urls.length) allDone();
+          };
+          img.src = url;
         });
-        // #endregion
-        // #region Main Script Here
+      }
 
-        const gameElement = document.getElementById("game");
+      // Show loader, then start preloading after paint
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          preloadAssets(assetsToPreload, function () {
+            // Fade out loader
+            document.getElementById("loader").classList.add("hide");
+            setTimeout(() => {
+              document.getElementById("loader").style.display = "none";
+              document.getElementById("main-content").style.display = "block";
+              // Initialize your app here if needed
+            }, 500); // Match transition duration
+          });
+          updateProgress();
+        }, 50);
+      });
+      // #endregion
+      // #region Main Script Here
 
-        // Define multiple levels
-        const levels = [
+      const gameElement = document.getElementById("game");
 
-            //Level 1 - Tutorial 1
-            [
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 3, 0, 0, 0, 2, 0, 4, 0, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-            ],
+      // Define multiple levels
+      const levels = [
+        //Level 1 - Tutorial 1
+        [
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 3, 0, 0, 0, 2, 0, 4, 0, 1],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        ],
 
-            // Level 2 - Tutorial 2
-            [
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                [1, 0, 2, 0, 4, 0, 0, 3, 0, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-            ],
+        // Level 2 - Tutorial 2
+        [
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+          [1, 0, 2, 0, 4, 0, 0, 3, 0, 1],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        ],
 
-            // Level 3 - Tutorial 3
-            [
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                [1, 0, 4, 0, 2, 0, 0, 0, 0, 1],
-                [1, 0, 0, 0, 0, 0, 0, 0, 3, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-            ],
+        // Level 3 - Tutorial 3
+        [
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+          [1, 0, 4, 0, 2, 0, 0, 0, 0, 1],
+          [1, 0, 0, 0, 0, 0, 0, 0, 3, 1],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        ],
 
-            // Level 4 - Easy 1
-            [
-                [1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 0, 2, 0, 3, 0, 0, 1],
-                [1, 0, 0, 2, 0, 3, 0, 1],
-                [1, 0, 0, 0, 4, 0, 0, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1]
-            ],
+        // Level 4 - Easy 1
+        [
+          [1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 0, 2, 0, 3, 0, 0, 1],
+          [1, 0, 0, 2, 0, 3, 0, 1],
+          [1, 0, 0, 0, 4, 0, 0, 1],
+          [1, 1, 1, 1, 1, 1, 1, 1],
+        ],
 
-            // Level 5 - Easy 2
-            [
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                [1, 0, 2, 0, 1, 1, 0, 0, 3, 1],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                [1, 0, 0, 4, 0, 0, 0, 0, 0, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-            ],
+        // Level 5 - Easy 2
+        [
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+          [1, 0, 2, 0, 1, 1, 0, 0, 3, 1],
+          [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+          [1, 0, 0, 4, 0, 0, 0, 0, 0, 1],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        ],
 
-            // Level 6 - Easy 3
-            [
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 3, 0, 0, 0, 0, 0, 0, 3, 1],
-                [1, 0, 0, 0, 2, 0, 0, 0, 0, 1],
-                [1, 0, 0, 2, 4, 2, 0, 0, 0, 1],
-                [1, 0, 0, 0, 2, 0, 0, 0, 0, 1],
-                [1, 3, 0, 0, 0, 0, 0, 0, 3, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-            ],
+        // Level 6 - Easy 3
+        [
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 3, 0, 0, 0, 0, 0, 0, 3, 1],
+          [1, 0, 0, 0, 2, 0, 0, 0, 0, 1],
+          [1, 0, 0, 2, 4, 2, 0, 0, 0, 1],
+          [1, 0, 0, 0, 2, 0, 0, 0, 0, 1],
+          [1, 3, 0, 0, 0, 0, 0, 0, 3, 1],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        ],
 
-            // Level 7 - Easy 4
-            [
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 0, 2, 0, 3, 0, 0, 0, 0, 1],
-                [1, 0, 1, 0, 1, 0, 2, 0, 3, 1],
-                [1, 0, 0, 0, 0, 0, 0, 4, 0, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-            ],
+        // Level 7 - Easy 4
+        [
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 0, 2, 0, 3, 0, 0, 0, 0, 1],
+          [1, 0, 1, 0, 1, 0, 2, 0, 3, 1],
+          [1, 0, 0, 0, 0, 0, 0, 4, 0, 1],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        ],
 
-            [
-                // Level 8 - Easy 5
-                [1, 1, 1, 1, 1, 1, 1],
-                [1, 0, 0, 0, 0, 0, 1],
-                [1, 0, 2, 0, 0, 0, 1],
-                [1, 1, 0, 1, 1, 0, 1],
-                [1, 0, 0, 0, 3, 0, 1],
-                [1, 0, 4, 0, 0, 0, 1],
-                [1, 1, 1, 1, 1, 1, 1]
-            ],
+        [
+          // Level 8 - Easy 5
+          [1, 1, 1, 1, 1, 1, 1],
+          [1, 0, 0, 0, 0, 0, 1],
+          [1, 0, 2, 0, 0, 0, 1],
+          [1, 1, 0, 1, 1, 0, 1],
+          [1, 0, 0, 0, 3, 0, 1],
+          [1, 0, 4, 0, 0, 0, 1],
+          [1, 1, 1, 1, 1, 1, 1],
+        ],
 
-            [
-                // Level 9 - Medium 1
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 0, 0, 0, 1, 0, 3, 0, 2, 0, 3, 1],
-                [1, 0, 2, 0, 1, 0, 0, 0, 0, 1, 0, 1],
-                [1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 1],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-            ],
+        [
+          // Level 9 - Medium 1
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 0, 0, 0, 1, 0, 3, 0, 2, 0, 3, 1],
+          [1, 0, 2, 0, 1, 0, 0, 0, 0, 1, 0, 1],
+          [1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1],
+          [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 1],
+          [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+          [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        ],
 
-            // Level 10 - Medium 2
-            [
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 0, 0, 0, 0, 0, 0, 0, 3, 1],
-                [1, 0, 2, 1, 1, 0, 1, 0, 0, 1],
-                [1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
-                [1, 1, 1, 0, 1, 0, 1, 1, 0, 1],
-                [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-                [1, 0, 0, 0, 0, 0, 1, 2, 0, 1],
-                [1, 3, 0, 0, 4, 0, 0, 0, 0, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-            ],
+        // Level 10 - Medium 2
+        [
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 0, 0, 0, 0, 0, 0, 0, 3, 1],
+          [1, 0, 2, 1, 1, 0, 1, 0, 0, 1],
+          [1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+          [1, 1, 1, 0, 1, 0, 1, 1, 0, 1],
+          [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+          [1, 0, 0, 0, 0, 0, 1, 2, 0, 1],
+          [1, 3, 0, 0, 4, 0, 0, 0, 0, 1],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        ],
 
-            // Level 11 - Medium 3
-            [
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 4, 0, 0, 0, 0, 0, 0, 0, 1],
-                [1, 1, 1, 1, 0, 1, 1, 1, 0, 1],
-                [1, 3, 0, 0, 0, 0, 0, 2, 0, 1],
-                [1, 0, 0, 1, 0, 1, 0, 0, 0, 1],
-                [1, 0, 2, 1, 0, 1, 0, 1, 3, 1],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-            ],
+        // Level 11 - Medium 3
+        [
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 4, 0, 0, 0, 0, 0, 0, 0, 1],
+          [1, 1, 1, 1, 0, 1, 1, 1, 0, 1],
+          [1, 3, 0, 0, 0, 0, 0, 2, 0, 1],
+          [1, 0, 0, 1, 0, 1, 0, 0, 0, 1],
+          [1, 0, 2, 1, 0, 1, 0, 1, 3, 1],
+          [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        ],
 
-                        /*
+        /*
                         // BASE
                         [
                             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -796,243 +849,265 @@ body {
                             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
                         ],
             */
+      ];
 
-        ];
+      let currentLevelIndex = 0;
+      let level = [];
 
-        let currentLevelIndex = 0;
-        let level = [];
+      // 0 = floor, 1 = wall, 2 = box, 3 = goal, 4 = player, 5 = box on goal, 6 = player on goal
 
-        // 0 = floor, 1 = wall, 2 = box, 3 = goal, 4 = player, 5 = box on goal, 6 = player on goal
+      function loadLevel(levelIndex) {
+        currentLevelIndex = levelIndex;
+        level = levels[levelIndex].map((row) => [...row]); // Deep copy
+        updateLevelInfo();
+        draw();
+      }
 
-        function loadLevel(levelIndex) {
-            currentLevelIndex = levelIndex;
-            level = levels[levelIndex].map(row => [...row]); // Deep copy
-            updateLevelInfo();
-            draw();
+      function updateLevelInfo() {
+        document.getElementById("level-info").textContent = `Level ${
+          currentLevelIndex + 1
+        } of ${levels.length}`;
+        document.getElementById("prev-level").disabled =
+          currentLevelIndex === 0;
+        document.getElementById("next-level").disabled =
+          currentLevelIndex === levels.length - 1;
+      }
+
+      const width = 10;
+      const height = 10;
+
+      function draw() {
+        const levelHeight = level.length;
+        const levelWidth = level[0] ? level[0].length : 0;
+
+        // Update grid template to match actual level size
+        gameElement.style.gridTemplateColumns = `repeat(${levelWidth}, 45px)`;
+        gameElement.style.gridTemplateRows = `repeat(${levelHeight}, 45px)`;
+
+        gameElement.innerHTML = "";
+        for (let y = 0; y < levelHeight; y++) {
+          for (let x = 0; x < levelWidth; x++) {
+            const cell = document.createElement("div");
+            cell.classList.add("cell");
+            const value = level[y][x];
+
+            if (value === 1) cell.classList.add("wall");
+            else if (value === 0) cell.classList.add("floor");
+            else if (value === 2) cell.classList.add("box");
+            else if (value === 3) cell.classList.add("goal");
+            else if (value === 4) cell.classList.add("player");
+
+            // Composite states
+            if (value === 5) cell.classList.add("box", "goal");
+            if (value === 6) cell.classList.add("player", "goal");
+
+            gameElement.appendChild(cell);
+          }
         }
+      }
 
-        function updateLevelInfo() {
-            document.getElementById('level-info').textContent = `Level ${currentLevelIndex + 1} of ${levels.length}`;
-            document.getElementById('prev-level').disabled = currentLevelIndex === 0;
-            document.getElementById('next-level').disabled = currentLevelIndex === levels.length - 1;
+      function findPlayer() {
+        const levelHeight = level.length;
+        const levelWidth = level[0] ? level[0].length : 0;
+
+        for (let y = 0; y < levelHeight; y++) {
+          for (let x = 0; x < levelWidth; x++) {
+            if (level[y][x] === 4 || level[y][x] === 6) return { x, y };
+          }
         }
+        return null;
+      }
 
-        const width = 10;
-        const height = 10;
+      function movePlayer(dx, dy) {
+        const { x, y } = findPlayer();
+        const targetX = x + dx;
+        const targetY = y + dy;
 
-        function draw() {
-            const levelHeight = level.length;
-            const levelWidth = level[0] ? level[0].length : 0;
+        const levelHeight = level.length;
+        const levelWidth = level[0] ? level[0].length : 0;
 
-            // Update grid template to match actual level size
-            gameElement.style.gridTemplateColumns = `repeat(${levelWidth}, 45px)`;
-            gameElement.style.gridTemplateRows = `repeat(${levelHeight}, 45px)`;
+        if (
+          targetX < 0 ||
+          targetX >= levelWidth ||
+          targetY < 0 ||
+          targetY >= levelHeight
+        )
+          return;
 
-            gameElement.innerHTML = '';
-            for (let y = 0; y < levelHeight; y++) {
-                for (let x = 0; x < levelWidth; x++) {
-                    const cell = document.createElement("div");
-                    cell.classList.add("cell");
-                    const value = level[y][x];
+        const next = level[targetY][targetX];
 
-                    if (value === 1) cell.classList.add("wall");
-                    else if (value === 0) cell.classList.add("floor");
-                    else if (value === 2) cell.classList.add("box");
-                    else if (value === 3) cell.classList.add("goal");
-                    else if (value === 4) cell.classList.add("player");
+        if (next === 1) return; // wall
 
-                    // Composite states
-                    if (value === 5) cell.classList.add("box", "goal");
-                    if (value === 6) cell.classList.add("player", "goal");
+        // box or box on goal
+        if (next === 2 || next === 5) {
+          const beyondX = x + dx * 2;
+          const beyondY = y + dy * 2;
 
-                    gameElement.appendChild(cell);
-                }
-            }
-        }
+          if (
+            beyondX < 0 ||
+            beyondX >= levelWidth ||
+            beyondY < 0 ||
+            beyondY >= levelHeight
+          )
+            return;
 
+          const beyond = level[beyondY][beyondX];
 
-        function findPlayer() {
-            const levelHeight = level.length;
-            const levelWidth = level[0] ? level[0].length : 0;
-
-            for (let y = 0; y < levelHeight; y++) {
-                for (let x = 0; x < levelWidth; x++) {
-                    if (level[y][x] === 4 || level[y][x] === 6) return { x, y };
-                }
-            }
-            return null;
-        }
-
-       function movePlayer(dx, dy) {
-    const { x, y } = findPlayer();
-    const targetX = x + dx;
-    const targetY = y + dy;
-
-    const levelHeight = level.length;
-    const levelWidth = level[0] ? level[0].length : 0;
-
-    if (targetX < 0 || targetX >= levelWidth || targetY < 0 || targetY >= levelHeight) return;
-
-    const next = level[targetY][targetX];
-
-    if (next === 1) return; // wall
-
-    // box or box on goal
-    if (next === 2 || next === 5) {
-        const beyondX = x + dx * 2;
-        const beyondY = y + dy * 2;
-
-        if (beyondX < 0 || beyondX >= levelWidth || beyondY < 0 || beyondY >= levelHeight) return;
-
-        const beyond = level[beyondY][beyondX];
-
-        // Only allow pushing if destination is floor or goal
-        if (beyond === 0 || beyond === 3) {
+          // Only allow pushing if destination is floor or goal
+          if (beyond === 0 || beyond === 3) {
             // Move box
             level[beyondY][beyondX] = beyond === 3 ? 5 : 2; // Box to new position
-            level[targetY][targetX] = next === 5 ? 3 : 0;   // Restore goal or floor where box was
-        } else return;
-    }
-
-    // Move player
-    const current = level[y][x];
-    level[y][x] = current === 6 ? 3 : 0;  // Restore goal or floor where player was
-    level[targetY][targetX] = next === 3 || next === 5 ? 6 : 4;  // Player to new position
-
-    draw();
-    checkWin();
-}
-
-        function checkWin() {
-            const levelHeight = level.length;
-            const levelWidth = level[0] ? level[0].length : 0;
-
-            // Check if all goals are covered by boxes
-            for (let y = 0; y < levelHeight; y++) {
-                for (let x = 0; x < levelWidth; x++) {
-                    if (level[y][x] === 3 || level[y][x] === 6) return; // still uncovered goals
-                }
-            }
-
-            // Show completion overlay
-            showCompletionOverlay();
+            level[targetY][targetX] = next === 5 ? 3 : 0; // Restore goal or floor where box was
+          } else return;
         }
 
-        function showCompletionOverlay() {
-            const overlay = document.getElementById('completion-overlay');
-            const title = document.getElementById('completion-title');
-            const message = document.getElementById('completion-message');
-            const nextBtn = document.getElementById('next-level-btn');
+        // Move player
+        const current = level[y][x];
+        level[y][x] = current === 6 ? 3 : 0; // Restore goal or floor where player was
+        level[targetY][targetX] = next === 3 || next === 5 ? 6 : 4; // Player to new position
 
-            if (currentLevelIndex < levels.length - 1) {
-                title.textContent = `🎉 Level ${currentLevelIndex + 1} Complete! 🎉`;
-                message.textContent = `Excellent work! Ready for the next challenge?`;
-                nextBtn.textContent = 'Next Level';
-                nextBtn.style.display = 'inline-block';
-            } else {
-                title.textContent = `🏆 All Levels Complete! 🏆`;
-                message.textContent = `Congratulations! You've mastered all the puzzles!`;
-                nextBtn.style.display = 'none';
-            }
+        draw();
+        checkWin();
+      }
 
-            overlay.style.display = 'flex';
+      function checkWin() {
+        const levelHeight = level.length;
+        const levelWidth = level[0] ? level[0].length : 0;
+
+        // Check if all goals are covered by boxes
+        for (let y = 0; y < levelHeight; y++) {
+          for (let x = 0; x < levelWidth; x++) {
+            if (level[y][x] === 3 || level[y][x] === 6) return; // still uncovered goals
+          }
         }
 
-        function hideCompletionOverlay() {
-            document.getElementById('completion-overlay').style.display = 'none';
+        // Show completion overlay
+        showCompletionOverlay();
+      }
+
+      function showCompletionOverlay() {
+        const overlay = document.getElementById("completion-overlay");
+        const title = document.getElementById("completion-title");
+        const message = document.getElementById("completion-message");
+        const nextBtn = document.getElementById("next-level-btn");
+
+        if (currentLevelIndex < levels.length - 1) {
+          title.textContent = `🎉 Level ${currentLevelIndex + 1} Complete! 🎉`;
+          message.textContent = `Excellent work! Ready for the next challenge?`;
+          nextBtn.textContent = "Next Level";
+          nextBtn.style.display = "inline-block";
+        } else {
+          title.textContent = `🏆 All Levels Complete! 🏆`;
+          message.textContent = `Congratulations! You've mastered all the puzzles!`;
+          nextBtn.style.display = "none";
         }
 
-        // Add event listeners for completion overlay buttons
-        document.getElementById('next-level-btn').addEventListener('click', () => {
+        overlay.style.display = "flex";
+      }
+
+      function hideCompletionOverlay() {
+        document.getElementById("completion-overlay").style.display = "none";
+      }
+
+      // Add event listeners for completion overlay buttons
+      document
+        .getElementById("next-level-btn")
+        .addEventListener("click", () => {
+          hideCompletionOverlay();
+          if (currentLevelIndex < levels.length - 1) {
+            loadLevel(currentLevelIndex + 1);
+          }
+        });
+
+      document
+        .getElementById("replay-level-btn")
+        .addEventListener("click", () => {
+          hideCompletionOverlay();
+          loadLevel(currentLevelIndex);
+        });
+
+      // Close overlay when clicking outside the card
+      document
+        .getElementById("completion-overlay")
+        .addEventListener("click", (e) => {
+          if (e.target.id === "completion-overlay") {
             hideCompletionOverlay();
-            if (currentLevelIndex < levels.length - 1) {
-                loadLevel(currentLevelIndex + 1);
-            }
+          }
         });
 
-        document.getElementById('replay-level-btn').addEventListener('click', () => {
-            hideCompletionOverlay();
-            loadLevel(currentLevelIndex);
-        });
+      // Event listeners
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowUp") movePlayer(0, -1);
+        else if (e.key === "ArrowDown") movePlayer(0, 1);
+        else if (e.key === "ArrowLeft") movePlayer(-1, 0);
+        else if (e.key === "ArrowRight") movePlayer(1, 0);
+      });
 
-        // Close overlay when clicking outside the card
-        document.getElementById('completion-overlay').addEventListener('click', (e) => {
-            if (e.target.id === 'completion-overlay') {
-                hideCompletionOverlay();
-            }
-        });
-
-
-
-        // Event listeners
-        document.addEventListener("keydown", e => {
-            if (e.key === "ArrowUp") movePlayer(0, -1);
-            else if (e.key === "ArrowDown") movePlayer(0, 1);
-            else if (e.key === "ArrowLeft") movePlayer(-1, 0);
-            else if (e.key === "ArrowRight") movePlayer(1, 0);
-        });
-
-        document.getElementById('prev-level').addEventListener('click', () => {
-            if (currentLevelIndex > 0) {
-                loadLevel(currentLevelIndex - 1);
-            }
-        });
-
-        document.getElementById('next-level').addEventListener('click', () => {
-            if (currentLevelIndex < levels.length - 1) {
-                loadLevel(currentLevelIndex + 1);
-            }
-        });
-
-        document.getElementById('reset-level').addEventListener('click', () => {
-            loadLevel(currentLevelIndex);
-        });
-
-// Add this code after the existing event listeners, before the loadLevel(0) call
-
-// Enhanced touch controls
-document.querySelectorAll('.touch-btn').forEach(btn => {
-    // Handle both touch and mouse events
-    btn.addEventListener('touchstart', handleTouchStart, { passive: false });
-    btn.addEventListener('touchend', handleTouchEnd, { passive: false });
-    
-    function handleTouchStart(e) {
-        e.preventDefault(); // Prevent scrolling
-        const direction = btn.id.split('-')[0];
-        switch(direction) {
-            case 'up':
-                movePlayer(0, -1);
-                break;
-            case 'down':
-                movePlayer(0, 1);
-                break;
-            case 'left':
-                movePlayer(-1, 0);
-                break;
-            case 'right':
-                movePlayer(1, 0);
-                break;
+      document.getElementById("prev-level").addEventListener("click", () => {
+        if (currentLevelIndex > 0) {
+          loadLevel(currentLevelIndex - 1);
         }
-        btn.style.transform = 'scale(0.95)';
-    }
-    
-    function handleTouchEnd(e) {
-        e.preventDefault();
-        btn.style.transform = 'scale(1)';
-    }
-});
+      });
 
-// Prevent default touch behavior on the game area
-document.getElementById('game').addEventListener('touchmove', (e) => {
-    e.preventDefault();
-}, { passive: false });
+      document.getElementById("next-level").addEventListener("click", () => {
+        if (currentLevelIndex < levels.length - 1) {
+          loadLevel(currentLevelIndex + 1);
+        }
+      });
 
+      document.getElementById("reset-level").addEventListener("click", () => {
+        loadLevel(currentLevelIndex);
+      });
 
-        // Initialize the game
-        loadLevel(0);
+      // Add this code after the existing event listeners, before the loadLevel(0) call
 
-        // #endregion
+      // Enhanced touch controls
+      document.querySelectorAll(".touch-btn").forEach((btn) => {
+        // Handle both touch and mouse events
+        btn.addEventListener("touchstart", handleTouchStart, {
+          passive: false,
+        });
+        btn.addEventListener("touchend", handleTouchEnd, { passive: false });
+
+        function handleTouchStart(e) {
+          e.preventDefault(); // Prevent scrolling
+          const direction = btn.id.split("-")[0];
+          switch (direction) {
+            case "up":
+              movePlayer(0, -1);
+              break;
+            case "down":
+              movePlayer(0, 1);
+              break;
+            case "left":
+              movePlayer(-1, 0);
+              break;
+            case "right":
+              movePlayer(1, 0);
+              break;
+          }
+          btn.style.transform = "scale(0.95)";
+        }
+
+        function handleTouchEnd(e) {
+          e.preventDefault();
+          btn.style.transform = "scale(1)";
+        }
+      });
+
+      // Prevent default touch behavior on the game area
+      document.getElementById("game").addEventListener(
+        "touchmove",
+        (e) => {
+          e.preventDefault();
+        },
+        { passive: false }
+      );
+
+      // Initialize the game
+      loadLevel(0);
+
+      // #endregion
     </script>
-</body>
-
+  </body>
 </html>
