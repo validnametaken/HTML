@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ESL Color Canvas — Modernized</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f6f7fb;
+        --card: #ffffff;
+        --muted: #728096;
+        --accent: #4dd5ff;
+        --glass: rgba(255, 255, 255, 0.6);
+        --shadow: 0 6px 20px rgba(29, 31, 41, 0.08);
+        --sw-size: 46px;
+        --radius: 14px;
+      }
+
+      /* Reset + base */
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 32px;
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial;
+        background: radial-gradient(
+            1000px 600px at -10% -10%,
+            rgba(77, 213, 255, 0.06),
+            transparent 12%
+          ),
+          radial-gradient(
+            900px 500px at 110% 120%,
+            rgba(255, 165, 0, 0.03),
+            transparent 10%
+          ),
+          var(--bg);
+        color: #0f1720;
+      }
+
+      /* Card */
+      .card {
+        width: 100%;
+        height: 100%;
+        /* max-width: 980px; */
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.9),
+          var(--card)
+        );
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        padding: 20px;
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 20px;
+        align-items: start;
+      }
+
+      /* Left: svg area */
+      .canvas-wrap {
+        padding: 18px;
+        border-radius: 10px;
+        background: linear-gradient(
+          180deg,
+          rgba(250, 252, 255, 0.6),
+          rgba(250, 250, 252, 0.4)
+        );
+        border: 1px solid rgba(15, 23, 32, 0.04);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .canvas-top {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 8px;
+      }
+
+      /* apply to the top-level group that contains the art */
+      .canvas-wrap svg > g#SVGRepo_iconCarrier {
+        transform-box: fill-box; /* ensure transforms use the group's bounding box */
+        transform-origin: 50% 50%;
+        transform: translateX(-22px); /* tweak -6px until it looks centered */
+      }
+
+      h1#colorName {
+        font-size: 2.125rem;
+        margin: 0;
+        font-weight: 700;
+      }
+
+      .subtitle {
+        font-size: 0.875rem;
+        color: var(--muted);
+      }
+
+      /* responsive svg (keeps the SVG markup intact) */
+      svg {
+        width: 100%;
+        height: auto;
+        display: block;
+        max-height: 720px;
+      }
+
+      /* Right: controls */
+      .controls {
+        padding: 14px;
+        border-radius: 12px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.6),
+          rgba(245, 247, 250, 0.6)
+        );
+        border: 1px solid rgba(15, 23, 32, 0.03);
+        height: fit-content;
+      }
+
+      .palette {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 8px 0;
+      }
+
+      /* modern swatch as button */
+      .color-swatch {
+        width: var(--sw-size);
+        height: var(--sw-size);
+        border-radius: 12px;
+        border: 1px solid rgba(15, 23, 41, 0.08);
+        cursor: pointer;
+        box-shadow: 0 8px 18px rgba(12, 14, 18, 0.06);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.18s ease, box-shadow 0.18s ease,
+          outline-color 0.12s ease;
+      }
+      .color-swatch:focus {
+        outline: 3px solid rgba(77, 213, 255, 0.18);
+      }
+      .color-swatch:hover {
+        transform: translateY(-4px);
+      }
+
+      .color-swatch--active {
+        box-shadow: 0 10px 26px rgba(12, 14, 18, 0.12);
+        transform: translateY(-6px) scale(1.02);
+      }
+
+      .meta {
+        font-size: 0.9rem;
+        color: var(--muted);
+        margin-top: 8px;
+      }
+
+      .actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      .btn {
+        font-weight: 600;
+        padding: 8px 12px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+      }
+      .btn--ghost {
+        background: transparent;
+        color: var(--muted);
+        border: 1px solid rgba(15, 23, 41, 0.06);
+      }
+      .btn--primary {
+        background: var(--accent);
+        color: #042334;
+      }
+
+      /* small screens: stack columns */
+      @media (max-width: 920px) {
+        .card {
+          grid-template-columns: 1fr;
+        }
+        .controls {
+          order: 2;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="canvas-wrap">
+        <div class="canvas-top">
+          <div>
+            <h1 id="colorName">Click a color!</h1>
+          </div>
+        </div>
+
+        <!-- ========== ORIGINAL SVG (kept unchanged) ========== -->
+        <!-- paste your original SVG here exactly (no edits) -->
+
+        <svg
+          version="1.1"
+          viewBox="0 0 580 520"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="false"
+          role="img"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <defs>
+            <mask
+              id="brushMask"
+              maskUnits="userSpaceOnUse"
+              maskContentUnits="userSpaceOnUse"
+            >
+              <path id="brushPath" d="M0,0 L0,0 Z" fill="white" />
+            </mask>
+          </defs>
+
+          <g id="SVGRepo_iconCarrier">
+            <path
+              style="display: inline; fill: #e4eaf8; stroke-width: 1.13619"
+              d="M 542.55012,59.323 H 78.914783 C 72.818989,59.323 67.876,63.152 67.876,67.874 V 341.51 H 553.5902 V 67.875 c -10e-4,-4.723 -4.94299,-8.552 -11.04008,-8.552 z"
+              id="path1"
+            />
+
+            <path
+              id="path2"
+              d="M 542.55012,59.323 H 78.914783 C 72.818989,59.323 67.876,63.152 67.876,67.874 V 341.51 H 553.5902 V 67.875 c -10e-4,-4.723 -4.94299,-8.552 -11.04008,-8.552 z"
+              style="fill: var(--canvas-fill)"
+              mask="url(#brushMask)"
+            />
+
+            <g id="g5" transform="matrix(1,0,0,0.93220118,0,0.5435431)">
+              <path
+                style="display: inline; fill: #ffc850; stroke-width: 2.03661"
+                d="m 345.30192,8.017 h -70.93528 c -19.5858,0 -35.46764,3.829 -35.46764,8.551 V 42.221 H 380.7737 V 16.568 c -0.004,-4.723 -15.88598,-8.551 -35.47178,-8.551 z"
+                id="path4"
+              />
+              <rect
+                x="296.49695"
+                y="358.61301"
+                style="display: inline; fill: #ffc850; stroke-width: 0.995307"
+                width="34.205002"
+                height="144.00781"
+                id="rect4"
+              />
+              <polygon
+                style="display: inline; fill: #ffc850"
+                points="119.182,367.164 93.529,503.982 127.734,503.982 153.387,367.164 "
+                id="polygon4"
+                transform="matrix(1,0,0,0.99502556,0,1.8264361)"
+              />
+              <polygon
+                style="display: inline; fill: #ffc850"
+                points="392.819,367.164 418.472,503.982 384.267,503.982 358.614,367.164 "
+                id="polygon5"
+                transform="matrix(1,0,0,0.98836546,110.0802,4.2717855)"
+              />
+            </g>
+
+            <g
+              id="g6"
+              transform="matrix(1.0054075,0,0,0.99447751,-0.27455778,0.23316513)"
+              style="display: inline"
+            >
+              <path
+                style="fill: #ffdc64; stroke-width: 1.43153"
+                d="M 397.45332,76.426 H 222.21739 c -9.6767,0 -17.52339,-3.829 -17.52339,-8.551 V 50.772 c 0,-4.722 7.84669,-8.551 17.52339,-8.551 h 175.23593 c 9.67669,0 17.52338,3.829 17.52338,8.551 v 17.102 c 0,4.723 -7.84464,8.552 -17.52338,8.552 z"
+                id="path5"
+              />
+              <path
+                style="fill: #ffdc64"
+                d="M 452.677,367.164 H 59.325 c -4.722,0 -8.551,-3.829 -8.551,-8.551 v -17.102 c 0,-4.722 3.829,-8.551 8.551,-8.551 h 393.352 c 4.722,0 113.37543,2.04968 113.85677,6.74654 l 2.67726,26.1243 C 569.69238,370.5277 457.399,367.164 452.677,367.164 Z"
+                id="path6"
+              />
+            </g>
+
+            <path
+              d="m 566.59722,324.943 h -0.534 V 67.875 c 0,-9.136 -7.432,-16.568 -16.568,-16.568 h -120.25 v -0.534 c 0,-9.136 -7.432,-16.568 -16.568,-16.568 h -17.637 V 16.568 C 395.03922,7.432 387.60722,0 378.47222,0 H 247.45 c -9.136,0 -16.568,7.432 -16.568,16.568 v 17.637 h -17.637 c -9.136,0 -16.568,7.432 -16.568,16.568 v 0.534 H 76.427 c -9.136,0 -16.568,7.432 -16.568,16.568 v 257.068 h -0.534 c -9.136,0 -16.568,7.432 -16.568,16.568 v 17.102 c 0,9.136 7.432,16.568 16.568,16.568 h 50.198 l -23.874,86.36392 c -0.816,4.351 2.05,8.542 6.402,9.357 0.499,0.093 0.996,0.139 1.487,0.139 3.782,0 7.149,-2.688 7.87,-6.541 L 125.835,375.18 h 17.892 l -23.874,86.36392 c -0.816,4.351 2.05,8.542 6.402,9.357 0.499,0.093 0.996,0.139 1.487,0.139 3.782,0 7.149,-2.688 7.87,-6.541 L 150.419,426.486 h 135.50211 v 36.53492 c 0,4.427 3.589,8.017 8.017,8.017 4.427,0 8.017,-3.589 8.017,-8.017 V 375.181 h 23.291 v 87.84092 c 0,4.427 3.589,8.017 8.017,8.017 4.427,0 8.017,-3.589 8.017,-8.017 V 426.487 h 134.22211 l 14.807,38.01192 c 0.723,3.852 4.089,6.541 7.87,6.541 0.49,0 0.987,-0.045 1.487,-0.139 4.351,-0.816 7.217,-5.006 6.402,-9.357 l -23.874,-86.36292 h 17.892 l 24.427,89.31892 c 0.723,3.852 4.089,6.541 7.87,6.541 0.49,0 0.987,-0.045 1.487,-0.139 4.351,-0.816 7.217,-5.006 6.402,-9.357 l -23.874,-86.36292 h 50.198 c 9.136,0 16.568,-7.432 16.568,-16.568 v -17.102 c 0,-9.137 -7.432,-16.569 -16.567,-16.569 z M 246.915,16.568 c 0,-0.295 0.239,-0.534 0.534,-0.534 h 131.02222 c 0.295,0 0.534,0.239 0.534,0.534 V 34.205 H 246.914 V 16.568 Z M 212.71,50.772 c 0,-0.295 0.239,-0.534 0.534,-0.534 h 199.43122 c 0.295,0 0.534,0.239 0.534,0.534 v 17.102 c 0,0.295 -0.239,0.534 -0.534,0.534 H 213.244 c -0.295,0 -0.534,-0.239 -0.534,-0.534 z M 75.892,67.875 c 0,-0.295 0.239,-0.534 0.534,-0.534 h 120.25 v 0.534 c 0,9.136 7.432,16.568 16.568,16.568 h 199.43122 c 9.136,0 16.568,-7.432 16.568,-16.568 V 67.34 h 120.25 c 0.295,0 0.534,0.239 0.534,0.534 V 324.942 H 75.892 Z M 285.92211,410.454 H 153.427 l 6.614,-35.273 h 125.88211 v 35.273 z m 186.57311,0 H 341.28011 v -35.273 h 124.60211 z m 94.636,-51.841 c 0,0.295 -0.239,0.534 -0.534,0.534 H 59.325 c -0.295,0 -0.534,-0.239 -0.534,-0.534 v -17.102 c 0,-0.295 0.239,-0.534 0.534,-0.534 h 507.27222 c 0.295,0 0.534,0.239 0.534,0.534 z"
+              id="path11"
+              style="display: inline"
+            />
+          </g>
+        </svg>
+
+        <!-- end original svg -->
+      </div>
+
+      <aside class="controls">
+        <div style="font-weight: 700; margin-bottom: 8px">Palette</div>
+        <div class="palette" id="palette"></div>
+
+        <div class="meta" style="margin-top: 12px">
+          Tip: click a swatch to animate paint. Use "Instant Fill" to skip
+          animation.
+        </div>
+      </aside>
+    </div>
+
+    <script>
+      const brushPath = document.getElementById("brushPath");
+      const path2 = document.getElementById("path2");
+      const colorNameDiv = document.getElementById("colorName");
+      const paletteDiv = document.getElementById("palette");
+      const resetBtn = document.getElementById("resetBtn");
+      const fillAllBtn = document.getElementById("fillAllBtn");
+
+      // ESL colors
+      const colors = [
+        { name: "Red", code: "#FF0000" },
+        { name: "Blue", code: "#0000FF" },
+        { name: "Yellow", code: "#FFFF00" },
+        { name: "Green", code: "#00FF00" },
+        { name: "Orange", code: "#FFA500" },
+        { name: "Purple", code: "#800080" },
+      ];
+
+      let activeIndex = -1;
+      let animating = false;
+
+      // build palette using buttons for accessibility
+      colors.forEach((color, index) => {
+        const sw = document.createElement("button");
+        sw.className = "color-swatch";
+        sw.style.backgroundColor = color.code;
+        sw.title = color.name;
+        sw.setAttribute("aria-pressed", "false");
+        sw.addEventListener("click", () => {
+          // update active UI state
+          document.querySelectorAll(".color-swatch").forEach((b, i) => {
+            b.classList.toggle("color-swatch--active", i === index);
+            b.setAttribute("aria-pressed", i === index);
+          });
+          paintAnimation(index);
+        });
+        paletteDiv.appendChild(sw);
+      });
+
+      resetBtn.addEventListener("click", () => {
+        // clear mask (hide paint)
+        brushPath.setAttribute("d", "M0,0 L0,0 Z");
+        colorNameDiv.textContent = "Click a color!";
+        document.documentElement.style.removeProperty("--canvas-fill");
+        document
+          .querySelectorAll(".color-swatch")
+          .forEach((b) => b.classList.remove("color-swatch--active"));
+        activeIndex = -1;
+      });
+
+      fillAllBtn.addEventListener("click", () => {
+        // if a color is active, instantly fill the canvas region
+        if (activeIndex < 0) return;
+        const bbox = path2.getBBox();
+        const PAD = 12;
+        const left = bbox.x - PAD;
+        const top = bbox.y - PAD;
+        const width = bbox.width + PAD * 2;
+        const height = bbox.height + PAD * 2;
+        // create a rectangle that covers the whole masked area
+        const d = `M ${left},${top} L ${left},${top + height} L ${
+          left + width
+        },${top + height} L ${left + width},${top} Z`;
+        brushPath.setAttribute("d", d);
+      });
+
+      // Animation uses the path2 bounding box so it always covers the correct area
+      function paintAnimation(index) {
+        if (animating) return; // simple guard
+        animating = true;
+
+        const color = colors[index];
+        colorNameDiv.textContent = color.name;
+        document.documentElement.style.setProperty("--canvas-fill", color.code);
+
+        // compute canvas bbox (in SVG user coords)
+        const bbox = path2.getBBox();
+        const PAD = 12; // <<-- tweak this (in pixels). Increase if you still see a gap.
+        const left = bbox.x - PAD;
+        const top = bbox.y - PAD;
+        const width = bbox.width + PAD * 2;
+        const height = bbox.height + PAD * 2;
+
+        // animation parameters
+        const step = Math.max(6, Math.round(width / 120)); // speed relative to width
+        let progress = 0;
+
+        // choose sampling step so the wave is smooth regardless of width
+        const seg = Math.max(8, Math.round(width / 40));
+
+        function animateBrush() {
+          progress = Math.min(progress + step, height);
+
+          // Construct polygon that covers everything above the wavy line.
+          let d = `M ${left.toFixed(2)},${top.toFixed(2)} L ${left.toFixed(
+            2
+          )},${(
+            top +
+            progress +
+            Math.sin((left + progress) * 0.06) * 6
+          ).toFixed(2)} `;
+
+          for (let x = left; x <= left + width + 0.1; x += seg) {
+            const y = top + progress + Math.sin((x + progress) * 0.06) * 6;
+            d += `L ${x.toFixed(2)},${y.toFixed(2)} `;
+          }
+
+          d += `L ${(left + width).toFixed(2)},${top.toFixed(2)} Z`;
+
+          brushPath.setAttribute("d", d);
+
+          if (progress < height) {
+            requestAnimationFrame(animateBrush);
+          } else {
+            animating = false;
+          }
+        }
+
+        // start animation
+        animateBrush();
+      }
+    </script>
+  </body>
+</html>

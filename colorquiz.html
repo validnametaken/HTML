@@ -1,130 +1,356 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Guess the Missing Color</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    margin: 20px;
-    background: #f0f8ff;
-  }
+  <meta charset="UTF-8">
+  <title>Color Quiz Combined</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+    }
 
-  h1 {
-    color: #333;
-  }
+    /* Landing styles */
+    #landing {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      background: #1a1a1a;
+      gap: 30px;
+    }
 
-  #game-container {
-    display: inline-block;
-    margin-top: 20px;
-    position: relative;
-    width: 100%;
-    height: 60vh;
-    border-color: red;
-  }
+    #landing h1 {
+      font-size: 50px;
+      margin: 0;
+      text-align: center;
+      background: linear-gradient(90deg, #FF7F00, #FFFF00, #7FFF00, #00FF00, #00FF7F, #00FFFF, #007FFF, #0000FF, #7F00FF, #FF00FF, #FF007F, #FF0000);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: rainbow 5s linear infinite;
+    }
 
-  #game-container img {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: min(90vw, 90vh);
-    height: auto;
-    border: 2px solid #333;
-    border-radius: 15px;
-    opacity: 0;
-    transition: opacity 1s ease;
-    border-color: green;
-  }
+    @keyframes rainbow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-  #overlayImage {
-    transition: opacity 2s ease;
-    opacity: 0; /* hidden at start */
-  }
+    .spinner-wrapper {
+      position: relative;
+      width: 220px;
+      height: 220px;
+    }
 
-  button {
-    padding: 10px 25px;
-    font-size: 16px;
-    margin-top: 15px;
-    cursor: pointer;
-    border-radius: 8px;
-    border: none;
-    background: #4CAF50;
-    color: white;
-    transition: background 0.3s ease;
-  }
+    .loader {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      transform-origin: 50% 50%;
+      animation: spin 30s linear infinite;
+    }
 
-  button:hover {
-    background: #45a049;
-  }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
 
-  #category {
-    font-weight: bold;
-    margin-top: 20px; /* space below images */
-    font-size: 3vw;
-  }
+    .bar {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 20px;
+      height: 40px;
+      border-radius: 40px;
+      transform-origin: center -100px;
+      opacity: 0.0;
+      transition: transform 0.3s, opacity 0.3s, box-shadow 0.3s;
+    }
 
-  /* Modal styles */
-  .modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-  }
+    .highlight {
+      opacity: 1 !important;
+      transform: scale(1.9) !important;
+      box-shadow: 0 0 5px white;
+      z-index: 2;
+    }
 
-  .modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 400px;
-    border-radius: 10px;
-    text-align: center;
-  }
+    .center-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 30px;
+      font-weight: bold;
+      text-align: center;
+      color: white;
+      text-shadow: 0 0 5px black;
+      pointer-events: none;
+      transition: color 0.3s;
+    }
 
-  .modal-content h2 {
-    margin-top: 0;
-  }
+    .landing-buttons {
+      display: flex;
+      gap: 20px;
+    }
 
-  .modal-content button {
-    margin: 10px;
-  }
-</style>
+    .landing-buttons button {
+      padding: 10px 25px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #4CAF50;
+      color: white;
+    }
+
+    .landing-buttons button:hover {
+      background: #45a049;
+    }
+
+    /* Game styles */
+    #game {
+      display: none;
+      text-align: center;
+      margin: 20px;
+      background: #f0f8ff;
+      min-height: 100vh;
+      padding-bottom: 40px;
+    }
+
+    #game h1 {
+      color: #333;
+    }
+
+    #game-container {
+      display: inline-block;
+      margin-top: 20px;
+      position: relative;
+      width: 100%;
+      height: 60vh;
+    }
+
+    #game-container img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(90vw, 90vh);
+      height: auto;
+      border: 2px solid #333;
+      border-radius: 15px;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    #overlayImage {
+      transition: opacity 2s ease;
+      opacity: 0;
+    }
+
+    #nextBtn {
+      padding: 10px 25px;
+      font-size: 16px;
+      margin-top: 15px;
+      cursor: pointer;
+      border-radius: 8px;
+      border: none;
+      background: #4CAF50;
+      color: white;
+      transition: background 0.3s ease;
+    }
+
+    #nextBtn:hover {
+      background: #45a049;
+    }
+
+    #category {
+      font-weight: bold;
+      margin-top: 20px;
+      font-size: 3vw;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 90%;
+      max-width: 600px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .modal-content h2 {
+      margin-top: 0;
+    }
+
+    .modal-content button {
+      margin: 10px;
+    }
+
+    /* Review grid */
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .color-card {
+      border-radius: 8px;
+      padding: 20px 10px;
+      color: white;
+      font-weight: bold;
+      text-shadow: 0 0 3px black;
+    }
+  </style>
 </head>
 <body>
-  <h1>Color Quiz</h1>
-  <div id="game-container">
-    <img id="baseImage" src="" alt="Base image">
-    <img id="overlayImage" src="" alt="Overlay image">
+  <!-- Landing Page -->
+  <div id="landing">
+    <h1 id="landingHeading">Color Quiz</h1>
+    <div class="spinner-wrapper">
+      <div class="loader"></div>
+      <div class="center-text">Orange</div>
+    </div>
+    <div class="landing-buttons">
+      <button id="startGameBtn">Start Game</button>
+      <button id="reviewBtn">Review</button>
+    </div>
   </div>
-  <p id="category"></p>
-  <button id="nextBtn">Next</button>
 
-  <!-- Completion Modal -->
-  <div id="completionModal" class="modal">
+  <!-- Game Page -->
+  <div id="game">
+    <h1>Color Quiz</h1>
+    <div id="game-container">
+      <img id="baseImage" src="" alt="Base image">
+      <img id="overlayImage" src="" alt="Overlay image">
+    </div>
+    <p id="category"></p>
+    <button id="nextBtn">Next</button>
+
+    <!-- Completion Modal -->
+    <div id="completionModal" class="modal">
+      <div class="modal-content">
+        <h2>Congratulations! 🎉</h2>
+        <p>You've completed all the challenges!</p>
+        <p>Would you like to try again?</p>
+        <button id="tryAgainBtn">Try Again</button>
+        <button id="closeModalBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Review Modal -->
+  <div id="reviewModal" class="modal">
     <div class="modal-content">
-      <h2>Congratulations! 🎉</h2>
-      <p>You've completed all the challenges!</p>
-      <p>Would you like to try again?</p>
-      <button id="tryAgainBtn">Try Again</button>
-      <button id="closeModalBtn">Close</button>
+      <h2>Review Colors</h2>
+      <div class="color-grid" id="colorGrid"></div>
+      <button id="closeReviewBtn">Close</button>
     </div>
   </div>
 
   <script>
+    /* Shared color list */
+    const colors = [
+      { name: "Orange", hex: "#FF7F00" },
+      { name: "Yellow", hex: "#FFFF00" },
+      { name: "Lime", hex: "#7FFF00" },
+      { name: "Green", hex: "#00FF00" },
+      { name: "Spring", hex: "#00FF7F" },
+      { name: "Cyan", hex: "#00FFFF" },
+      { name: "Azure", hex: "#007FFF" },
+      { name: "Blue", hex: "#0000FF" },
+      { name: "Violet", hex: "#7F00FF" },
+      { name: "Magenta", hex: "#FF00FF" },
+      { name: "Pink", hex: "#FF007F" },
+      { name: "Red", hex: "#FF0000" },
+      { name: "Brown", hex: "#8B4513" }
+    ];
+
+    /* Landing spinner logic */
+    const loader = document.querySelector(".loader");
+    const textEl = document.querySelector(".center-text");
+
+    colors.forEach((color, i) => {
+      const bar = document.createElement("div");
+      bar.classList.add("bar");
+      bar.style.background = color.hex;
+      const angle = (360 / colors.length) * i;
+      bar.style.transform = `rotate(${angle}deg) translateY(-100px)`;
+      loader.appendChild(bar);
+    });
+
+    const bars = document.querySelectorAll(".bar");
+    let index = 0;
+
+    function updateHighlight() {
+      bars.forEach(bar => bar.classList.remove("highlight"));
+      bars[index].classList.add("highlight");
+
+      textEl.textContent = colors[index].name;
+      textEl.style.color = colors[index].hex;
+
+      index = (index + 1) % colors.length;
+    }
+
+    setInterval(updateHighlight, 1500);
+    updateHighlight();
+
+    /* Switch to game */
+    const startGameBtn = document.getElementById("startGameBtn");
+    const reviewBtn = document.getElementById("reviewBtn");
+    const landing = document.getElementById("landing");
+    const game = document.getElementById("game");
+
+    startGameBtn.addEventListener("click", () => {
+      landing.style.display = "none";
+      game.style.display = "block";
+    });
+
+    /* Review modal */
+    const reviewModal = document.getElementById("reviewModal");
+    const closeReviewBtn = document.getElementById("closeReviewBtn");
+    const colorGrid = document.getElementById("colorGrid");
+
+    // Build color cards
+    colors.forEach(c => {
+      const card = document.createElement("div");
+      card.classList.add("color-card");
+      card.style.background = c.hex;
+      card.textContent = c.name;
+      colorGrid.appendChild(card);
+    });
+
+    reviewBtn.addEventListener("click", () => {
+      reviewModal.style.display = "block";
+    });
+
+    closeReviewBtn.addEventListener("click", () => {
+      reviewModal.style.display = "none";
+    });
+
+    /* Game logic */
     const challengeSets = [
       { name: 'Brown', category: 'Animal', nocolor: '/colorquiz/bearnocolor.jpg', color: '/colorquiz/bear.jpg' },
       { name: 'Orange', category: 'Animal', nocolor: '/colorquiz/clownfishnocolor.jpg', color: '/colorquiz/clownfish.jpg' },
-      // { name: 'Frog', category: 'Animal', nocolor: 'frog-nocolor.jpg', color: 'frog-color.jpg' },
-      // { name: 'Carrot', category: 'Vegetable', nocolor: 'carrot-nocolor.jpg', color: 'carrot-color.jpg' },
-      // { name: 'Peacock', category: 'Animal', nocolor: 'peacock-nocolor.jpg', color: 'peacock-color.jpg' }
     ];
 
     function shuffle(array) {
@@ -144,55 +370,46 @@
     const categoryEl = document.getElementById('category');
     const nextBtn = document.getElementById('nextBtn');
 
-function loadNextChallenge() {
-  currentIndex++;
-  if (currentIndex >= challenges.length) {
-    // Show completion modal instead of alert
-    completionModal.style.display = "block";
-    return;
-  }
+    function loadNextChallenge() {
+      currentIndex++;
+      if (currentIndex >= challenges.length) {
+        completionModal.style.display = "block";
+        return;
+      }
 
-  const currentSet = challenges[currentIndex];
+      const currentSet = challenges[currentIndex];
 
-  // Immediately hide overlay so no flash of color shows
-  overlayEl.style.transition = "none";   // turn off transition
-  overlayEl.style.opacity = 0;
-  overlayEl.offsetHeight;                // force reflow
-  overlayEl.style.transition = "opacity 2s ease"; // restore transition
+      overlayEl.style.transition = "none";
+      overlayEl.style.opacity = 0;
+      overlayEl.offsetHeight;
+      overlayEl.style.transition = "opacity 2s ease";
 
-  // Hide base, then set src, then fade in
-  baseEl.style.opacity = 0;
-  baseEl.src = currentSet.nocolor;
-  baseEl.onload = () => {
-    baseEl.style.opacity = 1; // fade in nocolor image
-  };
+      baseEl.style.opacity = 0;
+      baseEl.src = currentSet.nocolor;
+      baseEl.onload = () => {
+        baseEl.style.opacity = 1;
+      };
 
-  overlayEl.src = currentSet.color;
+      overlayEl.src = currentSet.color;
 
-  categoryEl.textContent = `What color is missing?`;
-  nextBtn.textContent = "Reveal Color";
-  showingColor = false;
-}
-
+      categoryEl.textContent = `What color is missing?`;
+      nextBtn.textContent = "Reveal Color";
+      showingColor = false;
+    }
 
     function handleButtonClick() {
       if (!showingColor) {
-        // Reveal phase: fade in overlay
         overlayEl.style.opacity = 1;
         categoryEl.textContent = `${challenges[currentIndex].name}!`;
         nextBtn.textContent = "Next Image";
         showingColor = true;
       } else {
-        // Next challenge
         loadNextChallenge();
       }
     }
 
-    // Init
-    loadNextChallenge();
     nextBtn.addEventListener('click', handleButtonClick);
 
-    // Modal elements and buttons
     const completionModal = document.getElementById('completionModal');
     const tryAgainBtn = document.getElementById('tryAgainBtn');
     const closeModalBtn = document.getElementById('closeModalBtn');
@@ -206,6 +423,8 @@ function loadNextChallenge() {
     closeModalBtn.addEventListener('click', () => {
       completionModal.style.display = 'none';
     });
+
+    loadNextChallenge();
   </script>
 </body>
 </html>
