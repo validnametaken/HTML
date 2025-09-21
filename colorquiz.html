@@ -1,430 +1,557 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Color Quiz Combined</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <title>Color Quiz Combined</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      html,
+      body {
+        margin: 0;
+      }
+      body {
+        font-family: "Sniglet", system-ui;
+        /* My backgrund style */
+        background-color: #1e1e2f;
+        color: white;
+        font-family: "Sniglet", system-ui;
+        background-image: radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.02) 1px,
+            transparent 1px
+          ),
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cstyle%3Etext%7Bfont-family:Sniglet,Arial,Helvetica,sans-serif;font-size:4px;fill:white;fill-opacity:0.015;%7D%3C/style%3E%3Ctext x='57' y='50'%3EEnjoy%3C/text%3E%3Ctext x='51' y='25'%3EFrederiksen%3C/text%3E%3Ctext x='54' y='75'%3EWelcome%3C/text%3E%3Ctext x='33' y='50'%3EAndy%3C/text%3E%3Ctext x='85' y='50'%3EPlus%3C/text%3E%3C/svg%3E");
+        background-repeat: repeat, repeat;
+        background-size: 25px 25px, 100px 100px;
+        background-position: 0 0, 0 0;
+      }
 
-    /* Landing styles */
-    #landing {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      height: 100vh;
-      background: #1a1a1a;
-      gap: 30px;
-    }
+              @font-face {
+            font-family: 'Sniglet';
+            src: url('Sniglet-Regular.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
 
-    #landing h1 {
-      font-size: 50px;
-      margin: 0;
-      text-align: center;
-      background: linear-gradient(90deg, #FF7F00, #FFFF00, #7FFF00, #00FF00, #00FF7F, #00FFFF, #007FFF, #0000FF, #7F00FF, #FF00FF, #FF007F, #FF0000);
-      background-size: 200% 200%;
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: rainbow 5s linear infinite;
-    }
+      /* Landing styles */
+      #landing {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        height: 100vh;
+        /* background: #1a1a1a; */
+        gap: 30px;
+      }
 
-    @keyframes rainbow {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
+      #landing h1 {
+        font-size: 50px;
+        margin: 0;
+        text-align: center;
+        background: linear-gradient(
+          90deg,
+          #ff7f00,
+          #ffff00,
+          #7fff00,
+          #00ff00,
+          #00ff7f,
+          #00ffff,
+          #007fff,
+          #0000ff,
+          #7f00ff,
+          #ff00ff,
+          #ff007f,
+          #ff0000
+        );
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: rainbow 5s linear infinite;
+      }
 
-    .spinner-wrapper {
-      position: relative;
-      width: 220px;
-      height: 220px;
-    }
+      @keyframes rainbow {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
 
-    .loader {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      transform-origin: 50% 50%;
-      animation: spin 30s linear infinite;
-    }
+      .spinner-wrapper {
+        position: relative;
+        width: 420px;
+        height: 420px;
+      }
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+      .loader {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        transform-origin: 50% 50%;
+        animation: spin 30s linear infinite;
+      }
 
-    .bar {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 20px;
-      height: 40px;
-      border-radius: 40px;
-      transform-origin: center -100px;
-      opacity: 0.0;
-      transition: transform 0.3s, opacity 0.3s, box-shadow 0.3s;
-    }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
 
-    .highlight {
-      opacity: 1 !important;
-      transform: scale(1.9) !important;
-      box-shadow: 0 0 5px white;
-      z-index: 2;
-    }
+      .bar {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 20px;
+        height: 40px;
+        border-radius: 40px;
+        transform-origin: center -100px;
+        opacity: 0;
+        transition: transform 0.3s, opacity 0.3s, box-shadow 0.3s;
+      }
 
-    .center-text {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 30px;
-      font-weight: bold;
-      text-align: center;
-      color: white;
-      text-shadow: 0 0 5px black;
-      pointer-events: none;
-      transition: color 0.3s;
-    }
+      .highlight {
+        opacity: 1 !important;
+        transform: scale(1.9) !important;
+        box-shadow: 0 0 5px white;
+        z-index: 2;
+      }
 
-    .landing-buttons {
-      display: flex;
-      gap: 20px;
-    }
+      .center-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 30px;
+        font-weight: bold;
+        text-align: center;
+        color: white;
+        text-shadow: 0 0 5px black;
+        pointer-events: none;
+        transition: color 0.3s;
+      }
 
-    .landing-buttons button {
-      padding: 10px 25px;
-      font-size: 18px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      background: #4CAF50;
-      color: white;
-    }
+      .landing-buttons {
+        display: flex;
+        gap: 20px;
+      }
 
-    .landing-buttons button:hover {
-      background: #45a049;
-    }
+      .landing-buttons button {
+        padding: 10px 25px;
+        font-size: 18px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        background: #4caf50;
+        color: white;
+      }
 
-    /* Game styles */
-    #game {
-      display: none;
-      text-align: center;
-      margin: 20px;
-      background: #f0f8ff;
-      min-height: 100vh;
-      padding-bottom: 40px;
-    }
+      .landing-buttons button:hover {
+        background: #45a049;
+      }
 
-    #game h1 {
-      color: #333;
-    }
+      /* Game styles */
+      #game {
+        display: none;
+        text-align: center;
+        margin: 20px;
+        /* background: #f0f8ff; */
+        min-height: 100vh;
+        padding-bottom: 40px;
+      }
 
-    #game-container {
-      display: inline-block;
-      margin-top: 20px;
-      position: relative;
-      width: 100%;
-      height: 60vh;
-    }
+      #game h1 {
+        color: white;
+      }
 
-    #game-container img {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: min(90vw, 90vh);
-      height: auto;
-      border: 2px solid #333;
-      border-radius: 15px;
-      opacity: 0;
-      transition: opacity 1s ease;
-    }
+      #game-container {
+        display: inline-block;
+        margin-top: 20px;
+        position: relative;
+        width: 100%;
+        height: 60vh;
+      }
 
-    #overlayImage {
-      transition: opacity 2s ease;
-      opacity: 0;
-    }
+      #game-container img {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: min(90vw, 90vh);
+        height: auto;
+        border: 2px solid #333;
+        border-radius: 15px;
+        opacity: 0;
+        transition: opacity 1s ease;
+      }
 
-    #nextBtn {
-      padding: 10px 25px;
-      font-size: 16px;
-      margin-top: 15px;
-      cursor: pointer;
-      border-radius: 8px;
-      border: none;
-      background: #4CAF50;
-      color: white;
-      transition: background 0.3s ease;
-    }
+      #overlayImage {
+        transition: opacity 2s ease;
+        opacity: 0;
+      }
 
-    #nextBtn:hover {
-      background: #45a049;
-    }
+      #nextBtn {
+        padding: 10px 25px;
+        font-size: 16px;
+        margin-top: 15px;
+        cursor: pointer;
+        border-radius: 8px;
+        border: none;
+        background: #4caf50;
+        color: white;
+        transition: background 0.3s ease;
+      }
 
-    #category {
-      font-weight: bold;
-      margin-top: 20px;
-      font-size: 3vw;
-    }
+      #nextBtn:hover {
+        background: #45a049;
+      }
 
-    /* Modal styles */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 10;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-    }
+      #category {
+        font-weight: bold;
+        margin-top: 20px;
+        font-size: 3vw;
+      }
 
-    .modal-content {
-      background-color: #fefefe;
-      margin: 10% auto;
-      padding: 20px;
-      border: 1px solid #888;
-      width: 90%;
-      max-width: 600px;
-      border-radius: 10px;
-      text-align: center;
-    }
+      /* Modal styles */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 10;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
 
-    .modal-content h2 {
-      margin-top: 0;
-    }
+      .modal-content {
+        background-color: #301934;
+        margin: 10% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 90%;
+        max-width: 600px;
+        border-radius: 10px;
+        text-align: center;
+      }
 
-    .modal-content button {
-      margin: 10px;
-    }
+      .modal-content h2 {
+        margin-top: 0;
+      }
 
-    /* Review grid */
-    .color-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-      gap: 15px;
-      margin-top: 20px;
-    }
+      .modal-content button {
+        margin: 10px;
+      }
 
-    .color-card {
-      border-radius: 8px;
-      padding: 20px 10px;
-      color: white;
-      font-weight: bold;
-      text-shadow: 0 0 3px black;
-    }
-  </style>
-</head>
-<body>
-  <!-- Landing Page -->
-  <div id="landing">
-    <h1 id="landingHeading">Color Quiz</h1>
-    <div class="spinner-wrapper">
-      <div class="loader"></div>
-      <div class="center-text">Orange</div>
-    </div>
-    <div class="landing-buttons">
-      <button id="startGameBtn">Start Game</button>
-      <button id="reviewBtn">Review</button>
-    </div>
-  </div>
+      /* Review grid */
+      .color-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+      }
 
-  <!-- Game Page -->
-  <div id="game">
-    <h1>Color Quiz</h1>
-    <div id="game-container">
-      <img id="baseImage" src="" alt="Base image">
-      <img id="overlayImage" src="" alt="Overlay image">
-    </div>
-    <p id="category"></p>
-    <button id="nextBtn">Next</button>
-
-    <!-- Completion Modal -->
-    <div id="completionModal" class="modal">
-      <div class="modal-content">
-        <h2>Congratulations! 🎉</h2>
-        <p>You've completed all the challenges!</p>
-        <p>Would you like to try again?</p>
-        <button id="tryAgainBtn">Try Again</button>
-        <button id="closeModalBtn">Close</button>
+      .color-card {
+        border-radius: 8px;
+        padding: 20px 10px;
+        color: white;
+        font-weight: bold;
+        text-shadow: 0 0 3px black;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Landing Page -->
+    <div id="landing">
+      <h1 id="landingHeading">Color Quiz</h1>
+      <div class="spinner-wrapper">
+        <div class="loader"></div>
+        <div class="center-text">Orange</div>
+      </div>
+      <div class="landing-buttons">
+        <button id="startGameBtn">Start Game</button>
+        <button id="reviewBtn">Review</button>
       </div>
     </div>
-  </div>
 
-  <!-- Review Modal -->
-  <div id="reviewModal" class="modal">
-    <div class="modal-content">
-      <h2>Review Colors</h2>
-      <div class="color-grid" id="colorGrid"></div>
-      <button id="closeReviewBtn">Close</button>
+    <!-- Game Page -->
+    <div id="game">
+      <h1>Color Quiz</h1>
+      <div id="game-container">
+        <img id="baseImage" src="" alt="Base image" />
+        <img id="overlayImage" src="" alt="Overlay image" />
+      </div>
+      <p id="category"></p>
+      <button id="nextBtn">Next</button>
+
+      <!-- Completion Modal -->
+      <div id="completionModal" class="modal">
+        <div class="modal-content">
+          <h2>Congratulations! 🎉</h2>
+          <p>You've completed all the challenges!</p>
+          <p>Would you like to try again?</p>
+          <button id="tryAgainBtn">Try Again</button>
+          <button id="closeModalBtn">Menu</button>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <script>
-    /* Shared color list */
-    const colors = [
-      { name: "Orange", hex: "#FF7F00" },
-      { name: "Yellow", hex: "#FFFF00" },
-      { name: "Lime", hex: "#7FFF00" },
-      { name: "Green", hex: "#00FF00" },
-      { name: "Spring", hex: "#00FF7F" },
-      { name: "Cyan", hex: "#00FFFF" },
-      { name: "Azure", hex: "#007FFF" },
-      { name: "Blue", hex: "#0000FF" },
-      { name: "Violet", hex: "#7F00FF" },
-      { name: "Magenta", hex: "#FF00FF" },
-      { name: "Pink", hex: "#FF007F" },
-      { name: "Red", hex: "#FF0000" },
-      { name: "Brown", hex: "#8B4513" }
-    ];
+    <!-- Review Modal -->
+    <div id="reviewModal" class="modal">
+      <div class="modal-content">
+        <h2>Review Colors</h2>
+        <div class="color-grid" id="colorGrid"></div>
+        <button id="closeReviewBtn">Menu</button>
+      </div>
+    </div>
 
-    /* Landing spinner logic */
-    const loader = document.querySelector(".loader");
-    const textEl = document.querySelector(".center-text");
+    <script>
+      /* Shared color list */
+      const colors = [
+        { name: "Orange", hex: "#FF7F00" },
+        { name: "Yellow", hex: "#FFFF00" },
+        { name: "Green", hex: "#008000" },
+        { name: "Blue", hex: "#0000FF" },
+        { name: "Pink", hex: "#FF007F" },
+        { name: "Red", hex: "#FF0000" },
+        { name: "Brown", hex: "#8B4513" },
+        { name: "White", hex: "#FFFFFF" },
+        { name: "Black", hex: "#000000" },
+        { name: "Grey", hex: "#808080" },
+        { name: "Purple", hex: "#800080" },
+      ];
 
-    colors.forEach((color, i) => {
-      const bar = document.createElement("div");
-      bar.classList.add("bar");
-      bar.style.background = color.hex;
-      const angle = (360 / colors.length) * i;
-      bar.style.transform = `rotate(${angle}deg) translateY(-100px)`;
-      loader.appendChild(bar);
-    });
+      /* Landing spinner logic */
+      const loader = document.querySelector(".loader");
+      const textEl = document.querySelector(".center-text");
 
-    const bars = document.querySelectorAll(".bar");
-    let index = 0;
+      colors.forEach((color, i) => {
+        const bar = document.createElement("div");
+        bar.classList.add("bar");
+        bar.style.background = color.hex;
+        const angle = (360 / colors.length) * i;
+        bar.style.transform = `rotate(${angle}deg) translateY(-100px)`;
+        loader.appendChild(bar);
+      });
 
-    function updateHighlight() {
-      bars.forEach(bar => bar.classList.remove("highlight"));
-      bars[index].classList.add("highlight");
+      const bars = document.querySelectorAll(".bar");
+      let index = 0;
 
-      textEl.textContent = colors[index].name;
-      textEl.style.color = colors[index].hex;
+      function updateHighlight() {
+        bars.forEach((bar) => bar.classList.remove("highlight"));
+        bars[index].classList.add("highlight");
 
-      index = (index + 1) % colors.length;
-    }
+        textEl.textContent = colors[index].name;
+        textEl.style.color = colors[index].hex;
 
-    setInterval(updateHighlight, 1500);
-    updateHighlight();
-
-    /* Switch to game */
-    const startGameBtn = document.getElementById("startGameBtn");
-    const reviewBtn = document.getElementById("reviewBtn");
-    const landing = document.getElementById("landing");
-    const game = document.getElementById("game");
-
-    startGameBtn.addEventListener("click", () => {
-      landing.style.display = "none";
-      game.style.display = "block";
-    });
-
-    /* Review modal */
-    const reviewModal = document.getElementById("reviewModal");
-    const closeReviewBtn = document.getElementById("closeReviewBtn");
-    const colorGrid = document.getElementById("colorGrid");
-
-    // Build color cards
-    colors.forEach(c => {
-      const card = document.createElement("div");
-      card.classList.add("color-card");
-      card.style.background = c.hex;
-      card.textContent = c.name;
-      colorGrid.appendChild(card);
-    });
-
-    reviewBtn.addEventListener("click", () => {
-      reviewModal.style.display = "block";
-    });
-
-    closeReviewBtn.addEventListener("click", () => {
-      reviewModal.style.display = "none";
-    });
-
-    /* Game logic */
-    const challengeSets = [
-      { name: 'Brown', category: 'Animal', nocolor: '/colorquiz/bearnocolor.jpg', color: '/colorquiz/bear.jpg' },
-      { name: 'Orange', category: 'Animal', nocolor: '/colorquiz/clownfishnocolor.jpg', color: '/colorquiz/clownfish.jpg' },
-    ];
-
-    function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-      return array;
-    }
-
-    const challenges = shuffle([...challengeSets]);
-    let currentIndex = -1;
-    let showingColor = false;
-
-    const baseEl = document.getElementById('baseImage');
-    const overlayEl = document.getElementById('overlayImage');
-    const categoryEl = document.getElementById('category');
-    const nextBtn = document.getElementById('nextBtn');
-
-    function loadNextChallenge() {
-      currentIndex++;
-      if (currentIndex >= challenges.length) {
-        completionModal.style.display = "block";
-        return;
+        index = (index + 1) % colors.length;
       }
 
-      const currentSet = challenges[currentIndex];
+      setInterval(updateHighlight, 1500);
+      updateHighlight();
 
-      overlayEl.style.transition = "none";
-      overlayEl.style.opacity = 0;
-      overlayEl.offsetHeight;
-      overlayEl.style.transition = "opacity 2s ease";
+      /* Switch to game */
+      const startGameBtn = document.getElementById("startGameBtn");
+      const reviewBtn = document.getElementById("reviewBtn");
+      const landing = document.getElementById("landing");
+      const game = document.getElementById("game");
 
-      baseEl.style.opacity = 0;
-      baseEl.src = currentSet.nocolor;
-      baseEl.onload = () => {
-        baseEl.style.opacity = 1;
-      };
+      startGameBtn.addEventListener("click", () => {
+        landing.style.display = "none";
+        game.style.display = "block";
+      });
 
-      overlayEl.src = currentSet.color;
+      /* Review modal */
+      const reviewModal = document.getElementById("reviewModal");
+      const closeReviewBtn = document.getElementById("closeReviewBtn");
+      const colorGrid = document.getElementById("colorGrid");
 
-      categoryEl.textContent = `What color is missing?`;
-      nextBtn.textContent = "Reveal Color";
-      showingColor = false;
-    }
+      // Build color cards
+      colors.forEach((c) => {
+        const card = document.createElement("div");
+        card.classList.add("color-card");
+        card.style.background = c.hex;
+        card.textContent = c.name;
+        colorGrid.appendChild(card);
+      });
 
-    function handleButtonClick() {
-      if (!showingColor) {
-        overlayEl.style.opacity = 1;
-        categoryEl.textContent = `${challenges[currentIndex].name}!`;
-        nextBtn.textContent = "Next Image";
-        showingColor = true;
-      } else {
+      reviewBtn.addEventListener("click", () => {
+        reviewModal.style.display = "block";
+      });
+
+      closeReviewBtn.addEventListener("click", () => {
+        reviewModal.style.display = "none";
+
+        
+      });
+
+      /* Game logic */
+      const challengeSets = [
+        {
+          name: "Brown",
+          category: "Animal",
+          nocolor: "/colorquiz/bearnocolor.jpg",
+          color: "/colorquiz/bear.jpg",
+        },
+        {
+          name: "Orange",
+          category: "Animal",
+          nocolor: "/colorquiz/clownfishnocolor.jpg",
+          color: "/colorquiz/clownfish.jpg",
+        },
+        {
+          name: "White",
+          category: "Animal",
+          nocolor: "/colorquiz/cownocolor.jpg",
+          color: "/colorquiz/cow.jpg",
+        },
+        {
+          name: "Yellow",
+          category: "Animal",
+          nocolor: "/colorquiz/ducknocolor.jpg",
+          color: "/colorquiz/duck.jpg",
+        },
+        {
+          name: "Grey",
+          category: "Animal",
+          nocolor: "/colorquiz/elephantnocolor.jpg",
+          color: "/colorquiz/elephant.jpg",
+        },
+        {
+          name: "Pink",
+          category: "Animal",
+          nocolor: "/colorquiz/flamingonocolor.jpg",
+          color: "/colorquiz/flamingo.jpg",
+        },
+        {
+          name: "Green",
+          category: "Animal",
+          nocolor: "/colorquiz/frognocolor.jpg",
+          color: "/colorquiz/frog.jpg",
+        },
+        {
+          name: "Red",
+          category: "Animal",
+          nocolor: "/colorquiz/ladybugnocolor.jpg",
+          color: "/colorquiz/ladybug.jpg",
+        },
+        {
+          name: "Black",
+          category: "Animal",
+          nocolor: "/colorquiz/pandanocolor.jpg",
+          color: "/colorquiz/panda.jpg",
+        },
+        {
+          name: "Blue",
+          category: "Animal",
+          nocolor: "/colorquiz/peacocknocolor.jpg",
+          color: "/colorquiz/peacock.jpg",
+        },
+        {
+          name: "White",
+          category: "Animal",
+          nocolor: "/colorquiz/penguinnocolor.jpg",
+          color: "/colorquiz/penguin.jpg",
+        },
+        {
+          name: "Pink",
+          category: "Animal",
+          nocolor: "/colorquiz/pignocolor.jpg",
+          color: "/colorquiz/pig.jpg",
+        },
+                {
+          name: "Purple",
+          category: "Animal",
+          nocolor: "/colorquiz/octopusnocolor.jpg",
+          color: "/colorquiz/octopus.jpg",
+        },
+      ];
+
+      function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+      }
+
+      const challenges = shuffle([...challengeSets]);
+      let currentIndex = -1;
+      let showingColor = false;
+
+      const baseEl = document.getElementById("baseImage");
+      const overlayEl = document.getElementById("overlayImage");
+      const categoryEl = document.getElementById("category");
+      const nextBtn = document.getElementById("nextBtn");
+
+      function loadNextChallenge() {
+        currentIndex++;
+        if (currentIndex >= challenges.length) {
+          completionModal.style.display = "block";
+          return;
+        }
+
+        const currentSet = challenges[currentIndex];
+
+        overlayEl.style.transition = "none";
+        overlayEl.style.opacity = 0;
+        overlayEl.offsetHeight;
+        overlayEl.style.transition = "opacity 2s ease";
+
+        baseEl.style.opacity = 0;
+        baseEl.src = currentSet.nocolor;
+        baseEl.onload = () => {
+          baseEl.style.opacity = 1;
+        };
+
+        overlayEl.src = currentSet.color;
+
+        categoryEl.textContent = `What color is missing?`;
+        nextBtn.textContent = "Reveal Color";
+        showingColor = false;
+      }
+
+      function handleButtonClick() {
+        if (!showingColor) {
+          overlayEl.style.opacity = 1;
+          categoryEl.textContent = `${challenges[currentIndex].name}!`;
+          nextBtn.textContent = "Next Image";
+          showingColor = true;
+        } else {
+          loadNextChallenge();
+        }
+      }
+
+      nextBtn.addEventListener("click", handleButtonClick);
+
+      const completionModal = document.getElementById("completionModal");
+      const tryAgainBtn = document.getElementById("tryAgainBtn");
+      const closeModalBtn = document.getElementById("closeModalBtn");
+
+      tryAgainBtn.addEventListener("click", () => {
+        completionModal.style.display = "none";
+        currentIndex = -1;
         loadNextChallenge();
-      }
-    }
+      });
 
-    nextBtn.addEventListener('click', handleButtonClick);
+      closeModalBtn.addEventListener("click", () => {
+        completionModal.style.display = "none";
+                landing.style.display = "";
+        game.style.display = "none";
+        completionModal.style.display = "block";
+      });
 
-    const completionModal = document.getElementById('completionModal');
-    const tryAgainBtn = document.getElementById('tryAgainBtn');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-
-    tryAgainBtn.addEventListener('click', () => {
-      completionModal.style.display = 'none';
-      currentIndex = -1;
       loadNextChallenge();
-    });
-
-    closeModalBtn.addEventListener('click', () => {
-      completionModal.style.display = 'none';
-    });
-
-    loadNextChallenge();
-  </script>
-</body>
+    </script>
+  </body>
 </html>
