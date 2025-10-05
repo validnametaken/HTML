@@ -1,0 +1,5144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎨 Mixbox Pigment Mixer</title>
+    <style>
+      body {
+        font-family: "Alata", sans-serif;
+        background: #f9fafb;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2em;
+      }
+      h1 {
+        font-size: 1.8em;
+        margin-bottom: 1em;
+      }
+      .mix-container {
+        display: flex;
+        gap: 2em;
+        align-items: flex-start;
+        margin-bottom: 1em;
+      }
+      .color-input {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .color-box {
+        width: 120px;
+        height: 120px;
+        border-radius: 12px;
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+        margin-top: 1em;
+      }
+      .slider-container {
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+        margin-bottom: 1em;
+      }
+      .slider {
+        width: 220px;
+      }
+      .rgb-text,
+      .name-text {
+        font-family: monospace;
+        background: #eee;
+        padding: 0.4em 0.8em;
+        border-radius: 6px;
+        margin-top: 0.3em;
+      }
+
+      
+    </style>
+  </head>
+  <body>
+    <h1>🎨 Mixbox Pigment Mixer</h1>
+
+    <div class="mix-container">
+      <!-- Color 1 -->
+      <div class="color-input">
+        <label for="color1">Color 1:</label>
+        <input type="color" id="color1" value="#002185" />
+
+        <!-- Hex input with accessible label -->
+        <label for="hex1" class="sr-only">Hex code for Color 1</label>
+        <input
+          type="text"
+          class="rgb-text"
+          id="hex1"
+          value="#002185"
+          maxlength="7"
+          placeholder="#002185"
+          title="Enter hex color code for Color 1"
+        />
+
+        <!-- Nearest color name -->
+        <div class="name-text" id="name1"></div>
+      </div>
+
+      <!-- Color 2 -->
+      <div class="color-input">
+        <label for="color2">Color 2:</label>
+        <input type="color" id="color2" value="#fcd300" />
+
+        <!-- Hex input with accessible label -->
+        <label for="hex2" class="sr-only">Hex code for Color 2</label>
+        <input
+          type="text"
+          class="rgb-text"
+          id="hex2"
+          value="#fcd300"
+          maxlength="7"
+          placeholder="#fcd300"
+          title="Enter hex color code for Color 2"
+        />
+
+        <!-- Nearest color name -->
+        <div class="name-text" id="name2"></div>
+      </div>
+    </div>
+
+    <div class="slider-container">
+      <label for="ratio">Mix ratio:</label>
+      <input
+        type="range"
+        id="ratio"
+        class="slider"
+        min="0"
+        max="1"
+        step="0.01"
+        value="0.5"
+        title="Adjust the mix ratio between Color 1 and Color 2"
+      />
+      <span id="ratioLabel">50%</span>
+    </div>
+
+    <div class="color-box" id="resultBox"></div>
+    <div class="name-text" id="resultName"></div>
+    <div class="rgb-text" id="rgbText"></div>
+
+    <script src="https://scrtwpns.com/mixbox.js"></script>
+
+    <script>
+      // --- Color utilities ---
+      function hexToRgb(hex) {
+        const bigint = parseInt(hex.slice(1), 16);
+        return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
+      }
+
+      function rgbToHex(rgb) {
+        return (
+          "#" +
+          rgb.map((v) => Math.round(v).toString(16).padStart(2, "0")).join("")
+        );
+      }
+
+      function rgbToCss(rgb) {
+        return `rgb(${rgb.map((v) => Math.round(v)).join(",")})`;
+      }
+
+      // --- Nearest color name finder (based on HTML color names) ---
+      const colorList = [
+        {
+          name: "Absolute Zero",
+          hex: "#0048ba",
+        },
+        {
+          name: "Acajou",
+          hex: "#4c2f27",
+        },
+        {
+          name: "Acid green",
+          hex: "#b0bf1a",
+        },
+        {
+          name: "Aero",
+          hex: "#7cb9e8",
+        },
+        {
+          name: "Aero blue",
+          hex: "#c9ffe5",
+        },
+        {
+          name: "African violet",
+          hex: "#b284be",
+        },
+        {
+          name: "Air Force blue (RAF)",
+          hex: "#5d8aa8",
+        },
+        {
+          name: "Air Force blue (USAF)",
+          hex: "#00308f",
+        },
+        {
+          name: "Air superiority blue",
+          hex: "#72a0c1",
+        },
+        {
+          name: "Alabama crimson",
+          hex: "#af002a",
+        },
+        {
+          name: "Alabaster",
+          hex: "#f2f0e6",
+        },
+        {
+          name: "AliceBlue",
+          hex: "#F0F8FF",
+        },
+        {
+          name: "Alizarin crimson",
+          hex: "#e32636",
+        },
+        {
+          name: "Alloy orange",
+          hex: "#c46210",
+        },
+        {
+          name: "Almond",
+          hex: "#efdecd",
+        },
+        {
+          name: "Aloeswood brown (Tonocha)",
+          hex: "#5a6457",
+        },
+        {
+          name: "Aloewood-color (Kyara-iro)",
+          hex: "#6a432d",
+        },
+        {
+          name: "Aluminum",
+          hex: "#d6d6d6",
+        },
+        {
+          name: "Aluminum foil",
+          hex: "#d2d9db",
+        },
+        {
+          name: "Amaranth",
+          hex: "#e52b50",
+        },
+        {
+          name: "Amaranth deep purple",
+          hex: "#9f2b68",
+        },
+        {
+          name: "Amaranth pink",
+          hex: "#f19cbb",
+        },
+        {
+          name: "Amaranth purple",
+          hex: "#ab274f",
+        },
+        {
+          name: "Amaranth red",
+          hex: "#d3212d",
+        },
+        {
+          name: "Amazon",
+          hex: "#3b7a57",
+        },
+        {
+          name: "Amber",
+          hex: "#ffbf00",
+        },
+        {
+          name: "Amber (Kohaku-iro)",
+          hex: "#ca6924",
+        },
+        {
+          name: "Amber (SAE/ECE)",
+          hex: "#ff7e00",
+        },
+        {
+          name: "American blue",
+          hex: "#3b3b6d",
+        },
+        {
+          name: "American bronze",
+          hex: "#391802",
+        },
+        {
+          name: "American brown",
+          hex: "#804040",
+        },
+        {
+          name: "American gold",
+          hex: "#d3af37",
+        },
+        {
+          name: "American green",
+          hex: "#34b334",
+        },
+        {
+          name: "American orange",
+          hex: "#ff8b00",
+        },
+        {
+          name: "American pink",
+          hex: "#ff9899",
+        },
+        {
+          name: "American purple",
+          hex: "#431c53",
+        },
+        {
+          name: "American red",
+          hex: "#b32134",
+        },
+        {
+          name: "American rose",
+          hex: "#ff033e",
+        },
+        {
+          name: "American silver",
+          hex: "#cfcfcf",
+        },
+        {
+          name: "American violet",
+          hex: "#551b8c",
+        },
+        {
+          name: "American yellow",
+          hex: "#f2b400",
+        },
+        {
+          name: "Amethyst",
+          hex: "#9966cc",
+        },
+        {
+          name: "Amur cork tree (Phellodendron amurense) (Kihada)",
+          hex: "#f3c13a",
+        },
+        {
+          name: "Anti-flash white",
+          hex: "#f2f3f4",
+        },
+        {
+          name: "Antique brass",
+          hex: "#cd9575",
+        },
+        {
+          name: "Antique bronze",
+          hex: "#665d1e",
+        },
+        {
+          name: "Antique fuchsia",
+          hex: "#915c83",
+        },
+        {
+          name: "Antique ruby",
+          hex: "#841b2d",
+        },
+        {
+          name: "AntiqueWhite",
+          hex: "#FAEBD7",
+        },
+        {
+          name: "Apple",
+          hex: "#66b447",
+        },
+        {
+          name: "Apple green",
+          hex: "#8db600",
+        },
+        {
+          name: "Apricot",
+          hex: "#fbceb1",
+        },
+        {
+          name: "Aqua",
+          hex: "#00ffff",
+        },
+        {
+          name: "Aqua Blue color (Mizu-iro)",
+          hex: "#86aba5",
+        },
+        {
+          name: "Aquamarine",
+          hex: "#7FFFD4",
+        },
+        {
+          name: "Arctic lime",
+          hex: "#d0ff14",
+        },
+        {
+          name: "Argent",
+          hex: "#c0c0c0",
+        },
+        {
+          name: "Army green",
+          hex: "#4b5320",
+        },
+        {
+          name: "Artichoke",
+          hex: "#8f9779",
+        },
+        {
+          name: "Arylide yellow",
+          hex: "#e9d66b",
+        },
+        {
+          name: "Asda Green",
+          hex: "#7dc242",
+        },
+        {
+          name: "Asda Green (1985)",
+          hex: "#00dea4",
+        },
+        {
+          name: "Asda Green (1994)",
+          hex: "#80c197",
+        },
+        {
+          name: "Asda Green (1999)",
+          hex: "#66c992",
+        },
+        {
+          name: "Asda Green (2002)",
+          hex: "#32ad61",
+        },
+        {
+          name: "Asda Orange",
+          hex: "#c86500",
+        },
+        {
+          name: "Asda Orange (1968)",
+          hex: "#ca7309",
+        },
+        {
+          name: "Ash gray",
+          hex: "#b2beb5",
+        },
+        {
+          name: "Asparagus",
+          hex: "#87a96b",
+        },
+        {
+          name: "Ateneo blue",
+          hex: "#003a6c",
+        },
+        {
+          name: "Atomic tangerine",
+          hex: "#ff9966",
+        },
+        {
+          name: "Auburn",
+          hex: "#a52a2a",
+        },
+        {
+          name: "Aureolin",
+          hex: "#fdee00",
+        },
+        {
+          name: "AuroMetalSaurus",
+          hex: "#6e7f80",
+        },
+        {
+          name: "Avocado",
+          hex: "#568203",
+        },
+        {
+          name: "Awesome",
+          hex: "#ff2052",
+        },
+        {
+          name: "Axolotl",
+          hex: "#63775b",
+        },
+        {
+          name: "Azure",
+          hex: "#f0ffff",
+        },
+        {
+          name: "Azure (Compendium)",
+          hex: "#007fff",
+        },
+        {
+          name: "Azureish white",
+          hex: "#dbe9f4",
+        },
+        {
+          name: "B'dazzled blue",
+          hex: "#2e5894",
+        },
+        {
+          name: "Baby blue",
+          hex: "#89cff0",
+        },
+        {
+          name: "Baby blue eyes",
+          hex: "#a1caf1",
+        },
+        {
+          name: "Baby pink",
+          hex: "#f4c2c2",
+        },
+        {
+          name: "Baby powder",
+          hex: "#fefefa",
+        },
+        {
+          name: "Baiko brown (Baikōcha)",
+          hex: "#857c55",
+        },
+        {
+          name: "Baker-Miller pink",
+          hex: "#ff91af",
+        },
+        {
+          name: "Ball blue",
+          hex: "#21abcd",
+        },
+        {
+          name: "Banana Mania",
+          hex: "#fae7b5",
+        },
+        {
+          name: "Banana yellow",
+          hex: "#ffe135",
+        },
+        {
+          name: "Bangladesh green",
+          hex: "#006a4e",
+        },
+        {
+          name: "Barbie Pink",
+          hex: "#e94196",
+        },
+        {
+          name: "Barbie Pink (1959-1975)",
+          hex: "#e85395",
+        },
+        {
+          name: "Barbie Pink (1975-1990)",
+          hex: "#d3419d",
+        },
+        {
+          name: "Barbie Pink (1990-1999)",
+          hex: "#f364a2",
+        },
+        {
+          name: "Barbie Pink (1999-2004)",
+          hex: "#f7238a",
+        },
+        {
+          name: "Barbie Pink (2004-2005)",
+          hex: "#ff3988",
+        },
+        {
+          name: "Barbie Pink (2005-2009)",
+          hex: "#fc419a",
+        },
+        {
+          name: "Barn red",
+          hex: "#7c0a02",
+        },
+        {
+          name: "Battery charged blue",
+          hex: "#1dacd6",
+        },
+        {
+          name: "Battleship grey",
+          hex: "#848482",
+        },
+        {
+          name: "Bayside",
+          hex: "#5fc9bf",
+        },
+        {
+          name: "Bazaar",
+          hex: "#98777b",
+        },
+        {
+          name: "Beau blue",
+          hex: "#bcd4e6",
+        },
+        {
+          name: "Beaver",
+          hex: "#9f8170",
+        },
+        {
+          name: "Beer",
+          hex: "#f28e1c",
+        },
+        {
+          name: "Begonia",
+          hex: "#fa6e79",
+        },
+        {
+          name: "Beige",
+          hex: "#F5F5DC",
+        },
+        {
+          name: "Bellflower color (Kikyō-iro)",
+          hex: "#5d3f6a",
+        },
+        {
+          name: "Betel nut dye (Binrōjizome)",
+          hex: "#352925",
+        },
+        {
+          name: "Big dip o’ruby",
+          hex: "#9c2542",
+        },
+        {
+          name: "Big Foot Feet",
+          hex: "#e88e5a",
+        },
+        {
+          name: "Birch brown (Kabacha)",
+          hex: "#b14a30",
+        },
+        {
+          name: "Bisque",
+          hex: "#FFE4C4",
+        },
+        {
+          name: "Bistre",
+          hex: "#3d2b1f",
+        },
+        {
+          name: "Bistre brown",
+          hex: "#967117",
+        },
+        {
+          name: "Bitter lemon",
+          hex: "#cae00d",
+        },
+        {
+          name: "Bitter lime",
+          hex: "#bfff00",
+        },
+        {
+          name: "Bittersweet",
+          hex: "#fe6f5e",
+        },
+        {
+          name: "Bittersweet shimmer",
+          hex: "#bf4f51",
+        },
+        {
+          name: "Black",
+          hex: "#000000",
+        },
+        {
+          name: "Black (Kokushoku)",
+          hex: "#171412",
+        },
+        {
+          name: "Black bean",
+          hex: "#3d0c02",
+        },
+        {
+          name: "Black chestnut oak (Kurotsurubami)",
+          hex: "#252321",
+        },
+        {
+          name: "Black chocolate",
+          hex: "#1b1811",
+        },
+        {
+          name: "Black coffee",
+          hex: "#3b2f2f",
+        },
+        {
+          name: "Black coral",
+          hex: "#54626f",
+        },
+        {
+          name: "Black kite (bird species) (Kurotobi)",
+          hex: "#351e1c",
+        },
+        {
+          name: "Black leather jacket",
+          hex: "#253529",
+        },
+        {
+          name: "Black olive",
+          hex: "#3b3c36",
+        },
+        {
+          name: "Black Shadows",
+          hex: "#bfafb2",
+        },
+        {
+          name: "BlanchedAlmond",
+          hex: "#FFEBCD",
+        },
+        {
+          name: "Blast-off bronze",
+          hex: "#a57164",
+        },
+        {
+          name: "Bleu de France",
+          hex: "#318ce7",
+        },
+        {
+          name: "Blizzard blue",
+          hex: "#ace5ee",
+        },
+        {
+          name: "Blond",
+          hex: "#faf0be",
+        },
+        {
+          name: "Blood",
+          hex: "#8a0303",
+        },
+        {
+          name: "Blood (Animal)",
+          hex: "#a41313",
+        },
+        {
+          name: "Blood (organ)",
+          hex: "#630f0f",
+        },
+        {
+          name: "Blood orange",
+          hex: "#d1001c",
+        },
+        {
+          name: "Blood red",
+          hex: "#660000",
+        },
+        {
+          name: "Blood red (Benihi)",
+          hex: "#f35336",
+        },
+        {
+          name: "Blue",
+          hex: "#0000FF",
+        },
+        {
+          name: "Blue (Crayola)",
+          hex: "#1f75fe",
+        },
+        {
+          name: "Blue (Munsell)",
+          hex: "#0093af",
+        },
+        {
+          name: "Blue (NCS)",
+          hex: "#0087bd",
+        },
+        {
+          name: "Blue (pigment)",
+          hex: "#333399",
+        },
+        {
+          name: "Blue (RYB)",
+          hex: "#0247fe",
+        },
+        {
+          name: "Blue bell",
+          hex: "#a2a2d0",
+        },
+        {
+          name: "Blue Black Crayfish (Aoni)",
+          hex: "#52593b",
+        },
+        {
+          name: "Blue bolt",
+          hex: "#00b9fb",
+        },
+        {
+          name: "Blue cola",
+          hex: "#0088dc",
+        },
+        {
+          name: "Blue jeans",
+          hex: "#5dadec",
+        },
+        {
+          name: "Blue lagoon",
+          hex: "#4cb7a5",
+        },
+        {
+          name: "Blue raspberry",
+          hex: "#0cbfe9",
+        },
+        {
+          name: "Blue sapphire",
+          hex: "#126180",
+        },
+        {
+          name: "Blue violet (Shikon)",
+          hex: "#2b2028",
+        },
+        {
+          name: "Blue yonder",
+          hex: "#5072a7",
+        },
+        {
+          name: "Blue-gray",
+          hex: "#6699cc",
+        },
+        {
+          name: "Blue-green",
+          hex: "#0d98ba",
+        },
+        {
+          name: "Blue-green (color wheel)",
+          hex: "#064e40",
+        },
+        {
+          name: "Blue-green (Seiheki)",
+          hex: "#3a6960",
+        },
+        {
+          name: "Blue-magenta violet",
+          hex: "#553592",
+        },
+        {
+          name: "BlueViolet",
+          hex: "#8A2BE2",
+        },
+        {
+          name: "Blue-violet (color wheel)",
+          hex: "#4d1a7f",
+        },
+        {
+          name: "Blue-violet (Crayola)",
+          hex: "#7366bd",
+        },
+        {
+          name: "Blueberry",
+          hex: "#4f86f7",
+        },
+        {
+          name: "Bluebonnet",
+          hex: "#1c1cf0",
+        },
+        {
+          name: "Blush",
+          hex: "#de5d83",
+        },
+        {
+          name: "Boiled red bean brown (Momoshiocha)",
+          hex: "#542d24",
+        },
+        {
+          name: "Bole",
+          hex: "#79443b",
+        },
+        {
+          name: "Bondi blue",
+          hex: "#0095b6",
+        },
+        {
+          name: "Bone",
+          hex: "#e3dac9",
+        },
+        {
+          name: "Bored accent green",
+          hex: "#dde26a",
+        },
+        {
+          name: "Boy red",
+          hex: "#0e9ca5",
+        },
+        {
+          name: "Boysenberry",
+          hex: "#873260",
+        },
+        {
+          name: "Brandeis blue",
+          hex: "#0070ff",
+        },
+        {
+          name: "Brandy",
+          hex: "#87413f",
+        },
+        {
+          name: "Brass",
+          hex: "#b5a642",
+        },
+        {
+          name: "Brave orange",
+          hex: "#ff631c",
+        },
+        {
+          name: "Brewed mustard-brown (Tokigaracha)",
+          hex: "#e68364",
+        },
+        {
+          name: "Brick red",
+          hex: "#cb4154",
+        },
+        {
+          name: "Bright gray",
+          hex: "#ebecf0",
+        },
+        {
+          name: "Bright green",
+          hex: "#66ff00",
+        },
+        {
+          name: "Bright lavender",
+          hex: "#bf94e4",
+        },
+        {
+          name: "Bright lilac",
+          hex: "#d891ef",
+        },
+        {
+          name: "Bright maroon",
+          hex: "#c32148",
+        },
+        {
+          name: "Bright navy blue",
+          hex: "#1974d2",
+        },
+        {
+          name: "Bright pink",
+          hex: "#ff007f",
+        },
+        {
+          name: "Bright turquoise",
+          hex: "#08e8de",
+        },
+        {
+          name: "Bright ube",
+          hex: "#d19fe8",
+        },
+        {
+          name: "Bright yellow (Crayola)",
+          hex: "#ffaa1d",
+        },
+        {
+          name: "Brilliant azure",
+          hex: "#3399ff",
+        },
+        {
+          name: "Brilliant lavender",
+          hex: "#f4bbff",
+        },
+        {
+          name: "Brilliant rose",
+          hex: "#ff55a3",
+        },
+        {
+          name: "Brink pink",
+          hex: "#fb607f",
+        },
+        {
+          name: "British racing green",
+          hex: "#004225",
+        },
+        {
+          name: "Bronze",
+          hex: "#cd7f32",
+        },
+        {
+          name: "Bronze (second entry)",
+          hex: "#88540b",
+        },
+        {
+          name: "Bronze (metallic)",
+          hex: "#b08d57",
+        },
+        {
+          name: "Bronze yellow",
+          hex: "#737000",
+        },
+        {
+          name: "Brown",
+          hex: "#A52A2A",
+        },
+        {
+          name: "Brown (second entry)",
+          hex: "#993300",
+        },
+        {
+          name: "Brown (Crayola)",
+          hex: "#af593e",
+        },
+        {
+          name: "Brown (traditional)",
+          hex: "#964b00",
+        },
+        {
+          name: "Brown Chocolate",
+          hex: "#5f1933",
+        },
+        {
+          name: "Brown Coffee",
+          hex: "#4a2c2a",
+        },
+        {
+          name: "Brown rat grey (Dobunezumi)",
+          hex: "#4b3c39",
+        },
+        {
+          name: "Brown sugar",
+          hex: "#af6e4d",
+        },
+        {
+          name: "Brown Yellow",
+          hex: "#cc9966",
+        },
+        {
+          name: "Brown-nose",
+          hex: "#6b4423",
+        },
+        {
+          name: "Brunswick green",
+          hex: "#1b4d3e",
+        },
+        {
+          name: "Brushwood-dyed (Fushizome)",
+          hex: "#8c5939",
+        },
+        {
+          name: "Bubble gum",
+          hex: "#ffc1cc",
+        },
+        {
+          name: "Bubbles",
+          hex: "#e7feff",
+        },
+        {
+          name: "Bud green",
+          hex: "#7bb661",
+        },
+        {
+          name: "Buff",
+          hex: "#f0dc82",
+        },
+        {
+          name: "Bulgarian rose",
+          hex: "#480607",
+        },
+        {
+          name: "Burgundy",
+          hex: "#800020",
+        },
+        {
+          name: "Burlywood",
+          hex: "#DEB887",
+        },
+        {
+          name: "Burnished brown",
+          hex: "#a17a74",
+        },
+        {
+          name: "Burnt orange",
+          hex: "#cc5500",
+        },
+        {
+          name: "Burnt sienna",
+          hex: "#e97451",
+        },
+        {
+          name: "Burnt umber",
+          hex: "#8a3324",
+        },
+        {
+          name: "Button blue",
+          hex: "#24a0ed",
+        },
+        {
+          name: "Byzantine",
+          hex: "#bd33a4",
+        },
+        {
+          name: "Byzantium",
+          hex: "#702963",
+        },
+        {
+          name: "Cadet",
+          hex: "#536872",
+        },
+        {
+          name: "CadetBlue",
+          hex: "#5F9EA0",
+        },
+        {
+          name: "Cadet blue (Crayola)",
+          hex: "#a9b2c3",
+        },
+        {
+          name: "Cadet grey",
+          hex: "#91a3b0",
+        },
+        {
+          name: "Cadmium blue",
+          hex: "#0a1195",
+        },
+        {
+          name: "Cadmium green",
+          hex: "#006b3c",
+        },
+        {
+          name: "Cadmium orange",
+          hex: "#ed872d",
+        },
+        {
+          name: "Cadmium purple",
+          hex: "#b60c26",
+        },
+        {
+          name: "Cadmium red",
+          hex: "#e30022",
+        },
+        {
+          name: "Cadmium violet",
+          hex: "#7f3e98",
+        },
+        {
+          name: "Cadmium yellow",
+          hex: "#fff600",
+        },
+        {
+          name: "Café au lait",
+          hex: "#a67b5b",
+        },
+        {
+          name: "Café noir",
+          hex: "#4b3621",
+        },
+        {
+          name: "Cal Poly green",
+          hex: "#1e4d2b",
+        },
+        {
+          name: "Cal Poly Pomona green",
+          hex: "#1e4d2b",
+        },
+        {
+          name: "Calamansi",
+          hex: "#fcffa4",
+        },
+        {
+          name: "Cambridge blue",
+          hex: "#a3c1ad",
+        },
+        {
+          name: "Camel",
+          hex: "#c19a6b",
+        },
+        {
+          name: "Cameo pink",
+          hex: "#efbbcc",
+        },
+        {
+          name: "Camouflage green",
+          hex: "#78866b",
+        },
+        {
+          name: "Canary",
+          hex: "#ffff99",
+        },
+        {
+          name: "Canary yellow",
+          hex: "#ffef00",
+        },
+        {
+          name: "Candy apple red",
+          hex: "#ff0800",
+        },
+        {
+          name: "Candy pink",
+          hex: "#e4717a",
+        },
+        {
+          name: "Cape jasmine or gardenia (Kuchinashi)",
+          hex: "#ffb95a",
+        },
+        {
+          name: "Capri",
+          hex: "#00bfff",
+        },
+        {
+          name: "Caput mortuum",
+          hex: "#592720",
+        },
+        {
+          name: "Caramel",
+          hex: "#ffd59a",
+        },
+        {
+          name: "Cardinal",
+          hex: "#c41e3a",
+        },
+        {
+          name: "Caribbean blue",
+          hex: "#1ac1dd",
+        },
+        {
+          name: "Caribbean green",
+          hex: "#00cc99",
+        },
+        {
+          name: "Carmine",
+          hex: "#960018",
+        },
+        {
+          name: "Carmine (M&P)",
+          hex: "#d70040",
+        },
+        {
+          name: "Carmine pink",
+          hex: "#eb4c42",
+        },
+        {
+          name: "Carmine red",
+          hex: "#ff0038",
+        },
+        {
+          name: "Carnation pink",
+          hex: "#ffa6c9",
+        },
+        {
+          name: "Carnelian",
+          hex: "#b31b1b",
+        },
+        {
+          name: "Carolina blue",
+          hex: "#56a0d3",
+        },
+        {
+          name: "Carrot orange",
+          hex: "#ed9121",
+        },
+        {
+          name: "Castleton green",
+          hex: "#00563B",
+        },
+        {
+          name: "Castleton green (second entry)",
+          hex: "#00563f",
+        },
+        {
+          name: "Catalina blue",
+          hex: "#062a78",
+        },
+        {
+          name: "Catawba",
+          hex: "#703642",
+        },
+        {
+          name: "Cattail color (the plant) (Kaba-iro)",
+          hex: "#b64925",
+        },
+        {
+          name: "Cedar Chest",
+          hex: "#c95a49",
+        },
+        {
+          name: "Ceil",
+          hex: "#92a1cf",
+        },
+        {
+          name: "Celadon",
+          hex: "#ACE1AF",
+        },
+        {
+          name: "Celadon blue",
+          hex: "#007ba7",
+        },
+        {
+          name: "Celadon color (Seiji-iro)",
+          hex: "#819c8b",
+        },
+        {
+          name: "Celadon green",
+          hex: "#2f847c",
+        },
+        {
+          name: "Celeste",
+          hex: "#b2ffff",
+        },
+        {
+          name: "Celestial blue",
+          hex: "#4997d0",
+        },
+        {
+          name: "Celtic blue",
+          hex: "#246bce",
+        },
+        {
+          name: "Cerise",
+          hex: "#de3163",
+        },
+        {
+          name: "Cerise pink",
+          hex: "#ec3b83",
+        },
+        {
+          name: "Cerulean blue",
+          hex: "#2a52be",
+        },
+        {
+          name: "Cerulean frost",
+          hex: "#6d9bc3",
+        },
+        {
+          name: "Cetacean blue",
+          hex: "#001440",
+        },
+        {
+          name: "CG blue",
+          hex: "#007aa5",
+        },
+        {
+          name: "CG red",
+          hex: "#e03c31",
+        },
+        {
+          name: "Chamoisee",
+          hex: "#a0785a",
+        },
+        {
+          name: "Champagne",
+          hex: "#f7e7ce",
+        },
+        {
+          name: "Champagne pink",
+          hex: "#f1ddcf",
+        },
+        {
+          name: "Charcoal",
+          hex: "#36454f",
+        },
+        {
+          name: "Charleston green",
+          hex: "#232b2b",
+        },
+        {
+          name: "Charm",
+          hex: "#d0748b",
+        },
+        {
+          name: "Charm pink",
+          hex: "#e68fac",
+        },
+        {
+          name: "Chartreuse",
+          hex: "#7FFF00",
+        },
+        {
+          name: "Chartreuse (traditional)",
+          hex: "#dfff00",
+        },
+        {
+          name: "Cheese",
+          hex: "#ffa600",
+        },
+        {
+          name: "Cherry blossom color (Sakura-iro)",
+          hex: "#fcc9b9",
+        },
+        {
+          name: "Cherry blossom mouse (Sakuranezumi)",
+          hex: "#ac8181",
+        },
+        {
+          name: "Cherry blossom pink",
+          hex: "#ffb7c5",
+        },
+        {
+          name: "Chestnut",
+          hex: "#954535",
+        },
+        {
+          name: "Chestnut-leather brown (Kurikawacha)",
+          hex: "#60281e",
+        },
+        {
+          name: "Chickadee",
+          hex: "#ffc34d",
+        },
+        {
+          name: "China pink",
+          hex: "#de6fa1",
+        },
+        {
+          name: "China rose",
+          hex: "#a8516e",
+        },
+        {
+          name: "Chinese black",
+          hex: "#141414",
+        },
+        {
+          name: "Chinese blue",
+          hex: "#365194",
+        },
+        {
+          name: "Chinese bronze",
+          hex: "#cd8032",
+        },
+        {
+          name: "Chinese brown",
+          hex: "#ab381f",
+        },
+        {
+          name: "Chinese gold",
+          hex: "#cc9900",
+        },
+        {
+          name: "Chinese green",
+          hex: "#d0db61",
+        },
+        {
+          name: "Chinese orange",
+          hex: "#f37042",
+        },
+        {
+          name: "Chinese pink",
+          hex: "#de70a1",
+        },
+        {
+          name: "Chinese purple",
+          hex: "#720b98",
+        },
+        {
+          name: "Chinese red",
+          hex: "#aa381e",
+        },
+        {
+          name: "Chinese red (Second entry)",
+          hex: "#cd071e",
+        },
+        {
+          name: "Chinese silver",
+          hex: "#cccccc",
+        },
+        {
+          name: "Chinese violet",
+          hex: "#856088",
+        },
+        {
+          name: "Chinese white",
+          hex: "#e2e5de",
+        },
+        {
+          name: "Chinese yellow",
+          hex: "#ffb200",
+        },
+        {
+          name: "Chinese yellow tea-colored (Kigaracha)",
+          hex: "#b7702d",
+        },
+        {
+          name: "Chlorophyll green",
+          hex: "#4aff00",
+        },
+        {
+          name: "Chocolate",
+          hex: "#D2691E",
+        },
+        {
+          name: "Chocolate (traditional)",
+          hex: "#7b3f00",
+        },
+        {
+          name: "Chocolate brown",
+          hex: "#3f000f",
+        },
+        {
+          name: "Chocolate cosmos",
+          hex: "#58111a",
+        },
+        {
+          name: "Chocolate Kisses",
+          hex: "#3c1421",
+        },
+        {
+          name: "Chrome aluminum",
+          hex: "#a8a9ad",
+        },
+        {
+          name: "Chrome yellow",
+          hex: "#ffa700",
+        },
+        {
+          name: "Cinereous",
+          hex: "#98817b",
+        },
+        {
+          name: "Cinnabar",
+          hex: "#e34234",
+        },
+        {
+          name: "Cinnamon",
+          hex: "#d2691e",
+        },
+        {
+          name: "Cinnamon Satin",
+          hex: "#cd607e",
+        },
+        {
+          name: "Citrine",
+          hex: "#e4d00a",
+        },
+        {
+          name: "Citrine Brown",
+          hex: "#933709",
+        },
+        {
+          name: "Citron",
+          hex: "#9fa91f",
+        },
+        {
+          name: "Claret",
+          hex: "#7f1734",
+        },
+        {
+          name: "Classic rose",
+          hex: "#fbcce7",
+        },
+        {
+          name: "Clove-brown (Chōjicha)",
+          hex: "#8f583c",
+        },
+        {
+          name: "Clove-dyed (Chōjizome)",
+          hex: "#a96232",
+        },
+        {
+          name: "Coarse wool color (Kachi-iro)",
+          hex: "#181b26",
+        },
+        {
+          name: "Cobalt blue",
+          hex: "#0047ab",
+        },
+        {
+          name: "Coconut",
+          hex: "#965a3e",
+        },
+        {
+          name: "Coconut White",
+          hex: "#e9edf6",
+        },
+        {
+          name: "Codium fragile seaweed color (Miru-iro)",
+          hex: "#524b2a",
+        },
+        {
+          name: "Coffee",
+          hex: "#6f4e37",
+        },
+        {
+          name: "Cola",
+          hex: "#3c3024",
+        },
+        {
+          name: "Columbia Blue",
+          hex: "#c4d8e2",
+        },
+        {
+          name: "Conditioner",
+          hex: "#ffffcc",
+        },
+        {
+          name: "Congo pink",
+          hex: "#f88379",
+        },
+        {
+          name: "Contemplation in a tea garden (Rokōcha)",
+          hex: "#665343",
+        },
+        {
+          name: "Cookies and cream",
+          hex: "#eee0b1",
+        },
+        {
+          name: "Cool black",
+          hex: "#002e63",
+        },
+        {
+          name: "Cool grey",
+          hex: "#8c92ac",
+        },
+        {
+          name: "Copper",
+          hex: "#b87333",
+        },
+        {
+          name: "Copper (Crayola)",
+          hex: "#da8a67",
+        },
+        {
+          name: "Copper penny",
+          hex: "#ad6f69",
+        },
+        {
+          name: "Copper red",
+          hex: "#cb6d51",
+        },
+        {
+          name: "Copper rose",
+          hex: "#996666",
+        },
+        {
+          name: "Coquelicot",
+          hex: "#ff3800",
+        },
+        {
+          name: "Coral",
+          hex: "#FF7F50",
+        },
+        {
+          name: "Coral color (Sango-iro)",
+          hex: "#f8674f",
+        },
+        {
+          name: "Coral red",
+          hex: "#ff4040",
+        },
+        {
+          name: "Coral reef",
+          hex: "#fd7c6e",
+        },
+        {
+          name: "Coral Reef (Valspar Paint Color)",
+          hex: "#f6a494",
+        },
+        {
+          name: "Cordovan",
+          hex: "#893f45",
+        },
+        {
+          name: "Corn",
+          hex: "#fbec5d",
+        },
+        {
+          name: "Corn-colored (Tōmorokoshi-iro)",
+          hex: "#faa945",
+        },
+        {
+          name: "Cornflower",
+          hex: "#93ccea",
+        },
+        {
+          name: "CornflowerBlue",
+          hex: "#6495ED",
+        },
+        {
+          name: "Cornsilk",
+          hex: "#FFF8DC",
+        },
+        {
+          name: "Cosmic cobalt",
+          hex: "#2e2d88",
+        },
+        {
+          name: "Cosmic latte",
+          hex: "#fff8e7",
+        },
+        {
+          name: "Cotton candy",
+          hex: "#ffbcd9",
+        },
+        {
+          name: "Coyote brown",
+          hex: "#81613c",
+        },
+        {
+          name: "Cream",
+          hex: "#fffdd0",
+        },
+        {
+          name: "Crimson",
+          hex: "#DC143C",
+        },
+        {
+          name: "Crimson glory",
+          hex: "#be0032",
+        },
+        {
+          name: "Crimson red",
+          hex: "#990000",
+        },
+        {
+          name: "Crystal",
+          hex: "#a7d8de",
+        },
+        {
+          name: "Crystal blue",
+          hex: "#68a0b0",
+        },
+        {
+          name: "Cultured",
+          hex: "#f5f5f5",
+        },
+        {
+          name: "Cyan",
+          hex: "#00FFFF",
+        },
+        {
+          name: "Cyan (process)",
+          hex: "#00b7eb",
+        },
+        {
+          name: "Cyan azure",
+          hex: "#4e82b4",
+        },
+        {
+          name: "Cyan cobalt blue",
+          hex: "#28589c",
+        },
+        {
+          name: "Cyan cornflower blue",
+          hex: "#188bc2",
+        },
+        {
+          name: "Cyan-blue azure",
+          hex: "#4682bf",
+        },
+        {
+          name: "Cyber grape",
+          hex: "#58427c",
+        },
+        {
+          name: "Cyber yellow",
+          hex: "#ffd300",
+        },
+        {
+          name: "Cyclamen",
+          hex: "#f56fa1",
+        },
+        {
+          name: "Cypress bark color (Hihada-iro)",
+          hex: "#752e23",
+        },
+        {
+          name: "Cypress bark red (Benihibata)",
+          hex: "#6f3028",
+        },
+        {
+          name: "Daffodil",
+          hex: "#ffff31",
+        },
+        {
+          name: "Dandelion",
+          hex: "#f0e130",
+        },
+        {
+          name: "Dandelion (Crayola)",
+          hex: "#fddb6d",
+        },
+        {
+          name: "DarkBlue",
+          hex: "#00008B",
+        },
+        {
+          name: "Dark blue (Kon)",
+          hex: "#192236",
+        },
+        {
+          name: "Dark blue lapis lazuli (Rurikon)",
+          hex: "#1b294b",
+        },
+        {
+          name: "Dark blue-gray",
+          hex: "#666699",
+        },
+        {
+          name: "Dark bronze",
+          hex: "#804a00",
+        },
+        {
+          name: "Dark bronze (Coin)",
+          hex: "#514100",
+        },
+        {
+          name: "Dark brown",
+          hex: "#654321",
+        },
+        {
+          name: "Dark brown-tangelo",
+          hex: "#88654e",
+        },
+        {
+          name: "Dark byzantium",
+          hex: "#5d3954",
+        },
+        {
+          name: "Dark candy apple red",
+          hex: "#a40000",
+        },
+        {
+          name: "Dark cerulean",
+          hex: "#08457e",
+        },
+        {
+          name: "Dark charcoal",
+          hex: "#333333",
+        },
+        {
+          name: "Dark chestnut",
+          hex: "#986960",
+        },
+        {
+          name: "Dark chocolate",
+          hex: "#490206",
+        },
+        {
+          name: "Dark chocolate (Hershey's)",
+          hex: "#3c1321",
+        },
+        {
+          name: "Dark coral",
+          hex: "#cd5b45",
+        },
+        {
+          name: "Dark cornflower blue",
+          hex: "#26428b",
+        },
+        {
+          name: "DarkCyan",
+          hex: "#008B8B",
+        },
+        {
+          name: "Dark electric blue",
+          hex: "#536878",
+        },
+        {
+          name: "Dark gold",
+          hex: "#aa6c39",
+        },
+        {
+          name: "DarkGoldenrod",
+          hex: "#B8860B",
+        },
+        {
+          name: "Dark Green",
+          hex: "#006600",
+        },
+        {
+          name: "DarkGray",
+          hex: "#A9A9A9",
+        },
+        {
+          name: "Dark gunmetal",
+          hex: "#1f262a",
+        },
+        {
+          name: "Dark imperial blue",
+          hex: "#00416a",
+        },
+        {
+          name: "Dark imperial blue (Second entry)",
+          hex: "#00147e",
+        },
+        {
+          name: "Dark indigo (Futaai)",
+          hex: "#614e6e",
+        },
+        {
+          name: "Dark jungle green",
+          hex: "#1a2421",
+        },
+        {
+          name: "DarkKhaki",
+          hex: "#BDB76B",
+        },
+        {
+          name: "Dark lava",
+          hex: "#483c32",
+        },
+        {
+          name: "Dark lavender",
+          hex: "#734f96",
+        },
+        {
+          name: "Dark lemon lime",
+          hex: "#8bbe1b",
+        },
+        {
+          name: "Dark liver",
+          hex: "#534b4f",
+        },
+        {
+          name: "Dark liver (horses)",
+          hex: "#543d37",
+        },
+        {
+          name: "DarkMagenta",
+          hex: "#8B008B",
+        },
+        {
+          name: "Dark midnight blue",
+          hex: "#003366",
+        },
+        {
+          name: "Dark moss green",
+          hex: "#4a5d23",
+        },
+        {
+          name: "Dark Navy",
+          hex: "#02075d",
+        },
+        {
+          name: "DarkOliveGreen",
+          hex: "#556B2F",
+        },
+        {
+          name: "DarkOrange",
+          hex: "#FF8C00",
+        },
+        {
+          name: "DarkOrchid",
+          hex: "#9932CC",
+        },
+        {
+          name: "Dark pastel blue",
+          hex: "#779ecb",
+        },
+        {
+          name: "Dark pastel green",
+          hex: "#03c03c",
+        },
+        {
+          name: "Dark pastel purple",
+          hex: "#966fd6",
+        },
+        {
+          name: "Dark pastel red",
+          hex: "#c23b22",
+        },
+        {
+          name: "Dark pink",
+          hex: "#e75480",
+        },
+        {
+          name: "Dark powder blue",
+          hex: "#003399",
+        },
+        {
+          name: "Dark puce",
+          hex: "#4f3a3c",
+        },
+        {
+          name: "Dark purple",
+          hex: "#301934",
+        },
+        {
+          name: "Dark raspberry",
+          hex: "#872657",
+        },
+        {
+          name: "DarkRed",
+          hex: "#8B0000",
+        },
+        {
+          name: "Dark red (Kurobeni)",
+          hex: "#23191e",
+        },
+        {
+          name: "DarkSalmon",
+          hex: "#E9967A",
+        },
+        {
+          name: "Dark scarlet",
+          hex: "#560319",
+        },
+        {
+          name: "DarkSeaGreen",
+          hex: "#8FBC8B",
+        },
+        {
+          name: "Dark sienna",
+          hex: "#3c1414",
+        },
+        {
+          name: "Dark silver",
+          hex: "#71706e",
+        },
+        {
+          name: "Dark sky blue",
+          hex: "#8cbed6",
+        },
+        {
+          name: "DarkSlateBlue",
+          hex: "#483D8B",
+        },
+        {
+          name: "DarkSlateGray",
+          hex: "#2F4F4F",
+        },
+        {
+          name: "Dark spring green",
+          hex: "#177245",
+        },
+        {
+          name: "Dark tan",
+          hex: "#918151",
+        },
+        {
+          name: "Dark tangerine",
+          hex: "#ffa812",
+        },
+        {
+          name: "Dark terra cotta",
+          hex: "#cc4e5c",
+        },
+        {
+          name: "DarkTurquoise",
+          hex: "#00CED1",
+        },
+        {
+          name: "Dark vanilla",
+          hex: "#d1bea8",
+        },
+        {
+          name: "DarkViolet",
+          hex: "#9400D3",
+        },
+        {
+          name: "Dark yellow",
+          hex: "#9b870c",
+        },
+        {
+          name: "Dartmouth green",
+          hex: "#00693E",
+        },
+        {
+          name: "Dartmouth green (second entry)",
+          hex: "#00703c",
+        },
+        {
+          name: "Davy's grey",
+          hex: "#555555",
+        },
+        {
+          name: "Dawn-color (Akebono-iro)",
+          hex: "#fa7b62",
+        },
+        {
+          name: "Daylily-colored (Kanzō-iro)",
+          hex: "#ff8936",
+        },
+        {
+          name: "Debian red",
+          hex: "#d70a53",
+        },
+        {
+          name: "Decaying leaves color (Kuchiba-iro)",
+          hex: "#d57835",
+        },
+        {
+          name: "Deep amethyst",
+          hex: "#9c8aa4",
+        },
+        {
+          name: "Deep aquamarine",
+          hex: "#40826d",
+        },
+        {
+          name: "Deep carmine",
+          hex: "#a9203e",
+        },
+        {
+          name: "Deep carmine pink",
+          hex: "#ef3038",
+        },
+        {
+          name: "Deep carrot orange",
+          hex: "#e9692c",
+        },
+        {
+          name: "Deep cerise",
+          hex: "#da3287",
+        },
+        {
+          name: "Deep champagne",
+          hex: "#fad6a5",
+        },
+        {
+          name: "Deep chestnut",
+          hex: "#b94e48",
+        },
+        {
+          name: "Deep coffee",
+          hex: "#704241",
+        },
+        {
+          name: "Deep dumpling",
+          hex: "#9b351b",
+        },
+        {
+          name: "Deep fuchsia",
+          hex: "#c154c1",
+        },
+        {
+          name: "Deep green",
+          hex: "#056608",
+        },
+        {
+          name: "Deep green-cyan turquoise",
+          hex: "#0e7c61",
+        },
+        {
+          name: "Deep jungle green",
+          hex: "#004b49",
+        },
+        {
+          name: "Deep koamaru",
+          hex: "#333366",
+        },
+        {
+          name: "Deep lemon",
+          hex: "#f5c71a",
+        },
+        {
+          name: "Deep lilac",
+          hex: "#9955bb",
+        },
+        {
+          name: "Deep magenta",
+          hex: "#cc00cc",
+        },
+        {
+          name: "Deep maroon",
+          hex: "#820000",
+        },
+        {
+          name: "Deep mauve",
+          hex: "#d473d4",
+        },
+        {
+          name: "Deep moss green",
+          hex: "#355e3b",
+        },
+        {
+          name: "Deep peach",
+          hex: "#ffcba4",
+        },
+        {
+          name: "DeepPink",
+          hex: "#FF1493",
+        },
+        {
+          name: "Deep puce",
+          hex: "#a95c68",
+        },
+        {
+          name: "Deep purple (Kokimurasaki)",
+          hex: "#3a243b",
+        },
+        {
+          name: "Deep red",
+          hex: "#850101",
+        },
+        {
+          name: "Deep ruby",
+          hex: "#843f5b",
+        },
+        {
+          name: "Deep saffron",
+          hex: "#ff9933",
+        },
+        {
+          name: "Deep scarlet (Kokiake)",
+          hex: "#7b3b3a",
+        },
+        {
+          name: "Deep Space Sparkle",
+          hex: "#4a646c",
+        },
+        {
+          name: "Deep taupe",
+          hex: "#7e5e60",
+        },
+        {
+          name: "Deep Tuscan red",
+          hex: "#66424d",
+        },
+        {
+          name: "Deep violet",
+          hex: "#330066",
+        },
+        {
+          name: "DeepSkyBlue",
+          hex: "#00BFFF",
+        },
+        {
+          name: "Deer",
+          hex: "#ba8759",
+        },
+        {
+          name: "Delicate girl blue",
+          hex: "#6ab2ca",
+        },
+        {
+          name: "Denim",
+          hex: "#1560bd",
+        },
+        {
+          name: "Denim blue",
+          hex: "#2243b6",
+        },
+        {
+          name: "Desaturated cyan",
+          hex: "#669999",
+        },
+        {
+          name: "Desert sand",
+          hex: "#edc9af",
+        },
+        {
+          name: "Desire",
+          hex: "#ea3c53",
+        },
+        {
+          name: "Diamond",
+          hex: "#b9f2ff",
+        },
+        {
+          name: "DimGray",
+          hex: "#696969",
+        },
+        {
+          name: "Dingy Dungeon",
+          hex: "#c53151",
+        },
+        {
+          name: "Dirt",
+          hex: "#9b7653",
+        },
+        {
+          name: "Dirty brown",
+          hex: "#b5651e",
+        },
+        {
+          name: "Dirty white",
+          hex: "#e8e4c9",
+        },
+        {
+          name: "Disappearing purple (Metsushi)",
+          hex: "#3f313a",
+        },
+        {
+          name: "DodgerBlue",
+          hex: "#1E90FF",
+        },
+        {
+          name: "Dodie yellow",
+          hex: "#fef65b",
+        },
+        {
+          name: "Dogwood rose",
+          hex: "#d71868",
+        },
+        {
+          name: "Dollar bill",
+          hex: "#85bb65",
+        },
+        {
+          name: "Dolphin gray",
+          hex: "#828e84",
+        },
+        {
+          name: "Douban Blue",
+          hex: "#2496cd",
+        },
+        {
+          name: "Douban Green",
+          hex: "#2e963d",
+        },
+        {
+          name: "Douban Light Yellow",
+          hex: "#f7c58e",
+        },
+        {
+          name: "Dove feather grey (Hatobanezumi)",
+          hex: "#755d5b",
+        },
+        {
+          name: "Duke blue",
+          hex: "#00009c",
+        },
+        {
+          name: "Dull blue (Aonibi)",
+          hex: "#4f4944",
+        },
+        {
+          name: "Durian",
+          hex: "#b07939",
+        },
+        {
+          name: "Durian White",
+          hex: "#e6d0ab",
+        },
+        {
+          name: "Durian Yellow",
+          hex: "#e1bd27",
+        },
+        {
+          name: "Dust storm",
+          hex: "#e5ccc9",
+        },
+        {
+          name: "Dutch white",
+          hex: "#efdfbb",
+        },
+        {
+          name: "Dyestalk red (lit. the color from dying with the stalk of the beni plant) (Bengara-iro)",
+          hex: "#913225",
+        },
+        {
+          name: "Earth yellow",
+          hex: "#e1a95f",
+        },
+        {
+          name: "Earthtone",
+          hex: "#5d3a1a",
+        },
+        {
+          name: "Ebony",
+          hex: "#555d50",
+        },
+        {
+          name: "Ecru",
+          hex: "#c2b280",
+        },
+        {
+          name: "Eerie black",
+          hex: "#1b1b1b",
+        },
+        {
+          name: "Egg-colored (Tamago-iro)",
+          hex: "#ffa631",
+        },
+        {
+          name: "Eggplant",
+          hex: "#614051",
+        },
+        {
+          name: "Eggshell",
+          hex: "#f0ead6",
+        },
+        {
+          name: "Eggshell paper-colored (Torinoko-iro)",
+          hex: "#e2be9f",
+        },
+        {
+          name: "Egyptian blue",
+          hex: "#1034a6",
+        },
+        {
+          name: "Elderberry",
+          hex: "#17182b",
+        },
+        {
+          name: "Electric blue",
+          hex: "#7df9ff",
+        },
+        {
+          name: "Electric brown",
+          hex: "#b56257",
+        },
+        {
+          name: "Electric crimson",
+          hex: "#ff003f",
+        },
+        {
+          name: "Electric green",
+          hex: "#C0FF00",
+        },
+        {
+          name: "Electric indigo",
+          hex: "#6f00ff",
+        },
+        {
+          name: "Electric lime",
+          hex: "#ccff00",
+        },
+        {
+          name: "Electric orange",
+          hex: "#ff3503",
+        },
+        {
+          name: "Electric pink",
+          hex: "#f62681",
+        },
+        {
+          name: "Electric purple",
+          hex: "#bf00ff",
+        },
+        {
+          name: "Electric red",
+          hex: "#e60000",
+        },
+        {
+          name: "Electric ultramarine",
+          hex: "#3f00ff",
+        },
+        {
+          name: "Electric violet",
+          hex: "#8f00ff",
+        },
+        {
+          name: "Electric yellow",
+          hex: "#ffff33",
+        },
+        {
+          name: "Emerald",
+          hex: "#50C878",
+        },
+        {
+          name: "Emerald green",
+          hex: "#046307",
+        },
+        {
+          name: "Eminence",
+          hex: "#6c3082",
+        },
+        {
+          name: "English lavender",
+          hex: "#b48395",
+        },
+        {
+          name: "English red",
+          hex: "#ab4b52",
+        },
+        {
+          name: "English vermillion",
+          hex: "#cc474b",
+        },
+        {
+          name: "English violet",
+          hex: "#563c5c",
+        },
+        {
+          name: "Eton blue",
+          hex: "#96c8a2",
+        },
+        {
+          name: "Eucalyptus",
+          hex: "#44d7a8",
+        },
+        {
+          name: "Facebook Blue",
+          hex: "#39569c",
+        },
+        {
+          name: "Faded Sen no Rikyu's tea (Rikyūshiracha)",
+          hex: "#b0927a",
+        },
+        {
+          name: "Faded spicy red-brown (Sōdenkaracha)",
+          hex: "#9b533f",
+        },
+        {
+          name: "Fake purple (Nisemurasaki)",
+          hex: "#43242a",
+        },
+        {
+          name: "Falu red",
+          hex: "#801818",
+        },
+        {
+          name: "Fandango",
+          hex: "#b53389",
+        },
+        {
+          name: "Fandango pink",
+          hex: "#de5285",
+        },
+        {
+          name: "Fashion fuchsia",
+          hex: "#f400a1",
+        },
+        {
+          name: "Fawn",
+          hex: "#e5aa70",
+        },
+        {
+          name: "Feldgrau",
+          hex: "#4d5d53",
+        },
+        {
+          name: "Feldspar",
+          hex: "#fdd5b1",
+        },
+        {
+          name: "Fern green",
+          hex: "#4F7942",
+        },
+        {
+          name: "Ferrari red",
+          hex: "#ff2800",
+        },
+        {
+          name: "Field drab",
+          hex: "#6c541e",
+        },
+        {
+          name: "Fiery rose",
+          hex: "#ff5470",
+        },
+        {
+          name: "Finch-brown (Cardueline finch) (Hiwacha)",
+          hex: "#957b38",
+        },
+        {
+          name: "Fire engine red",
+          hex: "#ce2029",
+        },
+        {
+          name: "Fire opal",
+          hex: "#e95c4b",
+        },
+        {
+          name: "Firebrick",
+          hex: "#B22222",
+        },
+        {
+          name: "Flame",
+          hex: "#e25822",
+        },
+        {
+          name: "Flamingo pink",
+          hex: "#fc8eac",
+        },
+        {
+          name: "Flavescent",
+          hex: "#f7e98e",
+        },
+        {
+          name: "Flax",
+          hex: "#eedc82",
+        },
+        {
+          name: "Flesh",
+          hex: "#ffe9d1",
+        },
+        {
+          name: "Flickr Blue",
+          hex: "#216bd6",
+        },
+        {
+          name: "Flickr Pink",
+          hex: "#fb0081",
+        },
+        {
+          name: "Flirt",
+          hex: "#a2006d",
+        },
+        {
+          name: "Flirtatious indigo tea (Aikobicha)",
+          hex: "#473f2d",
+        },
+        {
+          name: "Floral leaf-colored (Hanaba-iro or kayou-iro)",
+          hex: "#ffb94e",
+        },
+        {
+          name: "FloralWhite",
+          hex: "#FFFAF0",
+        },
+        {
+          name: "Flower girl",
+          hex: "#f498ad",
+        },
+        {
+          name: "Fluorescent blue",
+          hex: "#15f4ee",
+        },
+        {
+          name: "Folly",
+          hex: "#ff004f",
+        },
+        {
+          name: "Foreign crimson (Karakurenai)",
+          hex: "#c91f37",
+        },
+        {
+          name: "ForestGreen",
+          hex: "#228B22",
+        },
+        {
+          name: "Forest green (Crayola)",
+          hex: "#5fa777",
+        },
+        {
+          name: "Forest green (traditional)",
+          hex: "#014421",
+        },
+        {
+          name: "Fox-color (Kitsune-iro)",
+          hex: "#985629",
+        },
+        {
+          name: "French bistre",
+          hex: "#856d4d",
+        },
+        {
+          name: "French blue",
+          hex: "#0072bb",
+        },
+        {
+          name: "French fuchsia",
+          hex: "#fd3f92",
+        },
+        {
+          name: "French lilac",
+          hex: "#86608e",
+        },
+        {
+          name: "French lime",
+          hex: "#9efd38",
+        },
+        {
+          name: "French pink",
+          hex: "#fd6c9e",
+        },
+        {
+          name: "French plum",
+          hex: "#811453",
+        },
+        {
+          name: "French puce",
+          hex: "#4e1609",
+        },
+        {
+          name: "French raspberry",
+          hex: "#c72c48",
+        },
+        {
+          name: "French rose",
+          hex: "#f64a8a",
+        },
+        {
+          name: "French sky blue",
+          hex: "#77b5fe",
+        },
+        {
+          name: "French violet",
+          hex: "#8806ce",
+        },
+        {
+          name: "French wine",
+          hex: "#ac1e44",
+        },
+        {
+          name: "Fresh Air",
+          hex: "#a6e7ff",
+        },
+        {
+          name: "Fresh onion (Moegi)",
+          hex: "#5b8930",
+        },
+        {
+          name: "Frostbite",
+          hex: "#e936a7",
+        },
+        {
+          name: "Fuchsia",
+          hex: "#FF00FF",
+        },
+        {
+          name: "Fuchsia pink",
+          hex: "#ff77ff",
+        },
+        {
+          name: "Fuchsia purple",
+          hex: "#cc397b",
+        },
+        {
+          name: "Fuchsia rose",
+          hex: "#c74375",
+        },
+        {
+          name: "Fulvous",
+          hex: "#e48400",
+        },
+        {
+          name: "Fuzzy Wuzzy",
+          hex: "#cc6666",
+        },
+        {
+          name: "Gainsboro",
+          hex: "#DCDCDC",
+        },
+        {
+          name: "Gamboge",
+          hex: "#e49b0f",
+        },
+        {
+          name: "Gamboge (Tōō)",
+          hex: "#ffb61e",
+        },
+        {
+          name: "Gamboge orange (brown)",
+          hex: "#996600",
+        },
+        {
+          name: "Gargoyle Gas",
+          hex: "#ffdf46",
+        },
+        {
+          name: "Garnet",
+          hex: "#733635",
+        },
+        {
+          name: "Generic viridian",
+          hex: "#007f66",
+        },
+        {
+          name: "GhostWhite",
+          hex: "#F8F8FF",
+        },
+        {
+          name: "Giant's Club",
+          hex: "#b05c52",
+        },
+        {
+          name: "Giants orange",
+          hex: "#fe5a1d",
+        },
+        {
+          name: "Gin",
+          hex: "#d8e4bc",
+        },
+        {
+          name: "Glaucous",
+          hex: "#6082b6",
+        },
+        {
+          name: "Glazed persimmon (Terigaki)",
+          hex: "#d34e36",
+        },
+        {
+          name: "Glossy grape",
+          hex: "#ab92b3",
+        },
+        {
+          name: "GO green",
+          hex: "#00ab66",
+        },
+        {
+          name: "Gold",
+          hex: "#FFD700",
+        },
+        {
+          name: "Gold (Compendium)",
+          hex: "#a57c00",
+        },
+        {
+          name: "Gold (Crayola)",
+          hex: "#e6be8a",
+        },
+        {
+          name: "Gold (metallic)",
+          hex: "#d4af37",
+        },
+        {
+          name: "Gold foil",
+          hex: "#bd9b16",
+        },
+        {
+          name: "Gold Fusion",
+          hex: "#85754e",
+        },
+        {
+          name: "Gold-brown (Yamabukicha)",
+          hex: "#cb7e1f",
+        },
+        {
+          name: "Golden brown",
+          hex: "#996515",
+        },
+        {
+          name: "Golden brown (Kincha)",
+          hex: "#c66b27",
+        },
+        {
+          name: "Golden fallen leaves (Kikuchiba)",
+          hex: "#e29c45",
+        },
+        {
+          name: "Golden oak (Kitsurubami)",
+          hex: "#bb8141",
+        },
+        {
+          name: "Golden poppy",
+          hex: "#fcc200",
+        },
+        {
+          name: "Golden yellow",
+          hex: "#ffdf00",
+        },
+        {
+          name: "Golden yellow (and a particular rose varietal) (Yamabuki-iro)",
+          hex: "#ffa400",
+        },
+        {
+          name: "Golden-grey bamboo (dried and weathered) (Kinsusutake)",
+          hex: "#7d4e2d",
+        },
+        {
+          name: "Goldenrod",
+          hex: "#DAA520",
+        },
+        {
+          name: "Google Chrome blue",
+          hex: "#4c8bf5",
+        },
+        {
+          name: "Google Chrome green",
+          hex: "#1aa260",
+        },
+        {
+          name: "Google Chrome red",
+          hex: "#de5246",
+        },
+        {
+          name: "Google Chrome yellow",
+          hex: "#ffce44",
+        },
+        {
+          name: "Goryeo storeroom (Kōrainando)",
+          hex: "#203838",
+        },
+        {
+          name: "Granite gray",
+          hex: "#676767",
+        },
+        {
+          name: "Granny Smith apple",
+          hex: "#a8e4a0",
+        },
+        {
+          name: "Grape",
+          hex: "#6f2da8",
+        },
+        {
+          name: "Grape mouse (Budōnezumi)",
+          hex: "#63424b",
+        },
+        {
+          name: "Gray",
+          hex: "#808080",
+        },
+        {
+          name: "Gray (X11 gray)",
+          hex: "#bebebe",
+        },
+        {
+          name: "Gray-asparagus",
+          hex: "#465945",
+        },
+        {
+          name: "green",
+          hex: "#008000",
+        },
+        {
+          name: "Green (second entry)",
+          hex: "#008001",
+        },
+        {
+          name: "Green (Crayola)",
+          hex: "#1cac78",
+        },
+        {
+          name: "Green (Midori)",
+          hex: "#2a603b",
+        },
+        {
+          name: "Green (Munsell)",
+          hex: "#00a877",
+        },
+        {
+          name: "Green (NCS)",
+          hex: "#009f6b",
+        },
+        {
+          name: "Green (pigment)",
+          hex: "#00a550",
+        },
+        {
+          name: "Green (RYB)",
+          hex: "#66b032",
+        },
+        {
+          name: "Green bamboo color (Aotake-iro)",
+          hex: "#006442",
+        },
+        {
+          name: "Green Cola",
+          hex: "#4c721d",
+        },
+        {
+          name: "Green Lizard",
+          hex: "#a7f432",
+        },
+        {
+          name: "Green Sheen",
+          hex: "#6eaea1",
+        },
+        {
+          name: "Green slime",
+          hex: "#65ff00",
+        },
+        {
+          name: "Green tea-colored (Sencha-iro)",
+          hex: "#824b35",
+        },
+        {
+          name: "Green-blue",
+          hex: "#1164b4",
+        },
+        {
+          name: "Green-blue (Crayola)",
+          hex: "#2887c8",
+        },
+        {
+          name: "Green-cyan",
+          hex: "#009966",
+        },
+        {
+          name: "GreenYellow",
+          hex: "#ADFF2F",
+        },
+        {
+          name: "Green-yellow (Crayola)",
+          hex: "#f0e891",
+        },
+        {
+          name: "Greenfinch color (Hiwa-iro)",
+          hex: "#bda928",
+        },
+        {
+          name: "Greyed red (lit. silvered red) (Ginshu)",
+          hex: "#bc2d29",
+        },
+        {
+          name: "Greyish dark green (Rikyūnezumi)",
+          hex: "#656255",
+        },
+        {
+          name: "Grullo",
+          hex: "#a99a86",
+        },
+        {
+          name: "Gunmetal",
+          hex: "#2a3439",
+        },
+        {
+          name: "Guppie green",
+          hex: "#00ff7f",
+        },
+        {
+          name: "Guyabano",
+          hex: "#f8f8f8",
+        },
+        {
+          name: "Halayà úbe",
+          hex: "#663854",
+        },
+        {
+          name: "Half color (Hashita-iro)",
+          hex: "#8d608c",
+        },
+        {
+          name: "Halloween orange",
+          hex: "#eb6123",
+        },
+        {
+          name: "Han blue",
+          hex: "#446ccf",
+        },
+        {
+          name: "Han purple",
+          hex: "#5218fa",
+        },
+        {
+          name: "Harbor rat (Minatonezumi)",
+          hex: "#757d75",
+        },
+        {
+          name: "Harlequin",
+          hex: "#3FFF00",
+        },
+        {
+          name: "Harlequin green",
+          hex: "#46cb18",
+        },
+        {
+          name: "Harmonious rose",
+          hex: "#f29cb7",
+        },
+        {
+          name: "Harvest gold",
+          hex: "#da9100",
+        },
+        {
+          name: "Hawaii blue",
+          hex: "#00c3e3",
+        },
+        {
+          name: "Heart gold",
+          hex: "#808000",
+        },
+        {
+          name: "Heat Wave",
+          hex: "#ff7a00",
+        },
+        {
+          name: "Heliotrope",
+          hex: "#df73ff",
+        },
+        {
+          name: "Heliotrope gray",
+          hex: "#aa98a9",
+        },
+        {
+          name: "Heliotrope magenta",
+          hex: "#aa00bb",
+        },
+        {
+          name: "HoneyDew",
+          hex: "#F0FFF0",
+        },
+        {
+          name: "Honolulu blue",
+          hex: "#006db0",
+        },
+        {
+          name: "Hooker's green",
+          hex: "#49796B",
+        },
+        {
+          name: "Horsetail color (Tokusa-iro)",
+          hex: "#3d5d42",
+        },
+        {
+          name: "Hot magenta",
+          hex: "#ff1dce",
+        },
+        {
+          name: "HotPink",
+          hex: "#FF69B4",
+        },
+        {
+          name: "Huawei Red",
+          hex: "#cf0a2c",
+        },
+        {
+          name: "Huawei Red (1987-2018)",
+          hex: "#ed1c24",
+        },
+        {
+          name: "Hunter green",
+          hex: "#355E3B",
+        },
+        {
+          name: "Ibis wing color (Tokiha-iro)",
+          hex: "#f58f84",
+        },
+        {
+          name: "Iceberg",
+          hex: "#71a6d2",
+        },
+        {
+          name: "Iced tea",
+          hex: "#923c01",
+        },
+        {
+          name: "Icterine",
+          hex: "#fcf75e",
+        },
+        {
+          name: "Iguana green",
+          hex: "#71bc78",
+        },
+        {
+          name: "Illuminating emerald",
+          hex: "#319177",
+        },
+        {
+          name: "Imperial",
+          hex: "#602f6b",
+        },
+        {
+          name: "Imperial blue",
+          hex: "#002395",
+        },
+        {
+          name: "Imperial purple",
+          hex: "#66023c",
+        },
+        {
+          name: "Imperial red",
+          hex: "#ed2939",
+        },
+        {
+          name: "Inchworm",
+          hex: "#b2ec5d",
+        },
+        {
+          name: "Independence",
+          hex: "#4c516d",
+        },
+        {
+          name: "India green",
+          hex: "#138808",
+        },
+        {
+          name: "IndianRed",
+          hex: "#CD5C5C",
+        },
+        {
+          name: "Indian yellow",
+          hex: "#e3a857",
+        },
+        {
+          name: "Indigo",
+          hex: "#4B0082",
+        },
+        {
+          name: "Indigo (rainbow)",
+          hex: "#233067",
+        },
+        {
+          name: "Indigo Codium fragile seaweed brown (Aimirucha)",
+          hex: "#2e372e",
+        },
+        {
+          name: "Indigo dye",
+          hex: "#091f92",
+        },
+        {
+          name: "Indigo ink brown (Aisumicha)",
+          hex: "#393432",
+        },
+        {
+          name: "Indigo white (Aijiro)",
+          hex: "#ebf6f7",
+        },
+        {
+          name: "Infra red",
+          hex: "#ff496c",
+        },
+        {
+          name: "Ink color (Sumi-iro)",
+          hex: "#27221f",
+        },
+        {
+          name: "Insect screen (Mushiao)",
+          hex: "#2d4436",
+        },
+        {
+          name: "Inside of a bottle (Kamenozoki)",
+          hex: "#c6c2b6",
+        },
+        {
+          name: "Interdimensional blue",
+          hex: "#360ccc",
+        },
+        {
+          name: "International orange (aerospace)",
+          hex: "#ff4f00",
+        },
+        {
+          name: "International orange (engineering)",
+          hex: "#ba160c",
+        },
+        {
+          name: "International orange (Golden Gate Bridge)",
+          hex: "#c0362c",
+        },
+        {
+          name: "Iris",
+          hex: "#5a4fcf",
+        },
+        {
+          name: "Iris color (Ayame-iro)",
+          hex: "#763568",
+        },
+        {
+          name: "Iron",
+          hex: "#a19d94",
+        },
+        {
+          name: "Iron color (Tetsu-iro)",
+          hex: "#2b3733",
+        },
+        {
+          name: "Iron head flower color (Noshimehana-iro)",
+          hex: "#344d56",
+        },
+        {
+          name: "Iron storage (Tetsuonando)",
+          hex: "#2b3736",
+        },
+        {
+          name: "Irresistible",
+          hex: "#b3446c",
+        },
+        {
+          name: "Isabelline",
+          hex: "#f4f0ec",
+        },
+        {
+          name: "Islamic green",
+          hex: "#009000",
+        },
+        {
+          name: "Islamic green (Compendium)",
+          hex: "#138808",
+        },
+        {
+          name: "Italian ice",
+          hex: "#e9f6ef",
+        },
+        {
+          name: "Italian leather",
+          hex: "#635a52",
+        },
+        {
+          name: "Italian roast",
+          hex: "#906652",
+        },
+        {
+          name: "Ivory",
+          hex: "#FFFFF0",
+        },
+        {
+          name: "Iwai brown (Iwaicha)",
+          hex: "#5e5545",
+        },
+        {
+          name: "Jacarta",
+          hex: "#3d325d",
+        },
+        {
+          name: "Jacko bean",
+          hex: "#413628",
+        },
+        {
+          name: "Jade",
+          hex: "#00A86B",
+        },
+        {
+          name: "Japanese carmine",
+          hex: "#9d2933",
+        },
+        {
+          name: "Japanese indigo",
+          hex: "#264348",
+        },
+        {
+          name: "Japanese iris and sooty bamboo (Higosusutake)",
+          hex: "#7f5d3b",
+        },
+        {
+          name: "Japanese laurel",
+          hex: "#2f7532",
+        },
+        {
+          name: "Japanese triandra grass (Themeda japonica) (Kariyasu)",
+          hex: "#e2b13c",
+        },
+        {
+          name: "Japanese violet",
+          hex: "#5b3256",
+        },
+        {
+          name: "Jasmine",
+          hex: "#f8de7e",
+        },
+        {
+          name: "Jasper",
+          hex: "#d73b3e",
+        },
+        {
+          name: "Jasper orange",
+          hex: "#de8f4e",
+        },
+        {
+          name: "Jazzberry jam",
+          hex: "#a50b5e",
+        },
+        {
+          name: "Jelly bean",
+          hex: "#da614e",
+        },
+        {
+          name: "Jelly bean blue",
+          hex: "#44798e",
+        },
+        {
+          name: "Jet",
+          hex: "#343434",
+        },
+        {
+          name: "Jet stream",
+          hex: "#bbd0c9",
+        },
+        {
+          name: "Jonquil",
+          hex: "#f4ca16",
+        },
+        {
+          name: "Jordy blue",
+          hex: "#8ab9f1",
+        },
+        {
+          name: "June bud",
+          hex: "#bdda57",
+        },
+        {
+          name: "Jungle green",
+          hex: "#29AB87",
+        },
+        {
+          name: "Kelly green",
+          hex: "#4CBB17",
+        },
+        {
+          name: "Kenyan copper",
+          hex: "#7c1c05",
+        },
+        {
+          name: "Keppel",
+          hex: "#3ab09e",
+        },
+        {
+          name: "Key lime",
+          hex: "#e8f48c",
+        },
+        {
+          name: "Khaki",
+          hex: "#F0E68C",
+        },
+        {
+          name: "Kimono storage (Omeshionando)",
+          hex: "#3d4c51",
+        },
+        {
+          name: "Kiwi",
+          hex: "#8ee53f",
+        },
+        {
+          name: "Kobe",
+          hex: "#882d17",
+        },
+        {
+          name: "Kobi",
+          hex: "#e79fc4",
+        },
+        {
+          name: "Kombu green",
+          hex: "#354230",
+        },
+        {
+          name: "KSU purple",
+          hex: "#512888",
+        },
+        {
+          name: "KU crimson",
+          hex: "#e8000d",
+        },
+        {
+          name: "Kumquat",
+          hex: "#fb9912",
+        },
+        {
+          name: "Languid lavender",
+          hex: "#d6cadd",
+        },
+        {
+          name: "Lanzones",
+          hex: "#e0bc5b",
+        },
+        {
+          name: "Lapis lazuli",
+          hex: "#26619c",
+        },
+        {
+          name: "Lapis lazuli color (Ruri-iro)",
+          hex: "#1f4788",
+        },
+        {
+          name: "Laser lemon",
+          hex: "#ffff66",
+        },
+        {
+          name: "Laurel green",
+          hex: "#a9ba9d",
+        },
+        {
+          name: "Lava",
+          hex: "#cf1020",
+        },
+        {
+          name: "Lavender",
+          hex: "#E6E6FA",
+        },
+        {
+          name: "Lavender (floral)",
+          hex: "#b57edc",
+        },
+        {
+          name: "Lavender blue",
+          hex: "#ccccff",
+        },
+        {
+          name: "LavenderBlush",
+          hex: "#FFF0F5",
+        },
+        {
+          name: "Lavender gray",
+          hex: "#c4c3d0",
+        },
+        {
+          name: "Lavender indigo",
+          hex: "#9457eb",
+        },
+        {
+          name: "Lavender magenta",
+          hex: "#ee82ee",
+        },
+        {
+          name: "Lavender pink",
+          hex: "#fbaed2",
+        },
+        {
+          name: "Lavender purple",
+          hex: "#967bb6",
+        },
+        {
+          name: "Lavender rose",
+          hex: "#fba0e3",
+        },
+        {
+          name: "LawnGreen",
+          hex: "#7CFC00",
+        },
+        {
+          name: "Legal dye (from when color use was regulated by class) (Kenpōzome)",
+          hex: "#2e211b",
+        },
+        {
+          name: "Lemon",
+          hex: "#fff700",
+        },
+        {
+          name: "LemonChiffon",
+          hex: "#FFFACD",
+        },
+        {
+          name: "Lemon curry",
+          hex: "#cca01d",
+        },
+        {
+          name: "Lemon glacier",
+          hex: "#fdff00",
+        },
+        {
+          name: "Lemon iced tea",
+          hex: "#bd3000",
+        },
+        {
+          name: "Lemon lime",
+          hex: "#5cff67",
+        },
+        {
+          name: "Lemon lime (Second entry)",
+          hex: "#e3ff00",
+        },
+        {
+          name: "Lemon meringue",
+          hex: "#f6eabe",
+        },
+        {
+          name: "Lemon yellow",
+          hex: "#fff44f",
+        },
+        {
+          name: "Lemon yellow (Crayola)",
+          hex: "#ffff9f",
+        },
+        {
+          name: "Lenurple",
+          hex: "#ba93d8",
+        },
+        {
+          name: "Liberty",
+          hex: "#545aa7",
+        },
+        {
+          name: "Licorice",
+          hex: "#1a1110",
+        },
+        {
+          name: "LightBlue",
+          hex: "#ADD8E6",
+        },
+        {
+          name: "Light blue color (Asagi-iro)",
+          hex: "#48929b",
+        },
+        {
+          name: "Light blue flower (Hanaasagi)",
+          hex: "#1d697c",
+        },
+        {
+          name: "Light blue silk (Hanada)",
+          hex: "#044f67",
+        },
+        {
+          name: "Light brown",
+          hex: "#b5651d",
+        },
+        {
+          name: "Light carmine pink",
+          hex: "#e66771",
+        },
+        {
+          name: "Light chocolate cosmos",
+          hex: "#551f2f",
+        },
+        {
+          name: "Light cobalt blue",
+          hex: "#88ace0",
+        },
+        {
+          name: "LightCoral",
+          hex: "#F08080",
+        },
+        {
+          name: "Light crimson",
+          hex: "#f56991",
+        },
+        {
+          name: "LightCyan",
+          hex: "#E0FFFF",
+        },
+        {
+          name: "Light deep pink",
+          hex: "#ff5ccd",
+        },
+        {
+          name: "Light French beige",
+          hex: "#c8ad7f",
+        },
+        {
+          name: "Light fuchsia pink",
+          hex: "#f984ef",
+        },
+        {
+          name: "Light gold",
+          hex: "#b29700",
+        },
+        {
+          name: "LightGoldenrodYellow",
+          hex: "#FAFAD2",
+        },
+        {
+          name: "LightGray",
+          hex: "#D3D3D3",
+        },
+        {
+          name: "Light grayish magenta",
+          hex: "#cc99cc",
+        },
+        {
+          name: "LightGreen",
+          hex: "#90EE90",
+        },
+        {
+          name: "Light hot pink",
+          hex: "#ffb3de",
+        },
+        {
+          name: "Light khaki",
+          hex: "#f0e68c",
+        },
+        {
+          name: "Light magenta",
+          hex: "#ff80ff",
+        },
+        {
+          name: "Light medium orchid",
+          hex: "#d39bcb",
+        },
+        {
+          name: "Light moss green",
+          hex: "#addfad",
+        },
+        {
+          name: "Light orange",
+          hex: "#fed8b1",
+        },
+        {
+          name: "Light orchid",
+          hex: "#e6a8d7",
+        },
+        {
+          name: "Light pastel purple",
+          hex: "#b19cd9",
+        },
+        {
+          name: "Light periwinkle",
+          hex: "#c5cbe1",
+        },
+        {
+          name: "LightPink",
+          hex: "#FFB6C1",
+        },
+        {
+          name: "Light red",
+          hex: "#ffcccb",
+        },
+        {
+          name: "LightSalmon",
+          hex: "#FFA07A",
+        },
+        {
+          name: "Light salmon pink",
+          hex: "#ff9999",
+        },
+        {
+          name: "LightSeaGreen",
+          hex: "#20B2AA",
+        },
+        {
+          name: "Light silver",
+          hex: "#d8d8d8",
+        },
+        {
+          name: "LightSkyBlue",
+          hex: "#87CEFA",
+        },
+        {
+          name: "LightSlateGray",
+          hex: "#778899",
+        },
+        {
+          name: "LightSteelBlue",
+          hex: "#B0C4DE",
+        },
+        {
+          name: "Light taupe",
+          hex: "#b38b6d",
+        },
+        {
+          name: "LightYellow",
+          hex: "#FFFFE0",
+        },
+        {
+          name: "Light yellow (Asagi)",
+          hex: "#f7bb7d",
+        },
+        {
+          name: "Lilac",
+          hex: "#c8a2c8",
+        },
+        {
+          name: "Lilac Luster",
+          hex: "#ae98aa",
+        },
+        {
+          name: "Lime",
+          hex: "#00FF00",
+        },
+        {
+          name: "LimeGreen",
+          hex: "#32CD32",
+        },
+        {
+          name: "Lime pulp",
+          hex: "#d1e189",
+        },
+        {
+          name: "Limerick",
+          hex: "#9dc209",
+        },
+        {
+          name: "Lincoln green",
+          hex: "#195905",
+        },
+        {
+          name: "Linen",
+          hex: "#FAF0E6",
+        },
+        {
+          name: "Linkedin Blue",
+          hex: "#0072b1",
+        },
+        {
+          name: "Little boy blue",
+          hex: "#6ca0dc",
+        },
+        {
+          name: "Little girl pink",
+          hex: "#f8b9d4",
+        },
+        {
+          name: "Liver",
+          hex: "#674c47",
+        },
+        {
+          name: "Liver (dogs)",
+          hex: "#b86d29",
+        },
+        {
+          name: "Liver (organ)",
+          hex: "#6c2e1f",
+        },
+        {
+          name: "Liver chestnut",
+          hex: "#987456",
+        },
+        {
+          name: "Long spring (season) color (Chōshun-iro)",
+          hex: "#b95754",
+        },
+        {
+          name: "Loquat (tree) brown (Biwacha)",
+          hex: "#ab6134",
+        },
+        {
+          name: "Lotion",
+          hex: "#fefdfa",
+        },
+        {
+          name: "Lotion blue",
+          hex: "#15f2fd",
+        },
+        {
+          name: "Lotion pink",
+          hex: "#eccfcf",
+        },
+        {
+          name: "Lumber",
+          hex: "#ffe4cd",
+        },
+        {
+          name: "Lust",
+          hex: "#e62020",
+        },
+        {
+          name: "Lychee",
+          hex: "#dc5349",
+        },
+        {
+          name: "Lye-colored (Aku-iro)",
+          hex: "#7f6b5d",
+        },
+        {
+          name: "Macaroni and Cheese",
+          hex: "#ffbd88",
+        },
+        {
+          name: "Madder Lake",
+          hex: "#cc3336",
+        },
+        {
+          name: "Magenta",
+          hex: "#FF0090",
+        },
+        {
+          name: "Magenta (dye)",
+          hex: "#ca1f7b",
+        },
+        {
+          name: "Magenta haze",
+          hex: "#9f4576",
+        },
+        {
+          name: "Magenta-pink",
+          hex: "#cc338b",
+        },
+        {
+          name: "Magic mint",
+          hex: "#aaf0d1",
+        },
+        {
+          name: "Magic Potion",
+          hex: "#ff4466",
+        },
+        {
+          name: "Magnolia",
+          hex: "#f8f4ff",
+        },
+        {
+          name: "Mahogany",
+          hex: "#c04000",
+        },
+        {
+          name: "Maize (Crayola)",
+          hex: "#f2c649",
+        },
+        {
+          name: "Majorelle blue",
+          hex: "#6050dc",
+        },
+        {
+          name: "Malachite",
+          hex: "#0BDA51",
+        },
+        {
+          name: "Manatee",
+          hex: "#979aaa",
+        },
+        {
+          name: "Mandarin",
+          hex: "#f37a48",
+        },
+        {
+          name: "Mango",
+          hex: "#fdbe02",
+        },
+        {
+          name: "Mango green",
+          hex: "#96ff00",
+        },
+        {
+          name: "Mango Tango",
+          hex: "#ff8243",
+        },
+        {
+          name: "Manila",
+          hex: "#e7c9a9",
+        },
+        {
+          name: "Mantis",
+          hex: "#74C365",
+        },
+        {
+          name: "Maple syrup",
+          hex: "#bb9351",
+        },
+        {
+          name: "Mardi Gras",
+          hex: "#880085",
+        },
+        {
+          name: "Margarine",
+          hex: "#f2d930",
+        },
+        {
+          name: "Margarita",
+          hex: "#b0c24a",
+        },
+        {
+          name: "Marigold",
+          hex: "#eaa221",
+        },
+        {
+          name: "Maroon",
+          hex: "#800000",
+        },
+        {
+          name: "Maroon (Shrimp brown) (Ebicha)",
+          hex: "#5e2824",
+        },
+        {
+          name: "Maroon (X11)",
+          hex: "#b03060",
+        },
+        {
+          name: "Mauve",
+          hex: "#e0b0ff",
+        },
+        {
+          name: "Mauve taupe",
+          hex: "#915f6d",
+        },
+        {
+          name: "Mauvelous",
+          hex: "#ef98aa",
+        },
+        {
+          name: "Maximum blue",
+          hex: "#47abcc",
+        },
+        {
+          name: "Maximum blue green",
+          hex: "#30bfbf",
+        },
+        {
+          name: "Maximum blue purple",
+          hex: "#acace6",
+        },
+        {
+          name: "Maximum green",
+          hex: "#5e8c31",
+        },
+        {
+          name: "Maximum green yellow",
+          hex: "#d9e650",
+        },
+        {
+          name: "Maximum orange",
+          hex: "#ff5b00",
+        },
+        {
+          name: "Maximum purple",
+          hex: "#733380",
+        },
+        {
+          name: "Maximum red",
+          hex: "#d92121",
+        },
+        {
+          name: "Maximum red purple",
+          hex: "#a63a79",
+        },
+        {
+          name: "Maximum yellow",
+          hex: "#fafa37",
+        },
+        {
+          name: "Maximum yellow red",
+          hex: "#f2ba49",
+        },
+        {
+          name: "May green",
+          hex: "#4c9141",
+        },
+        {
+          name: "Maya blue",
+          hex: "#73c2fb",
+        },
+        {
+          name: "Meat brown",
+          hex: "#e5b73b",
+        },
+        {
+          name: "Meat-color (Shishi-iro)",
+          hex: "#f9906f",
+        },
+        {
+          name: "MediumAquamarine",
+          hex: "#66CDAA",
+        },
+        {
+          name: "MediumAquamarine (second entry)",
+          hex: "#66ddaa",
+        },
+        {
+          name: "MediumBlue",
+          hex: "#0000CD",
+        },
+        {
+          name: "Medium candy apple red",
+          hex: "#e2062c",
+        },
+        {
+          name: "Medium carmine",
+          hex: "#af4035",
+        },
+        {
+          name: "Medium champagne",
+          hex: "#f3e5ab",
+        },
+        {
+          name: "Medium crimson (dye) (Nakabeni)",
+          hex: "#c93756",
+        },
+        {
+          name: "Medium electric blue",
+          hex: "#035096",
+        },
+        {
+          name: "Medium jungle green",
+          hex: "#1c352d",
+        },
+        {
+          name: "Medium lavender magenta",
+          hex: "#dda0dd",
+        },
+        {
+          name: "MediumOrchid",
+          hex: "#BA55D3",
+        },
+        {
+          name: "Medium Persian blue",
+          hex: "#0067a5",
+        },
+        {
+          name: "MediumPurple",
+          hex: "#9370DB",
+        },
+        {
+          name: "Medium red-violet",
+          hex: "#bb3385",
+        },
+        {
+          name: "Medium ruby",
+          hex: "#aa4069",
+        },
+        {
+          name: "MediumSeaGreen",
+          hex: "#3CB371",
+        },
+        {
+          name: "Medium sky blue",
+          hex: "#80daeb",
+        },
+        {
+          name: "MediumSlateBlue",
+          hex: "#7B68EE",
+        },
+        {
+          name: "Medium spring bud",
+          hex: "#c9dc87",
+        },
+        {
+          name: "MediumSpringGreen",
+          hex: "#00FA9A",
+        },
+        {
+          name: "MediumTurquoise",
+          hex: "#48D1CC",
+        },
+        {
+          name: "Medium vermilion",
+          hex: "#d9603b",
+        },
+        {
+          name: "MediumVioletRed",
+          hex: "#C71585",
+        },
+        {
+          name: "Melancholy",
+          hex: "#fdbcb4",
+        },
+        {
+          name: "Mellow apricot",
+          hex: "#f8b878",
+        },
+        {
+          name: "Melon",
+          hex: "#febaad",
+        },
+        {
+          name: "Menthol",
+          hex: "#c1f9a2",
+        },
+        {
+          name: "Metallic blue",
+          hex: "#32527b",
+        },
+        {
+          name: "Metallic bronze",
+          hex: "#a97142",
+        },
+        {
+          name: "Metallic brown",
+          hex: "#ac4313",
+        },
+        {
+          name: "Metallic green",
+          hex: "#296e01",
+        },
+        {
+          name: "Metallic orange",
+          hex: "#da680f",
+        },
+        {
+          name: "Metallic pink",
+          hex: "#eda6c4",
+        },
+        {
+          name: "Metallic red",
+          hex: "#a62c2b",
+        },
+        {
+          name: "Metallic Seaweed",
+          hex: "#0a7e8c",
+        },
+        {
+          name: "Metallic Sunburst",
+          hex: "#9c7c38",
+        },
+        {
+          name: "Metallic violet",
+          hex: "#5b0a91",
+        },
+        {
+          name: "Metallic yellow",
+          hex: "#fdcc0d",
+        },
+        {
+          name: "Mexican pink",
+          hex: "#e4007c",
+        },
+        {
+          name: "Microsoft blue",
+          hex: "#00a2ed",
+        },
+        {
+          name: "Microsoft Edge blue",
+          hex: "#0078d7",
+        },
+        {
+          name: "Microsoft green",
+          hex: "#7db700",
+        },
+        {
+          name: "Microsoft red",
+          hex: "#f04e1f",
+        },
+        {
+          name: "Microsoft yellow",
+          hex: "#fdb900",
+        },
+        {
+          name: "Middle blue",
+          hex: "#7ed4e6",
+        },
+        {
+          name: "Middle blue green",
+          hex: "#8dd9cc",
+        },
+        {
+          name: "Middle blue purple",
+          hex: "#8b72be",
+        },
+        {
+          name: "Middle green",
+          hex: "#4d8c57",
+        },
+        {
+          name: "Middle green yellow",
+          hex: "#acbf60",
+        },
+        {
+          name: "Middle grey",
+          hex: "#8b8680",
+        },
+        {
+          name: "Middle purple",
+          hex: "#d982b5",
+        },
+        {
+          name: "Middle red",
+          hex: "#e58e73",
+        },
+        {
+          name: "Middle red purple",
+          hex: "#a55353",
+        },
+        {
+          name: "Middle yellow",
+          hex: "#ffeb00",
+        },
+        {
+          name: "Middle yellow red",
+          hex: "#ecb176",
+        },
+        {
+          name: "Midnight",
+          hex: "#702670",
+        },
+        {
+          name: "MidnightBlue",
+          hex: "#191970",
+        },
+        {
+          name: "Midnight blue (Second entry)",
+          hex: "#00468c",
+        },
+        {
+          name: "Midnight green",
+          hex: "#004953",
+        },
+        {
+          name: "Midnight green (eagle green)",
+          hex: "#004953",
+        },
+        {
+          name: "Mikado yellow",
+          hex: "#ffc40c",
+        },
+        {
+          name: "Milk",
+          hex: "#fdfff5",
+        },
+        {
+          name: "Milk chocolate",
+          hex: "#84563c",
+        },
+        {
+          name: "Mimi pink",
+          hex: "#ffdae9",
+        },
+        {
+          name: "Mindaro",
+          hex: "#E3F988",
+        },
+        {
+          name: "Ming",
+          hex: "#36747d",
+        },
+        {
+          name: "Minion yellow",
+          hex: "#f5e050",
+        },
+        {
+          name: "Mint",
+          hex: "#3EB489",
+        },
+        {
+          name: "Mint cream",
+          hex: "#f5fffa",
+        },
+        {
+          name: "Mint green",
+          hex: "#98ff98",
+        },
+        {
+          name: "Minty Paradise",
+          hex: "#00FFBF",
+        },
+        {
+          name: "Misty moss",
+          hex: "#bbb477",
+        },
+        {
+          name: "MistyRose",
+          hex: "#FFE4E1",
+        },
+        {
+          name: "Mocha",
+          hex: "#bea493",
+        },
+        {
+          name: "Moccasin",
+          hex: "#FFE4B5",
+        },
+        {
+          name: "Moonstone",
+          hex: "#3aa8c1",
+        },
+        {
+          name: "Moonstone blue",
+          hex: "#73a9c2",
+        },
+        {
+          name: "Mordant red 19",
+          hex: "#ae0c00",
+        },
+        {
+          name: "Morning blue",
+          hex: "#8da399",
+        },
+        {
+          name: "Moss color (Koke-iro)",
+          hex: "#8b7d3a",
+        },
+        {
+          name: "Moss green",
+          hex: "#8A9A5B",
+        },
+        {
+          name: "Mountain Meadow",
+          hex: "#30ba8f",
+        },
+        {
+          name: "Mountbatten pink",
+          hex: "#997a8d",
+        },
+        {
+          name: "Mousy indigo (Ainezumi)",
+          hex: "#5c544e",
+        },
+        {
+          name: "Mousy wisteria (Fujinezumi)",
+          hex: "#766980",
+        },
+        {
+          name: "MSU green",
+          hex: "#18453b",
+        },
+        {
+          name: "Mud",
+          hex: "#70543e",
+        },
+        {
+          name: "Muddy brown (lit. the brown of a distant river) (Enshūcha)",
+          hex: "#cb6649",
+        },
+        {
+          name: "Mughal green",
+          hex: "#306030",
+        },
+        {
+          name: "Mulberry",
+          hex: "#c54b8c",
+        },
+        {
+          name: "Mulberry (Crayola)",
+          hex: "#c8509b",
+        },
+        {
+          name: "Mulberry dye (Kuwazome)",
+          hex: "#59292c",
+        },
+        {
+          name: "Mulberry-dyed (Kuwazome)",
+          hex: "#c57f2e",
+        },
+        {
+          name: "Mustard",
+          hex: "#ffdb58",
+        },
+        {
+          name: "Mustard brown",
+          hex: "#cd7a00",
+        },
+        {
+          name: "Mustard green",
+          hex: "#6e6e30",
+        },
+        {
+          name: "Mustard yellow",
+          hex: "#e1ad01",
+        },
+        {
+          name: "Myrtle green",
+          hex: "#317873",
+        },
+        {
+          name: "Mystic",
+          hex: "#d65282",
+        },
+        {
+          name: "Mystic maroon",
+          hex: "#ad4379",
+        },
+        {
+          name: "Mystic red",
+          hex: "#ff5500",
+        },
+        {
+          name: "Nadeshiko pink",
+          hex: "#f6adc6",
+        },
+        {
+          name: "Napier green",
+          hex: "#2a8000",
+        },
+        {
+          name: "Naples yellow",
+          hex: "#fada5e",
+        },
+        {
+          name: "NavajoWhite",
+          hex: "#FFDEAD",
+        },
+        {
+          name: "Navy",
+          hex: "#000080",
+        },
+        {
+          name: "Navy blue",
+          hex: "#000080",
+        },
+        {
+          name: "Navy blue bellflower (Konkikyō)",
+          hex: "#191f45",
+        },
+        {
+          name: "Neon blue",
+          hex: "#1b03a3",
+        },
+        {
+          name: "Neon Carrot",
+          hex: "#ffa343",
+        },
+        {
+          name: "Neon Fuchsia",
+          hex: "#fe4164",
+        },
+        {
+          name: "Neon green",
+          hex: "#39FF14",
+        },
+        {
+          name: "New Car",
+          hex: "#214fc6",
+        },
+        {
+          name: 'New Bridge" color (Shinbashi-iro)',
+          hex: "#006c7f",
+        },
+        {
+          name: "New York pink",
+          hex: "#d7837f",
+        },
+        {
+          name: "Nickel",
+          hex: "#727472",
+        },
+        {
+          name: "Nightly Woods",
+          hex: "#013220",
+        },
+        {
+          name: "Nightingale-brown (greenish brown) (Uguisucha)",
+          hex: "#5c4827",
+        },
+        {
+          name: "Nintendo red",
+          hex: "#e4000f",
+        },
+        {
+          name: "Non-photo blue",
+          hex: "#a4dded",
+        },
+        {
+          name: "North Texas Green",
+          hex: "#059033",
+        },
+        {
+          name: "Nyanza",
+          hex: "#e9ffdb",
+        },
+        {
+          name: "Ocean Blue",
+          hex: "#4f42b5",
+        },
+        {
+          name: "Ocean boat blue",
+          hex: "#0077be",
+        },
+        {
+          name: "Ocean green",
+          hex: "#48bf91",
+        },
+        {
+          name: "Ochre",
+          hex: "#cc7722",
+        },
+        {
+          name: "Ochre (earthen yellow-red-brown) (Ōtan)",
+          hex: "#ff4e20",
+        },
+        {
+          name: "Ochre (lit. earthen yellow) (Ōdo-iro)",
+          hex: "#be7f51",
+        },
+        {
+          name: "Ogre Odor",
+          hex: "#fd5240",
+        },
+        {
+          name: "Old bamboo color (Oitake-iro)",
+          hex: "#5e644f",
+        },
+        {
+          name: "Old burgundy",
+          hex: "#43302e",
+        },
+        {
+          name: "Old gold",
+          hex: "#cfb53b",
+        },
+        {
+          name: "OldLace",
+          hex: "#FDF5E6",
+        },
+        {
+          name: "Old lavender",
+          hex: "#796878",
+        },
+        {
+          name: "Old mauve",
+          hex: "#673147",
+        },
+        {
+          name: "Old moss green",
+          hex: "#867e36",
+        },
+        {
+          name: "Old rose",
+          hex: "#c08081",
+        },
+        {
+          name: "Olive",
+          hex: "#808000",
+        },
+        {
+          name: "OliveDrab",
+          hex: "#6B8E23",
+        },
+        {
+          name: "Olive Drab #7",
+          hex: "#3c341f",
+        },
+        {
+          name: "Olive green",
+          hex: "#b5b35c",
+        },
+        {
+          name: "Olivine",
+          hex: "#9AB973",
+        },
+        {
+          name: "Onando color (Onando-iro)",
+          hex: "#364141",
+        },
+        {
+          name: "One kin (0.6 kg) dye (Ikkonzome)",
+          hex: "#f08f90",
+        },
+        {
+          name: "Onyx",
+          hex: "#353839",
+        },
+        {
+          name: "Opal",
+          hex: "#a8c3bc",
+        },
+        {
+          name: "Opera mauve",
+          hex: "#b784a7",
+        },
+        {
+          name: "Opera Red",
+          hex: "#ff1b2d",
+        },
+        {
+          name: "Opposite flower color (Masuhana-iro)",
+          hex: "#4d646c",
+        },
+        {
+          name: "Orange",
+          hex: "#FFA500",
+        },
+        {
+          name: "Orange (Compendium)",
+          hex: "#ff6600",
+        },
+        {
+          name: "Orange (color wheel)",
+          hex: "#ff7f00",
+        },
+        {
+          name: "Orange (Crayola)",
+          hex: "#ff7538",
+        },
+        {
+          name: "Orange (RYB)",
+          hex: "#fb9902",
+        },
+        {
+          name: "Orange peel",
+          hex: "#ff9f00",
+        },
+        {
+          name: "Orange soda",
+          hex: "#eb593d",
+        },
+        {
+          name: "Orange soda (Second entry)",
+          hex: "#fa5b3d",
+        },
+        {
+          name: "OrangeRed",
+          hex: "#FF4500",
+        },
+        {
+          name: "Orange-red (Crayola)",
+          hex: "#ff5349",
+        },
+        {
+          name: "Orange-yellow",
+          hex: "#f5bd1f",
+        },
+        {
+          name: "Orange-yellow (Crayola)",
+          hex: "#f8d568",
+        },
+        {
+          name: "Orchid",
+          hex: "#DA70D6",
+        },
+        {
+          name: "Orchid (Crayola)",
+          hex: "#e29cd2",
+        },
+        {
+          name: "Orchid pink",
+          hex: "#f2bdcd",
+        },
+        {
+          name: "Orioles orange",
+          hex: "#fb4f14",
+        },
+        {
+          name: "OU Crimson red",
+          hex: "#841617",
+        },
+        {
+          name: "Outer space",
+          hex: "#414a4c",
+        },
+        {
+          name: "Outer space (Crayola)",
+          hex: "#2d383a",
+        },
+        {
+          name: "Outrageous Orange",
+          hex: "#ff6e4a",
+        },
+        {
+          name: "Overdyed/refreshed red-brown (Sohi)",
+          hex: "#e35c38",
+        },
+        {
+          name: "Oxford blue",
+          hex: "#002147",
+        },
+        {
+          name: "Oxley",
+          hex: "#6d9a79",
+        },
+        {
+          name: "Pacific blue",
+          hex: "#1ca9c9",
+        },
+        {
+          name: "Painite",
+          hex: "#6b4947",
+        },
+        {
+          name: "Pakistan green",
+          hex: "#006600",
+        },
+        {
+          name: "Pakistan green (Compendium)",
+          hex: "#00401A",
+        },
+        {
+          name: "Palatinate blue",
+          hex: "#273be2",
+        },
+        {
+          name: "Palatinate purple",
+          hex: "#682860",
+        },
+        {
+          name: "Pale blue (Usuao)",
+          hex: "#8c9c76",
+        },
+        {
+          name: "PaleTurquoise",
+          hex: "#AFEEEE",
+        },
+        {
+          name: "Pale Brown",
+          hex: "#987654",
+        },
+        {
+          name: "Pale cerulean",
+          hex: "#9bc4e2",
+        },
+        {
+          name: "Pale Chestnut",
+          hex: "#ddadaf",
+        },
+        {
+          name: "Pale Cornflower Blue",
+          hex: "#abcdef",
+        },
+        {
+          name: "Pale Cyan",
+          hex: "#87d3f8",
+        },
+        {
+          name: "Pale fallen leaves (Aokuchiba)",
+          hex: "#aa8736",
+        },
+        {
+          name: "PaleGoldenrod",
+          hex: "#EEE8AA",
+        },
+        {
+          name: "PaleGreen",
+          hex: "#98FB98",
+        },
+        {
+          name: "Pale green onion (Mizuasagi)",
+          hex: "#749f8d",
+        },
+        {
+          name: "Pale incense (Usukō)",
+          hex: "#ffa565",
+        },
+        {
+          name: "Pale lavender",
+          hex: "#dcd0ff",
+        },
+        {
+          name: "Pale Magenta",
+          hex: "#f984e5",
+        },
+        {
+          name: "Pale Magenta-Pink",
+          hex: "#ff99cc",
+        },
+        {
+          name: "Pale oak (Aoshirotsurubami)",
+          hex: "#bba46d",
+        },
+        {
+          name: "Pale persimmon (Usugaki)",
+          hex: "#fca474",
+        },
+        {
+          name: "Pale pink",
+          hex: "#fadadd",
+        },
+        {
+          name: "PaleVioletRed",
+          hex: "#DB7093",
+        },
+        {
+          name: "Pale robin egg blue",
+          hex: "#96ded1",
+        },
+        {
+          name: "Pale silver",
+          hex: "#c9c0bb",
+        },
+        {
+          name: "Pale spring bud",
+          hex: "#ecebbd",
+        },
+        {
+          name: "Pale taupe",
+          hex: "#bc987e",
+        },
+        {
+          name: "Pale Violet",
+          hex: "#cc99ff",
+        },
+        {
+          name: "Pale young green onion (Usumoegi)",
+          hex: "#8db255",
+        },
+        {
+          name: "Palm Leaf",
+          hex: "#6f9940",
+        },
+        {
+          name: "Panasonic blue",
+          hex: "#0040be",
+        },
+        {
+          name: "Pansy purple",
+          hex: "#78184a",
+        },
+        {
+          name: "Paolo Veronese green",
+          hex: "#009b7d",
+        },
+        {
+          name: "PapayaWhip",
+          hex: "#FFEFD5",
+        },
+        {
+          name: "Paradise pink",
+          hex: "#e63e62",
+        },
+        {
+          name: "Parakeet Blue",
+          hex: "#7eb6ff",
+        },
+        {
+          name: "Parrot Pink",
+          hex: "#d998a0",
+        },
+        {
+          name: "Pastel blue",
+          hex: "#aec6cf",
+        },
+        {
+          name: "Pastel brown",
+          hex: "#836953",
+        },
+        {
+          name: "Pastel gray",
+          hex: "#cfcfc4",
+        },
+        {
+          name: "Pastel green",
+          hex: "#77dd77",
+        },
+        {
+          name: "Pastel magenta",
+          hex: "#f49ac2",
+        },
+        {
+          name: "Pastel orange",
+          hex: "#ffb347",
+        },
+        {
+          name: "Pastel pink",
+          hex: "#dea5a4",
+        },
+        {
+          name: "Pastel purple",
+          hex: "#b39eb5",
+        },
+        {
+          name: "Pastel red",
+          hex: "#ff6961",
+        },
+        {
+          name: "Pastel violet",
+          hex: "#cb99c9",
+        },
+        {
+          name: "Pastel yellow",
+          hex: "#fdfd96",
+        },
+        {
+          name: "Patina (Rokushō)",
+          hex: "#407a52",
+        },
+        {
+          name: "Patriarch",
+          hex: "#800080",
+        },
+        {
+          name: "Patrinia flowers (Patrinia scabiosaefolia) (Ominaeshi)",
+          hex: "#d9b611",
+        },
+        {
+          name: "Peach",
+          hex: "#ffe5b4",
+        },
+        {
+          name: "Peach Burst",
+          hex: "#f39998",
+        },
+        {
+          name: "PeachPuff",
+          hex: "#FFDAB9",
+        },
+        {
+          name: "Peach-colored (Momo-iro)",
+          hex: "#f47983",
+        },
+        {
+          name: "Peach-orange",
+          hex: "#ffcc99",
+        },
+        {
+          name: "Peach-yellow",
+          hex: "#fadfad",
+        },
+        {
+          name: "Pear",
+          hex: "#d1e231",
+        },
+        {
+          name: "Pearl",
+          hex: "#eae0c8",
+        },
+        {
+          name: "Pearl Aqua",
+          hex: "#88d8c0",
+        },
+        {
+          name: "Pearly purple",
+          hex: "#b768a2",
+        },
+        {
+          name: "Penguin White",
+          hex: "#f5f3ef",
+        },
+        {
+          name: "Peridot",
+          hex: "#e6e200",
+        },
+        {
+          name: "Periwinkle (Crayola)",
+          hex: "#c3cde6",
+        },
+        {
+          name: "Permanent Geranium Lake",
+          hex: "#e12c2c",
+        },
+        {
+          name: "Persian blue",
+          hex: "#1c39bb",
+        },
+        {
+          name: "Persian green",
+          hex: "#00a693",
+        },
+        {
+          name: "Persian indigo",
+          hex: "#32127a",
+        },
+        {
+          name: "Persian orange",
+          hex: "#d99058",
+        },
+        {
+          name: "Persian pink",
+          hex: "#f77fbe",
+        },
+        {
+          name: "Persian plum",
+          hex: "#701c1c",
+        },
+        {
+          name: "Persian red",
+          hex: "#cc3333",
+        },
+        {
+          name: "Persian rose",
+          hex: "#fe28a2",
+        },
+        {
+          name: "Persimmon",
+          hex: "#ec5800",
+        },
+        {
+          name: "Persimmon-juice color (Kakishibu-iro)",
+          hex: "#934337",
+        },
+        {
+          name: "Peru",
+          hex: "#CD853F",
+        },
+        {
+          name: "Pewter Blue",
+          hex: "#8ba8b7",
+        },
+        {
+          name: "Philippine blue",
+          hex: "#0038a7",
+        },
+        {
+          name: "Philippine bronze",
+          hex: "#6e3a07",
+        },
+        {
+          name: "Yellow",
+          hex: "#FFFF00",
+        },
+      ];
+
+      // Convert RGB [0–255] to CIE XYZ
+      function rgbToXyz([r, g, b]) {
+        r /= 255;
+        g /= 255;
+        b /= 255;
+        r = r > 0.04045 ? ((r + 0.055) / 1.055) ** 2.4 : r / 12.92;
+        g = g > 0.04045 ? ((g + 0.055) / 1.055) ** 2.4 : g / 12.92;
+        b = b > 0.04045 ? ((b + 0.055) / 1.055) ** 2.4 : b / 12.92;
+
+        const x = r * 0.4124 + g * 0.3576 + b * 0.1805;
+        const y = r * 0.2126 + g * 0.7152 + b * 0.0722;
+        const z = r * 0.0193 + g * 0.1192 + b * 0.9505;
+        return [x, y, z];
+      }
+
+      // Convert XYZ → Lab (D65 reference white)
+      function xyzToLab([x, y, z]) {
+        const refX = 0.95047,
+          refY = 1.0,
+          refZ = 1.08883;
+        x /= refX;
+        y /= refY;
+        z /= refZ;
+
+        const f = (t) => (t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116);
+
+        const L = 116 * f(y) - 16;
+        const a = 500 * (f(x) - f(y));
+        const b = 200 * (f(y) - f(z));
+        return [L, a, b];
+      }
+
+      function rgbToLab(rgb) {
+        return xyzToLab(rgbToXyz(rgb));
+      }
+
+      function deltaE2000(rgb1, rgb2) {
+        const [L1, a1, b1] = rgbToLab(rgb1);
+        const [L2, a2, b2] = rgbToLab(rgb2);
+
+        const avgL = (L1 + L2) / 2;
+        const C1 = Math.sqrt(a1 * a1 + b1 * b1);
+        const C2 = Math.sqrt(a2 * a2 + b2 * b2);
+        const avgC = (C1 + C2) / 2;
+
+        const G = 0.5 * (1 - Math.sqrt(avgC ** 7 / (avgC ** 7 + 25 ** 7)));
+        const a1p = (1 + G) * a1;
+        const a2p = (1 + G) * a2;
+        const C1p = Math.sqrt(a1p * a1p + b1 * b1);
+        const C2p = Math.sqrt(a2p * a2p + b2 * b2);
+        const avgCp = (C1p + C2p) / 2;
+
+        const h1p =
+          (Math.atan2(b1, a1p) * 180) / Math.PI +
+          (Math.atan2(b1, a1p) < 0 ? 360 : 0);
+        const h2p =
+          (Math.atan2(b2, a2p) * 180) / Math.PI +
+          (Math.atan2(b2, a2p) < 0 ? 360 : 0);
+        let deltahp;
+        if (Math.abs(h1p - h2p) <= 180) {
+          deltahp = h2p - h1p;
+        } else {
+          deltahp = h2p <= h1p ? h2p - h1p + 360 : h2p - h1p - 360;
+        }
+
+        const deltaLp = L2 - L1;
+        const deltaCp = C2p - C1p;
+        const deltaHp =
+          2 * Math.sqrt(C1p * C2p) * Math.sin(((deltahp / 2) * Math.PI) / 180);
+
+        const avgHp =
+          Math.abs(h1p - h2p) > 180 ? (h1p + h2p + 360) / 2 : (h1p + h2p) / 2;
+
+        const T =
+          1 -
+          0.17 * Math.cos(((avgHp - 30) * Math.PI) / 180) +
+          0.24 * Math.cos((2 * avgHp * Math.PI) / 180) +
+          0.32 * Math.cos(((3 * avgHp + 6) * Math.PI) / 180) -
+          0.2 * Math.cos(((4 * avgHp - 63) * Math.PI) / 180);
+
+        const deltaTheta = 30 * Math.exp(-(((avgHp - 275) / 25) ** 2));
+        const Rc = 2 * Math.sqrt(avgCp ** 7 / (avgCp ** 7 + 25 ** 7));
+        const Sl =
+          1 + (0.015 * (avgL - 50) ** 2) / Math.sqrt(20 + (avgL - 50) ** 2);
+        const Sc = 1 + 0.045 * avgCp;
+        const Sh = 1 + 0.015 * avgCp * T;
+        const Rt = -Math.sin((2 * deltaTheta * Math.PI) / 180) * Rc;
+
+        const dE = Math.sqrt(
+          (deltaLp / Sl) ** 2 +
+            (deltaCp / Sc) ** 2 +
+            (deltaHp / Sh) ** 2 +
+            Rt * (deltaCp / Sc) * (deltaHp / Sh)
+        );
+
+        return dE;
+      }
+
+      function hexDistance(h1, h2) {
+        return deltaE2000(hexToRgb(h1), hexToRgb(h2));
+      }
+
+      function nearestColorName(hex) {
+        let best = "Unknown",
+          bestDist = Infinity;
+        for (const c of colorList) {
+          const d = hexDistance(hex, c.hex);
+          if (d < bestDist) {
+            bestDist = d;
+            best = c.name;
+          }
+        }
+        return best;
+      }
+
+      function isValidHex(hex) {
+        return /^#([0-9A-Fa-f]{6})$/.test(hex);
+      }
+
+
+
+      // --- Main logic ---
+      window.addEventListener("load", () => {
+        if (typeof mixbox === "undefined") {
+          alert(
+            "Mixbox failed to load. Check your internet connection or CDN."
+          );
+          return;
+        }
+
+        const color1 = document.getElementById("color1");
+        const color2 = document.getElementById("color2");
+        const ratio = document.getElementById("ratio");
+
+              function syncHexInput(colorPickerId, hexInputId) {
+        const colorPicker = document.getElementById(colorPickerId);
+        const hexInput = document.getElementById(hexInputId);
+
+        // When color picker changes
+        colorPicker.addEventListener("input", () => {
+          hexInput.value = colorPicker.value.toLowerCase();
+          updateMix(); // refresh everything
+        });
+
+        // When hex field changes
+        hexInput.addEventListener("input", () => {
+          let val = hexInput.value.trim();
+
+          // Auto-add '#' if user types only 6 hex chars
+          if (/^[0-9A-Fa-f]{6}$/.test(val)) {
+            val = "#" + val;
+          }
+
+          if (isValidHex(val)) {
+            colorPicker.value = val.toLowerCase();
+            updateMix();
+          }
+        });
+      }
+
+      // Attach sync to both color pairs
+      syncHexInput("color1", "hex1");
+      syncHexInput("color2", "hex2");
+
+        function updateMix() {
+          const c1 = hexToRgb(color1.value);
+          const c2 = hexToRgb(color2.value);
+          const t = parseFloat(ratio.value);
+
+          const mixed = mixbox.lerp(c1, c2, t);
+          const hex = rgbToHex(mixed);
+
+          document.getElementById("resultBox").style.background =
+            rgbToCss(mixed);
+          document.getElementById(
+            "rgbText"
+          ).textContent = `${hex.toUpperCase()} → RGB(${mixed
+            .map((v) => Math.round(v))
+            .join(", ")})`;
+          document.getElementById("resultName").textContent =
+            nearestColorName(hex);
+
+          document.getElementById("hex1").value = color1.value.toUpperCase();
+          document.getElementById("hex2").value = color2.value.toUpperCase();
+          document.getElementById("name1").textContent = nearestColorName(
+            color1.value
+          );
+          document.getElementById("name2").textContent = nearestColorName(
+            color2.value
+          );
+
+          document.getElementById("ratioLabel").textContent =
+            Math.round(t * 100) + "%";
+        }
+
+        color1.addEventListener("input", updateMix);
+        color2.addEventListener("input", updateMix);
+        ratio.addEventListener("input", updateMix);
+
+        const c1 = hexToRgb(document.getElementById("color1").value);
+        const c2 = hexToRgb(document.getElementById("color2").value);
+        updateMix();
+      });
+    </script>
+  </body>
+</html>
