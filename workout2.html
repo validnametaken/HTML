@@ -237,14 +237,13 @@
 </head>
 
 <body>
-    <h1>Exercise Timer (v. 2) </h1>
+    <h1>Exercise Timer (v. 3) </h1>
     <div id="workout">
         <div class="left-column">
             <div id="next-exercise" margin-bottom: 10px;></div>
             <img id="next-exercise-img" class="exercise-media"
                 style="display:none; max-width:200px; margin-bottom:10px;" alt="Next Exercise Image" />
-            <div id="next-exercise-text" class="exercise-media" style="display:none; font-size:2em; text-align:center;">
-            </div>
+            <!-- <div id="next-exercise-text" class="exercise-media" style="display:none; font-size:2em; text-align:center;"></div> -->
             <video id="next-exercise-video" class="exercise-media"
                 style="display:none; max-width:200px; margin-bottom:10px;" controls muted loop></video>
 
@@ -280,40 +279,54 @@
         // Define exercise groups
         const warmupExercises = [
             { name: "Get ready!", reps: 1, repDuration: 3, breakBetweenReps: 2, breakBetweenExercises: 5, imgUrl: "Get Ready", explanation: "Get Ready!" },
-            { name: "Hip Twists", reps: 1, repDuration: 20, breakBetweenReps: 2, breakBetweenExercises: 5, imgUrl: "Hip Twists", explanation: "Get your heart rate up!" },
+            { name: "Hip Twists", reps: 1, repDuration: 20, breakBetweenReps: 2, breakBetweenExercises: 5, imgUrl: "Hip Twists", explanation: "Loosen up your back." },
             { name: "Arm Circles", reps: 2, repDuration: 15, breakBetweenReps: 2, breakBetweenExercises: 5, imgUrl: "Arm Circles", explanation: "Loosen up your shoulders." },
             { name: "Step Jacks", reps: 1, repDuration: 20, breakBetweenReps: 2, breakBetweenExercises: 5, imgUrl: "Step Jacks", explanation: "Get your heart rate up!" },
             { name: "Walking High Knees", reps: 1, repDuration: 20, breakBetweenReps: 2, breakBetweenExercises: 10, imgUrl: "Walking High Knees", explanation: "Drive your knees up!" }
         ];
 
+                const liedownExercises = [
+            { name: "Glute Bridges", reps: 14, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Glute Bridges", explanation: "Squeeze glutes." },
+            { name: "Reverse Superman", reps: 10, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Reverse Superman", explanation: "Start position is lying face down with hands facing up towards the ceiling, elbows tucked into your sides with arms and legs in a straight line. Squeezing your glutes, lift arms and legs simultaneously. Using a rotating motion, pull the shoulder blade in, and as you do so, hands will turn toward the ground. Aim for a solid two to three second contraction on each rep to really work the strength and stamina of the lower back muscles. Then return to the starting position and repeat." },
+
+        ];
+
         const armsExercises = [
-            { name: "Push-ups", reps: 5, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "https://img.freepik.com/free-vector/push-up-demostration_1133-392.jpg", explanation: "Focus on form." },
-            { name: "Self-arm wrestling", reps: 8, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Self-arm wrestling", explanation: "Push as hard as you can." },
-            { name: "Push-up to Plank", reps: 10, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Push-up to Plank", explanation: "Palms face each other." },
-            { name: "Down Under", reps: 5, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Down Unders", explanation: "Palms face each other." },
-            { name: "Tricep Dips", reps: 5, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "tricep dips", explanation: "Keep back straight." }
+            { name: "Push-ups", reps: 5, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Push-ups", explanation: "Focus on form." },
+            { name: "Self-arm wrestling", reps: 8, repDuration: 6, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Self-arm wrestling", explanation: "Push as hard as you can." },
+            { name: "Push-up to Plank", reps: 10, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Push-up to Plank", explanation: "Conrol your hips." },
+            { name: "Down Under", reps: 6, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Down Unders", explanation: "Palms face each other." },
+            { name: "Tricep Dips", reps: 5, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Tricep dips", explanation: "Keep back straight." }
         ];
 
         const coreExercises = [
-            { name: "Rotating Plank", reps: 1, repDuration: 60, breakBetweenReps: 0, breakBetweenExercises: 15, imgUrl: "plank", explanation: "Hold strong." },
-            { name: "Inchworms", reps: 10, repDuration: 8, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Inchworms", explanation: "Engage your core." },
+            { name: "Rotating Plank", reps: 6, repDuration: 10, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Side plank", explanation: "Hold strong." },
+            { name: "Inchworms", reps: 10, repDuration: 6, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Inchworms", explanation: "Engage your core." },
             { name: "Standing bicycle crunch (Alternating)", reps: 10, repDuration: 4, breakBetweenReps: 0, breakBetweenExercises: 15, imgUrl: "Standing bicycle crunch", explanation: "Keep legs straight." },
-            { name: "ab-rolls", reps: 5, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "ab-rolls", explanation: "Twist from the core." },
-            { name: "Dog-bird", reps: 10, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Dog-bird", explanation: "Engage your core." }
+            { name: "ab-rolls", reps: 6, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Ab-rolls", explanation: "Don't move your legs." },
+            { name: "Dog-bird", reps: 2, repDuration: 30, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Dog-bird", explanation: "Engage your core." }
 
         ];
 
         const legsExercises = [
-            { name: "Squats", reps: 10, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "squats", explanation: "Go deep." },
-            { name: "Lunges (Alternating)", reps: 10, repDuration: 10, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "lunges", explanation: "Step forward." },
+            { name: "Squats", reps: 10, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Squats", explanation: "Go deep." },
+            { name: "Forward Lunges", reps: 10, repDuration: 10, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Forward Lunges", explanation: "Step forward." },
             { name: "Calf Raises", reps: 15, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Calf Raises", explanation: "Full extension." },
-            { name: "Glute Bridges", reps: 14, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Glute Bridges", explanation: "Squeeze glutes." }
+            { name: "Side Lunges", reps: 10, repDuration: 10, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Side Lunges", explanation: "Step forward." },
+        ];
+
+        const flowExercises = [
+            { name: "Crab Crawl", reps: 2, repDuration: 20, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Crab Crawl", explanation: "Crawl forward and back" },
+            { name: "Bear Crawl", reps: 2, repDuration: 20, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Bear Crawl", explanation: "Crawl forward and back" },
+            { name: "Side Kick Through", reps: 15, repDuration: 5, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Side Kick Through", explanation: "Full extension." },
+            { name: "Front Kick Through", reps: 10, repDuration: 10, breakBetweenReps: 2, breakBetweenExercises: 15, imgUrl: "Front Kick Through", explanation: "Step forward." },
         ];
 
         const exerciseGroups = [
             { name: "Arms", exercises: armsExercises, used: [] },
             { name: "Core", exercises: coreExercises, used: [] },
-            { name: "Legs", exercises: legsExercises, used: [] }
+            { name: "Legs", exercises: legsExercises, used: [] },
+            { name: "Flow", exercises: flowExercises, used: [] },
         ];
 
         let workoutPlan = []; // This will be dynamically generated
@@ -468,7 +481,21 @@
             nextExerciseImgEl.style.display = 'none';
 
             const ex = workoutPlan[currentExercise];
-            currentExerciseEl.textContent = `${ex.name} (Exercise ${currentExercise + 1} of ${workoutPlan.length})`;
+
+const warmupLength = warmupExercises.length;
+const liedownLength = liedownExercises.length;
+let groupName = '';
+
+if (currentExercise < warmupLength) {
+    groupName = 'Warmup';
+} else if (currentExercise < warmupLength + liedownLength) {
+    groupName = 'Lie Down';
+} else {
+    const mainIndex = currentExercise - (warmupLength + liedownLength);
+    const groupIndex = mainIndex % exerciseGroups.length; // Use modulo to cycle through groups
+    groupName = exerciseGroups[groupIndex].name;
+}
+currentExerciseEl.textContent = `${groupName} - (Exercise ${currentExercise + 1} of ${workoutPlan.length})`;
 
             // Hide all media elements initially
             exerciseImgEl.style.display = 'none';
@@ -554,7 +581,7 @@
                     // Hide all next media elements initially
                     nextExerciseImgEl.style.display = 'none';
                     nextExerciseVideoEl.style.display = 'none';
-                    nextExerciseTextEl.style.display = 'none';
+                    // nextExerciseTextEl.style.display = 'none';
                     exerciseTextEl.style.display = 'none';
                     nextExerciseVideoEl.pause();
 
@@ -568,13 +595,13 @@
                         nextExerciseImgEl.style.display = '';
                     } else {
                         nextExerciseTextEl.textContent = nextEx.imgUrl;
-                        nextExerciseTextEl.style.display = '';
+                        // nextExerciseTextEl.style.display = '';
                     }
                 } else {
                     document.getElementById('next-exercise').textContent = "";
                     nextExerciseImgEl.style.display = 'none';
                     nextExerciseVideoEl.style.display = 'none';
-                    nextExerciseTextEl.style.display = 'none';
+                    // nextExerciseTextEl.style.display = 'none';
                     nextExerciseVideoEl.pause();
                 }
             } else {
@@ -583,7 +610,7 @@
                 document.getElementById('next-exercise').textContent = "";
                 nextExerciseImgEl.style.display = 'none';
                 nextExerciseVideoEl.style.display = 'none';
-                nextExerciseTextEl.style.display = 'none';
+                // nextExerciseTextEl.style.display = 'none';
                 nextExerciseVideoEl.pause();
             }
             startTimer(seconds, () => {
@@ -597,6 +624,7 @@
         function pauseWorkout() {
             paused = true;
             pauseBtn.disabled = true;
+            startBtn.disabled = true;
             resumeBtn.disabled = false;
             skipBtn.disabled = true;
             resetBtn.disabled = false; // Enable reset when paused
@@ -661,7 +689,7 @@
 
         function initializeWorkout() {
             const mainPlan = generateWorkoutPlan(); // Generate the main workout plan
-            workoutPlan = [...warmupExercises, ...mainPlan]; // Warmup first, then main
+            workoutPlan = [...warmupExercises, ...liedownExercises, ...mainPlan]; // Warmup, then lie-down, then main
             progressTotal = workoutPlan.reduce((acc, ex, idx) => {
                 const breakBetweenExercises = (idx < workoutPlan.length - 1) ? ex.breakBetweenExercises : 0;
                 return acc + ex.reps * (ex.repDuration + ex.breakBetweenReps) + breakBetweenExercises;
