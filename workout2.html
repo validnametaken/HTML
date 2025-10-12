@@ -562,7 +562,7 @@ currentExerciseEl.textContent = `${groupName} - (Exercise ${currentExercise + 1}
         function startBreak(seconds, isBetweenExercises, callback) {
             const nextExerciseImgEl = document.getElementById('next-exercise-img');
             const nextExerciseVideoEl = document.getElementById('next-exercise-video');
-            const nextExerciseTextEl = document.getElementById('next-exercise-text');
+            // const nextExerciseTextEl = document.getElementById('next-exercise-text');
             const exerciseVideoEl = document.getElementById('exercise-video');
             const exerciseTextEl = document.getElementById('exercise-text');
 
@@ -594,8 +594,9 @@ currentExerciseEl.textContent = `${groupName} - (Exercise ${currentExercise + 1}
                         nextExerciseImgEl.src = nextEx.imgUrl;
                         nextExerciseImgEl.style.display = '';
                     } else {
-                        nextExerciseTextEl.textContent = nextEx.imgUrl;
+                        // nextExerciseTextEl.textContent = nextEx.imgUrl;
                         // nextExerciseTextEl.style.display = '';
+                        document.getElementById('next-exercise').textContent = nextEx.imgUrl;
                     }
                 } else {
                     document.getElementById('next-exercise').textContent = "";
