@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
   <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -43,7 +42,6 @@
             min-height: 100vh;
             box-sizing: border-box;
             overflow: hidden;
-            -webkit-overflow-scrolling: none;
             align-items: center;
         }
 
@@ -150,6 +148,7 @@
             text-align: center;
             color: white;
             background: rgba(255, 255, 255, 0.1);
+            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 30px;
@@ -280,11 +279,13 @@
     <div id="loader">
         <div class="loader-content">
             <h1>Welcome to Andy's Wheel of Fortune</h1>
-            <select id="modeSelect">
-                <option value="">Select Mode</option>
-                <option value="number">Number Mode</option>
-                <option value="file">File Mode</option>
-            </select>
+<label for="modeSelect">Choose input mode:</label>
+<select id="modeSelect" name="modeSelect">
+    <option value="">Select Mode</option>
+    <option value="number">Number Mode</option>
+    <option value="file">File Mode</option>
+</select>
+
 
             <div id="numberMode" class="mode-container">
                 <input type="number" id="inputNumber" min="1" max="200" placeholder="Enter a number (1-200)">
