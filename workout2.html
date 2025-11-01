@@ -566,7 +566,7 @@ currentExerciseEl.textContent = `${ex.name} (${currentExercise + 1} of ${workout
         function startBreak(seconds, isBetweenExercises, callback) {
             const nextExerciseImgEl = document.getElementById('next-exercise-img');
             const nextExerciseVideoEl = document.getElementById('next-exercise-video');
-            // const nextExerciseTextEl = document.getElementById('next-exercise-text');
+            const nextExerciseTextEl = document.getElementById('next-exercise-text');
             const exerciseVideoEl = document.getElementById('exercise-video');
             const exerciseTextEl = document.getElementById('exercise-text');
 
@@ -576,6 +576,10 @@ currentExerciseEl.textContent = `${ex.name} (${currentExercise + 1} of ${workout
             exerciseVideoEl.pause();
 
 if (isBetweenExercises) {
+    // Break between exercises
+                exerciseImgEl.style.display = 'none';
+                currentExerciseEl.textContent = ""; // Clear current exercise text
+                exerciseExplanationEl.textContent = ""; // Clear explanation
     statusEl.textContent = "Break between exercises";
     if (currentExercise < workoutPlan.length) {
         const nextEx = workoutPlan[currentExercise];
