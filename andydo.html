@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tasks</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="andydo.css">
+</head>
+<body>
+
+<header class="app-header">
+  <h1>Tasks</h1>
+  <div class="user-info">
+    Logged in as <strong>Andy</strong>
+  </div>
+</header>
+
+<main class="container">
+
+  <section class="add-task">
+    <h2>Add task</h2>
+    <form id="taskForm">
+      <input type="text" id="title" placeholder="Task title" required>
+      <input type="date" id="dueDate">
+      <select id="assignedTo">
+        <option value="">Assign to…</option>
+        <option value="1">Andy</option>
+        <option value="2">Jane</option>
+      </select>
+      <button type="submit">Add</button>
+    </form>
+  </section>
+
+  <section class="tasks">
+    <h2>My tasks</h2>
+    <ul id="taskList"></ul>
+  </section>
+
+</main>
+
+<script src="andydo.js"></script>
+</body>
+</html>
