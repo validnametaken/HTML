@@ -101,19 +101,40 @@ input[type="range"]{width:200px;vertical-align:middle;min-height:44px}
 
 <script>
 const SAVE="quietGardenEnhanced";
-let state=JSON.parse(localStorage.getItem(SAVE)||'{"health":0,"score":0,"achievements":[]}');
+let state=JSON.parse(localStorage.getItem(SAVE)||'{"score":0,"achievements":[]}');
 let ctx,analyser,running=false,sm=0,budget=0,quiet=0,alarms=0,cool=0,lastTime=0;
+let lastFrameTime = 0;
+const frameDuration = 1000 / 30;
 let currentStreakSeconds = 0;
 let trend = [];
 
-// Centralized engine values matching your UI sliders
+// DOM update optimization cache
+let lastRenderData = { db: -1, streak: -1, score: -1, quiet: -1, alarms: -1, achievements: "", mood: "", gardenEmoji: "", gardenName: "", goal: "", animals: "", season: "", budget: -1 };
+
+function updateDOMIfChanged(id, value, cacheKey) {
+    if (lastRenderData[cacheKey] !== value) {
+        document.getElementById(id).textContent = value;
+        lastRenderData[cacheKey] = value;
+    }
+}
+
+// Visibility change handling
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    if (running) {
+      console.log("App moved to background, pausing processing.");
+      running = false;
+      start.textContent = "Start Monitoring";
+    }
+  }
+});
+
 const ENGINE = {
   smoothing: 0.85,
   drainRate: 0.08, 
   penaltyCooldown: 300 
 };
 
-// Extensible rewards list spanning roughly 1 hour of cumulative quiet time
 const ACHIEVEMENT_REGISTRY = [
   { mins: 1,  id: "quiet_starter",     name: "🌟 Quiet Starter", pts: 10 },
   { mins: 5,  id: "indoor_voices",     name: "🏆 Indoor Voices", pts: 25 },
@@ -124,7 +145,6 @@ const ACHIEVEMENT_REGISTRY = [
   { mins: 60, id: "silent_paradise",   name: "🌌 Silent Paradise", pts: 200 }
 ];
 
-// COMPRESSED SCALING: Allows "Paradise" transformation to happen inside a single play session
 const levels=[
   [0, "🌱", "Seed"],
   [10, "🌿", "Sprout"],
@@ -138,7 +158,6 @@ const levels=[
 function save(){localStorage.setItem(SAVE,JSON.stringify(state));}
 function msg(t){document.getElementById("message").textContent=t;}
 
-// Audio synthesizer for audio rewards without relying on sound files
 function playTone(freq, type, duration) {
   if(!ctx) return;
   try {
@@ -157,51 +176,85 @@ function playTone(freq, type, duration) {
 
 function award(name,pts){
  if(state.achievements.includes(name)) return;
- state.achievements.push(name); state.health+=pts; state.score+=pts;
+ state.achievements.push(name); state.score+=pts;
  msg("🏆 Unlock: " + name);
  playTone(523.25, 'sine', 0.15); 
  setTimeout(() => playTone(659.25, 'sine', 0.3), 100); 
- save(); render();
+ save(); render(true);
 }
 
-function render(){
- document.getElementById("health").textContent=Math.round(state.health);
- document.getElementById("score").textContent=Math.round(state.score);
- document.getElementById("quiet").textContent=Math.floor(quiet/60);
- document.getElementById("alarms").textContent=alarms;
- 
- let cur=levels[0];
- for(const l of levels){if(state.health>=l[0])cur=l;}
- garden.textContent=cur[1]; gardenName.textContent=cur[2];
- 
- let nxt=levels.find(x=>x[0]>state.health);
- goal.textContent=nxt?("Reach "+nxt[2]+" "+nxt[1]):"🎉 Paradise Reached!";
- achievements.innerHTML=ACHIEVEMENT_REGISTRY.map(a=>{
-   const isEarned = state.achievements.includes(a.name);
-   const cssClass = isEarned ? 'badge active' : 'badge locked-badge';
-   const hint = !isEarned ? `data-hint="Locked: ${a.name} (${a.mins} min)"` : "";
-   return `<span class="${cssClass}" ${hint} style="cursor: pointer;">${a.name}</span>`;
- }).join('');
+function updateDOMIfChanged(id, value, cacheKey) {
+  if (value !== lastRenderData[cacheKey]) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+      lastRenderData[cacheKey] = value;
+  }
+}
 
- let animals="";
- if(state.health>=100)animals+="🐞 ";
- if(state.health>=250)animals+="🦋 ";
- if(state.health>=450)animals+="🐦 ";
- if(state.health>=700)animals+="🦔 ";
- if(state.health>=1000)animals+="🐿️ ";
- if(Math.random()<0.002) animals+="🦉 ";
- document.getElementById("animals").textContent=animals;
+function render(force=false){
+  updateDOMIfChanged("score", Math.round(state.score), "score");
+  updateDOMIfChanged("quiet", Math.floor(quiet/60), "quiet");
+  updateDOMIfChanged("alarms", alarms, "alarms");
  
- const seasons=["🌱 Spring","☀️ Summer","🍂 Autumn","❄️ Winter"];
- season.textContent=seasons[Math.floor((new Date().getMonth())/3)];
+  let cur=levels[0];
+  for(const l of levels){if(state.score>=l[0])cur=l;}
+  
+  if (force || lastRenderData.gardenEmoji !== cur[1]) {
+      garden.textContent=cur[1];
+      lastRenderData.gardenEmoji = cur[1];
+  }
+  if (force || lastRenderData.gardenName !== cur[2]) {
+      gardenName.textContent=cur[2];
+      lastRenderData.gardenName = cur[2];
+  }
 
- if (budget >= 80) {
-   document.body.style.background = "#fce8e6"; 
- } else if (budget >= 40) {
-   document.body.style.background = "#fff9e6"; 
- } else {
-   document.body.style.background = "#eef8ef"; 
- }
+  let nxt=levels.find(x=>x[0]>state.score);
+  let goalText = nxt?("Reach "+nxt[2]+" "+nxt[1]):"🎉 Paradise Reached!";
+  if (force || lastRenderData.goal !== goalText) {
+      goal.textContent = goalText;
+      lastRenderData.goal = goalText;
+  }
+  
+  const currentAchievements = JSON.stringify(state.achievements);
+  if (force || currentAchievements !== lastRenderData.achievements) {
+      achievements.innerHTML=ACHIEVEMENT_REGISTRY.map(a=>{
+        const isEarned = state.achievements.includes(a.name);
+        const cssClass = isEarned ? 'badge active' : 'badge locked-badge';
+        const hint = !isEarned ? `data-hint="Locked: ${a.name} - ${a.mins} mins of quiet time required."` : "";
+        return `<span class="${cssClass}" ${hint} style="cursor: pointer; pointer-events: auto;">${a.name}</span>`;
+      }).join('');
+      lastRenderData.achievements = currentAchievements;
+  }
+
+  let animals="";
+  if(state.score>=100)animals+="🐞 ";
+  if(state.score>=250)animals+="🦋 ";
+  if(state.score>=450)animals+="🐦 ";
+  if(state.score>=700)animals+="🦔 ";
+  if(state.score>=1000)animals+="🐿️ ";
+  if(Math.random()<0.002) animals+="🦉 ";
+  if (force || animals !== lastRenderData.animals) {
+      document.getElementById("animals").textContent=animals;
+      lastRenderData.animals = animals;
+  }
+ 
+  const seasons=["🌱 Spring","☀️ Summer","🍂 Autumn","❄️ Winter"];
+  let seasonText = seasons[Math.floor((new Date().getMonth())/3)];
+  if (force || seasonText !== lastRenderData.season) {
+      season.textContent = seasonText;
+      lastRenderData.season = seasonText;
+  }
+
+  if (force || Math.round(budget) !== lastRenderData.budget) {
+      if (budget >= 80) {
+        document.body.style.background = "#fce8e6"; 
+      } else if (budget >= 40) {
+        document.body.style.background = "#fff9e6"; 
+      } else {
+        document.body.style.background = "#eef8ef"; 
+      }
+      lastRenderData.budget = Math.round(budget);
+  }
 }
 
 threshold.oninput=e=>tval.textContent=e.target.value;
@@ -239,9 +292,10 @@ start.onclick=async()=>{
    await ctx.resume();
  }
  running=!running;
- start.textContent=running?"Stop Monitoring verso":"Start Monitoring";
+ start.textContent=running?"Stop Monitoring":"Start Monitoring";
  if(running) {
     lastTime = performance.now();
+    lastFrameTime = performance.now();
     requestAnimationFrame(loop);
  }
 };
@@ -260,9 +314,9 @@ calibrate.onclick=async()=>{
  while(Date.now()<end){
    const a=new Uint8Array(analyser.fftSize);
    analyser.getByteTimeDomainData(a);
-   let s=0;
-   for(let i=0;i<a.length;i++){let x=(a[i]-128)/128;s+=x*x;}
-   let rms=Math.sqrt(s/a.length);
+   let sum=0;
+   for(let i=0;i<a.length;i++){let val=(a[i]-128)/128;sum+=val*val;}
+   let rms=Math.sqrt(sum/a.length);
    let db=(20*Math.log10(rms))+100;
    if(isFinite(db)){total+=db;count++;}
    await new Promise(r=>setTimeout(r,50));
@@ -273,7 +327,6 @@ calibrate.onclick=async()=>{
  msg("🎯 Auto-Calibrated to "+th+" dB");
 };
 
-// OVERHAULED RESET: Wipes the saved state clean so the kids can start from a complete seed again
 reset.onclick=()=>{
  quiet=0;
  alarms=0;
@@ -282,25 +335,26 @@ reset.onclick=()=>{
  state={health:0,score:0,achievements:[]};
  save();
  msg("🌞 Garden cleared! Ready for a fresh loop.");
- render();
+ render(true);
 };
 
 function loop(timestamp){
 if(!running)return;
+if (timestamp - lastFrameTime < frameDuration) { requestAnimationFrame(loop); return; }
+lastFrameTime = timestamp;
 const deltaTime = (timestamp - lastTime) / 1000;
 lastTime = timestamp;
 const a=new Uint8Array(analyser.fftSize);
 analyser.getByteTimeDomainData(a);
-let s=0;
-for(let i=0;i<a.length;i++){let x=(a[i]-128)/128;s+=x*x;}
-let rms=Math.sqrt(s/a.length);
+let sum=0;
+for(let i=0;i<a.length;i++){let val=(a[i]-128)/128;sum+=val*val;}
+let rms=Math.sqrt(sum/a.length);
 let db=(20*Math.log10(rms))+100;
 if(!isFinite(db))db=0;
 db=Math.max(0,Math.min(100,db));
 
 sm=sm*ENGINE.smoothing+db*(1 - ENGINE.smoothing);
 
-// Update trend chart
 trend.push(sm);
 if(trend.length > 60) trend.shift();
 const canvas = document.getElementById("noiseChart");
@@ -317,46 +371,49 @@ for(let i=0; i<trend.length; i++) {
 }
 ctx2.stroke();
 
-noiseFill.style.width=sm+"%";
-document.getElementById("db").textContent=Math.round(sm) + " dB";
+// Throttled DOM Updates
+const dbRound = Math.round(sm);
+if (dbRound !== lastRenderData.db) {
+    noiseFill.style.width=sm+"%";
+    document.getElementById("db").textContent=dbRound + " dB";
+    lastRenderData.db = dbRound;
+}
 
- const newMood = sm < threshold.value * 0.7 ? "😀" : (sm < threshold.value ? "😐" : "😡");
- if (face.textContent !== newMood) {
+const newMood = sm < threshold.value * 0.9 ? "😀" : (sm < threshold.value ? "😐" : "😡");
+if (newMood !== lastRenderData.mood) {
    face.textContent = newMood;
    face.classList.remove('pulse-anim');
-   void face.offsetWidth; // Trigger reflow to restart animation
+   void face.offsetWidth;
    face.classList.add('pulse-anim');
- }
+   lastRenderData.mood = newMood;
+}
 
- if(sm<threshold.value*0.7){
-   budget=Math.max(0,budget-0.25);
-   quiet+=deltaTime;
-   currentStreakSeconds += deltaTime;
- }
- else if(sm<threshold.value){
-   budget=Math.max(0,budget-0.15); // Faster recovery when quiet but not silent
-   currentStreakSeconds = 0;
- }
- else {
-   budget=Math.min(100,budget+(sm-threshold.value)*ENGINE.drainRate);
-   currentStreakSeconds = 0;
- }
+if(sm < threshold.value){
+    budget=Math.max(0, budget - 0.25);
+    quiet+=deltaTime;
+    currentStreakSeconds += deltaTime;
+  }
+  else {
+    budget=Math.min(100, budget + (sm - threshold.value) * ENGINE.drainRate);
+    currentStreakSeconds = 0;
+  }
 
- const streak = Math.round(currentStreakSeconds);
- document.getElementById("currentStreak").textContent = streak < 60 ? streak + "s" : Math.floor(streak/60) + "m " + (streak%60) + "s";
+ const streakRound = Math.round(currentStreakSeconds);
+ if (streakRound !== lastRenderData.streak) {
+     document.getElementById("currentStreak").textContent = streakRound < 60 ? streakRound + "s" : Math.floor(streakRound/60) + "m " + (streakRound%60) + "s";
+     lastRenderData.streak = streakRound;
+ }
 
  budgetFill.style.width=budget+"%";
  
- let qm = Math.floor(quiet/60);
  ACHIEVEMENT_REGISTRY.forEach(ach => {
-   if (qm >= ach.mins) {
+   if (Math.floor(quiet/60) >= ach.mins) {
      award(ach.name, ach.pts);
    }
  });
 
  if(budget>=100 && cool<=0){
    alarms++;
-   state.health=Math.max(0,state.health-10); // Bigger penalty
    state.score=Math.max(0,state.score-5);
    cool=ENGINE.penaltyCooldown;
    msg("🐿️ Startled Squirrel!");
@@ -364,12 +421,18 @@ document.getElementById("db").textContent=Math.round(sm) + " dB";
    save();
  }
  if(cool>0){cool--; cooldown.textContent="Safe Zone Recovery: "+Math.ceil(cool/60)+"s";}
- else cooldown.textContent="";
-
+ else if (cooldown.textContent !== "") cooldown.textContent="";
+ 
  render();
  if(running) requestAnimationFrame(loop);
 }
-render();
+render(true);
+
+document.addEventListener('touchstart', (e) => {
+  if (e.target.matches('.locked-badge')) {
+    alert(e.target.getAttribute('data-hint'));
+  }
+});
 
 document.addEventListener('click', (e) => {
   if (e.target.matches('.locked-badge')) {
