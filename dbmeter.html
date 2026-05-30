@@ -15,10 +15,10 @@ header{background:#68b85f;color:#fff;padding:16px;text-align:center}
 #noiseFill{background:#4caf50}
 #budgetFill{background:#e74c3c}
 #garden{font-size:140px;text-align:center;margin:10px 0}
-.badge{display:inline-block;background:#e3f6e3;padding:6px 10px;border-radius:20px;margin:4px;font-weight:bold}
+.badge{display:inline-block;background:#e3f6e3;padding:8px 12px;border-radius:20px;margin:8px;font-weight:bold}
 .badge.active{background:#68b85f;color:#fff}
-.locked-badge{background:#eee;color:#888;padding:6px 10px;border-radius:20px;margin:4px;font-weight:bold;filter:grayscale(1);cursor:help}
-button{padding:12px 16px;border:none;border-radius:10px;cursor:pointer;font-weight:bold;background:#68b85f;color:white;font-size:16px;min-height:44px;min-width:44px}
+.locked-badge{background:#eee;color:#888;padding:8px 12px;border-radius:20px;margin:8px;font-weight:bold;filter:grayscale(1);cursor:help}
+button{padding:12px 20px;border:none;border-radius:10px;cursor:pointer;font-weight:bold;background:#68b85f;color:white;font-size:16px;min-height:44px;min-width:44px;margin:4px}
 button:hover{opacity:0.9}
 #reset{background:#e74c3c}
 #face{font-size:100px;text-align:center;margin:10px 0}
@@ -61,6 +61,7 @@ input[type="range"]{width:200px;vertical-align:middle;min-height:44px}
 <div>Score: <span id="score">0</span></div>
 <div>Quiet Minutes: <span id="quiet">0</span></div>
 <div>Alarms: <span id="alarms">0</span></div>
+<div>Current Quiet Streak: <span id="currentStreak">0s</span></div>
 </div>
 <div class="card">
 <h3>Today's Goal</h3>
@@ -102,6 +103,7 @@ input[type="range"]{width:200px;vertical-align:middle;min-height:44px}
 const SAVE="quietGardenEnhanced";
 let state=JSON.parse(localStorage.getItem(SAVE)||'{"health":0,"score":0,"achievements":[]}');
 let ctx,analyser,running=false,sm=0,budget=0,quiet=0,alarms=0,cool=0,lastTime=0;
+let currentStreakSeconds = 0;
 let trend = [];
 
 // Centralized engine values matching your UI sliders
@@ -176,9 +178,9 @@ function render(){
  goal.textContent=nxt?("Reach "+nxt[2]+" "+nxt[1]):"🎉 Paradise Reached!";
  achievements.innerHTML=ACHIEVEMENT_REGISTRY.map(a=>{
    const isEarned = state.achievements.includes(a.name);
-   const cssClass = isEarned ? 'badge active' : 'locked-badge';
-   const title = isEarned ? a.name : 'Locked: ' + a.name + ' (' + a.mins + ' min)';
-   return `<span class="${cssClass}" title="${title}">${a.name}</span>`;
+   const cssClass = isEarned ? 'badge active' : 'badge locked-badge';
+   const hint = !isEarned ? `data-hint="Locked: ${a.name} (${a.mins} min)"` : "";
+   return `<span class="${cssClass}" ${hint} style="cursor: pointer;">${a.name}</span>`;
  }).join('');
 
  let animals="";
@@ -276,6 +278,7 @@ reset.onclick=()=>{
  quiet=0;
  alarms=0;
  budget=0;
+ currentStreakSeconds=0;
  state={health:0,score:0,achievements:[]};
  save();
  msg("🌞 Garden cleared! Ready for a fresh loop.");
@@ -328,13 +331,19 @@ document.getElementById("db").textContent=Math.round(sm) + " dB";
  if(sm<threshold.value*0.7){
    budget=Math.max(0,budget-0.25);
    quiet+=deltaTime;
+   currentStreakSeconds += deltaTime;
  }
  else if(sm<threshold.value){
    budget=Math.max(0,budget-0.15); // Faster recovery when quiet but not silent
+   currentStreakSeconds = 0;
  }
  else {
    budget=Math.min(100,budget+(sm-threshold.value)*ENGINE.drainRate);
+   currentStreakSeconds = 0;
  }
+
+ const streak = Math.round(currentStreakSeconds);
+ document.getElementById("currentStreak").textContent = streak < 60 ? streak + "s" : Math.floor(streak/60) + "m " + (streak%60) + "s";
 
  budgetFill.style.width=budget+"%";
  
@@ -361,8 +370,12 @@ document.getElementById("db").textContent=Math.round(sm) + " dB";
  if(running) requestAnimationFrame(loop);
 }
 render();
+
+document.addEventListener('click', (e) => {
+  if (e.target.matches('.locked-badge')) {
+    alert(e.target.getAttribute('data-hint'));
+  }
+});
 </script>
 </body>
 </html>
-
-
