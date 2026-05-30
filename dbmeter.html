@@ -1,296 +1,361 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courgette&display=swap">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>dB Meter</title>
-  <style>
-    body {
-      font-family: 'Courgette', cursive;
-    }
-
-    .meter {
-      width: 200px;
-      height: 200px;
-      border: 10px solid #ddd;
-      border-radius: 50%;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .volume {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      transition: height 0.1s ease-in-out;
-    }
-
-    .title {
-      font-weight: bold;
-      font-size: 50px;
-      transition: all 0.3s ease;
-      margin-bottom: 50px;
-    }
-
-    .db {
-      background: #f5f5f5;
-      padding: 15px 25px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      width: 290px;
-      margin: 40px 0;
-      font-weight: bold;
-      color: #333;
-      transition: all 0.3s ease;
-    }
-
-    .db:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    }
-
-
-    .controls {
-      margin-top: 30px;
-      padding: 20px;
-      background: #f5f5f5;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      width: 300px;
-    }
-
-    .controls div {
-      margin: 15px 0;
-    }
-
-    .controls label {
-      display: block;
-      margin-bottom: 8px;
-      color: #333;
-    }
-
-    input[type="range"] {
-      width: 100%;
-      height: 8px;
-      border-radius: 5px;
-      background: #ddd;
-      /* Standard property */
-      appearance: none;
-      /* Vendor prefixes */
-      -webkit-appearance: none;
-      -moz-appearance: none;
-
-
-    }
-
-    input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: #4CAF50;
-      cursor: pointer;
-      transition: background .3s ease-in-out;
-    }
-
-    input[type="range"]::-webkit-slider-thumb:hover {
-      background: #45a049;
-    }
-
-    #redThreshold::-webkit-slider-thumb {
-      background: #ff0000;
-    }
-
-    #orangeThreshold::-webkit-slider-thumb {
-      background: #FFA500;
-    }
-
-    span {
-      display: inline-block;
-      margin-top: 8px;
-      color: #666;
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quiet Garden v1.3 - iPad Loop Edition</title>
+<style>
+body{font-family:Segoe UI,sans-serif;background:#eef8ef;margin:0;color:#234;transition:background 0.5s ease}
+header{background:#68b85f;color:#fff;padding:16px;text-align:center}
+.container{max-width:1100px;margin:auto;padding:12px}
+.card{background:#fff;border-radius:14px;padding:14px;margin:10px 0;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.meter{height:26px;background:#ddd;border-radius:20px;overflow:hidden}
+.fill{height:100%;width:0%;transition:width 0.1s ease}
+#noiseFill{background:#4caf50}
+#budgetFill{background:#e74c3c}
+#garden{font-size:140px;text-align:center;margin:10px 0}
+.badge{display:inline-block;background:#e3f6e3;padding:6px 10px;border-radius:20px;margin:4px;font-weight:bold}
+button{padding:12px 16px;border:none;border-radius:10px;cursor:pointer;font-weight:bold;background:#68b85f;color:white;font-size:16px;min-height:44px;min-width:44px}
+button:hover{opacity:0.9}
+#reset{background:#e74c3c}
+#face{font-size:100px;text-align:center;margin:10px 0}
+#db{font-size:32px;text-align:center;font-weight:bold;margin-bottom:10px}
+.config-label{display:inline-block;width:180px;font-weight:bold;margin-bottom:8px}
+input[type="range"]{width:200px;vertical-align:middle;min-height:44px}
+.pulse-anim{animation:pulse 0.5s ease-out}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
+</style>
 </head>
-
 <body>
-  <div class="title" id="title">Andy's dB Meter</div>
-  <audio id="audioClip" src="alarm.mp3"></audio>
-  <div class="meter">
-    <div class="volume" id="volume"></div>
-  </div>
-  <div class="db" id="db">Current dB: -</div>
+<header><h1>🌳 Quiet Garden (Short Loop Edition)</h1></header>
+<div class="container">
 
-  <button id="startButton"
-    style="padding: 10px 20px; margin: 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">Start
-    Monitoring</button>
+<div class="card">
+<div id="garden">🌱</div>
+<h2 id="gardenName" style="text-align:center;margin:4px 0;">Seed</h2>
+<div id="message" style="text-align:center;font-weight:bold;color:#2c7a2c;font-size:18px">Let's grow the garden!</div>
+</div>
 
-  <div class="controls">
-    <div>
-      <label>Red Alert Threshold: </label>
-      <input type="range" id="redThreshold" min="0" max="100" value="66">
-      <span id="redValue">66 dB</span>
-    </div>
-    <div>
-      <label>Orange Warning Threshold: </label>
-      <input type="range" id="orangeThreshold" min="0" max="100" value="50">
-      <span id="orangeValue">50 dB</span>
-    </div>
-  </div>
+<div class="grid">
+<div class="card" style="display:flex;flex-direction:column;justify-content:center;">
+<h3>Noise Level</h3>
+<div id="face">😀</div>
+<div id="db">0 dB</div>
+<canvas id="noiseChart" width="300" height="100" style="width:100%; height:100px; background:#f0f0f0; border-radius:10px;"></canvas>
+<div class="meter"><div id="noiseFill" class="fill"></div></div>
+</div>
+<div class="card">
+<h3>Patience Meter (Danger Zone)</h3>
+<div class="meter"><div id="budgetFill" class="fill"></div></div>
+<div id="cooldown" style="color:#e74c3c;font-weight:bold;margin-top:10px;text-align:center"></div>
+</div>
+</div>
 
-  <script>
-    window.onload = function () {
-      const volumeElem = document.getElementById('volume');
-      const dbElem = document.getElementById('db');
-      let alarmAudio = new Audio('alarm.mp3');
-      let localDbValues = [];
-      const REFRESH_RATE = 300;
-      let isMonitoring = false;
-      let updateInterval;
-      let audioStream;
-      let audioContext;
-      let processor;
+<div class="grid">
+<div class="card">
+<h3>Garden Stats</h3>
+<div>Health Points: <span id="health">0</span></div>
+<div>Score: <span id="score">0</span></div>
+<div>Quiet Minutes: <span id="quiet">0</span></div>
+<div>Alarms: <span id="alarms">0</span></div>
+</div>
+<div class="card">
+<h3>Today's Goal</h3>
+<div id="goal"></div>
+<div>Season: <span id="season"></span></div>
+</div>
+</div>
 
-      const startButton = document.getElementById('startButton');
-      startButton.addEventListener('click', toggleMonitoring);
+<div class="card"><h3>Animals & Visitors</h3><div id="animals" style="font-size:40px"></div></div>
+<div class="card"><h3>Achievements Earned</h3><div id="achievements"></div></div>
 
-      function toggleMonitoring() {
-        if (!isMonitoring) {
-          startButton.textContent = 'Stop Monitoring';
-          startButton.style.backgroundColor = '#ff4444';
-          startMonitoring();
-          isMonitoring = true;
-        } else {
-          startButton.textContent = 'Start Monitoring';
-          startButton.style.backgroundColor = '#4CAF50';
-          stopMonitoring();
-          isMonitoring = false;
-        }
-      }
+<!-- CONFIGURATION PANEL FOR ON-THE-FLY TWEAKS -->
+<div class="card" style="background:#f9f9f9;border:2px dashed #ccc">
+<h3>⚙️ Live Engine Tweaks (On-The-Fly)</h3>
+<div>
+  <span class="config-label">Target Threshold:</span>
+  <input id="threshold" type="range" min="20" max="90" value="55"> <span id="tval" class="badge">55</span> dB
+</div>
+<div>
+  <span class="config-label">Microphone Smoothing:</span>
+  <input id="cfgSmoothing" type="range" min="50" max="99" value="85"> <span id="sval" class="badge">0.85</span>
+</div>
+<div>
+  <span class="config-label">Patience Drain Rate:</span>
+  <input id="cfgDrain" type="range" min="1" max="50" value="8"> <span id="dval" class="badge">0.008</span>
+</div>
+<br>
+<div style="display:flex;flex-wrap:wrap;gap:10px;">
+  <button id="start">Start Monitoring</button>
+  <button id="calibrate">Auto-Calibrate Room</button>
+  <button id="fullscreen">Fullscreen Mode</button>
+  <button id="reset">Clear & Start New Loop</button>
+</div>
+</div>
 
-      function stopMonitoring() {
-        clearInterval(updateInterval);
-        if (audioStream) {
-          audioStream.getTracks().forEach(track => track.stop());
-        }
-        if (audioContext) {
-          audioContext.close();
-        }
-        if (processor) {
-          processor.disconnect();
-        }
-        dbElem.textContent = 'Current dB: -';
-        volumeElem.style.height = '0px';
-        volumeElem.style.backgroundColor = '#4CAF50';
-      }
+</div>
 
-      function startMonitoring() {
-        navigator.mediaDevices.getUserMedia({ audio: true })
-          .then(function (stream) {
-            audioStream = stream;
-            audioContext = new AudioContext();
+<script>
+const SAVE="quietGardenEnhanced";
+let state=JSON.parse(localStorage.getItem(SAVE)||'{"health":0,"score":0,"achievements":[]}');
+let ctx,analyser,running=false,sm=0,budget=0,quiet=0,alarms=0,cool=0,lastTime=0;
+let trend = [];
 
+// Centralized engine values matching your UI sliders
+const ENGINE = {
+  smoothing: 0.85,
+  drainRate: 0.08, 
+  penaltyCooldown: 300 
+};
 
-            const source = audioContext.createMediaStreamSource(stream);
-            const analyser = audioContext.createAnalyser();
-            processor = audioContext.createScriptProcessor(2048, 1, 1);
+// Extensible rewards list spanning roughly 1 hour of cumulative quiet time
+const ACHIEVEMENT_REGISTRY = [
+  { mins: 1,  id: "quiet_starter",     name: "🌟 Quiet Starter", pts: 10 },
+  { mins: 5,  id: "indoor_voices",     name: "🏆 Indoor Voices", pts: 25 },
+  { mins: 10, id: "teamwork_hero",     name: "🎯 Teamwork Hero", pts: 50 },
+  { mins: 20, id: "butterfly_friend",  name: "🦋 Butterfly Friend", pts: 75 },
+  { mins: 30, id: "tree_protector",    name: "🌳 Tree Protector", pts: 100 },
+  { mins: 45, id: "zen_masters",       name: "🧘 Zen Masters", pts: 150 },
+  { mins: 60, id: "silent_paradise",   name: "🌌 Silent Paradise", pts: 200 }
+];
 
-            analyser.smoothingTimeConstant = 0.8;
-            analyser.fftSize = 256;
+// COMPRESSED SCALING: Allows "Paradise" transformation to happen inside a single play session
+const levels=[
+  [0, "🌱", "Seed"],
+  [10, "🌿", "Sprout"],
+  [35, "🌼", "Flower"],
+  [85, "🌷", "Garden"],
+  [160, "🌳", "Tree"],
+  [260, "🏡", "Park"],
+  [410, "🦋", "Paradise"]
+];
 
-            const bandpass = audioContext.createBiquadFilter();
-            bandpass.type = "bandpass";
-            bandpass.frequency.value = 170; // Center frequency for human voice
-            bandpass.Q.value = 0.5; // Bandwidth control
+function save(){localStorage.setItem(SAVE,JSON.stringify(state));}
+function msg(t){document.getElementById("message").textContent=t;}
 
-            // Update the connection chain
-            source.connect(bandpass);
-            bandpass.connect(analyser);
-            analyser.connect(processor);
-            processor.connect(audioContext.destination);
+// Audio synthesizer for audio rewards without relying on sound files
+function playTone(freq, type, duration) {
+  if(!ctx) return;
+  try {
+    let osc = ctx.createOscillator();
+    let gainNode = ctx.createGain();
+    osc.type = type;
+    osc.frequency.value = freq;
+    gainNode.gain.setValueAtTime(0.08, ctx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + duration);
+    osc.connect(gainNode);
+    gainNode.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + duration);
+  } catch(e) { console.log("Audio contextual block", e); }
+}
 
-            const bufferLength = analyser.frequencyBinCount;
-            const dataArray = new Uint8Array(bufferLength);
+function award(name,pts){
+ if(state.achievements.includes(name)) return;
+ state.achievements.push(name); state.health+=pts; state.score+=pts;
+ msg("🏆 Unlock: " + name);
+ playTone(523.25, 'sine', 0.15); 
+ setTimeout(() => playTone(659.25, 'sine', 0.3), 100); 
+ save(); render();
+}
 
-            processor.onaudioprocess = () => {
-              analyser.getByteFrequencyData(dataArray);
-              let values = 0;
+function render(){
+ document.getElementById("health").textContent=Math.round(state.health);
+ document.getElementById("score").textContent=Math.round(state.score);
+ document.getElementById("quiet").textContent=Math.floor(quiet/60);
+ document.getElementById("alarms").textContent=alarms;
+ 
+ let cur=levels[0];
+ for(const l of levels){if(state.health>=l[0])cur=l;}
+ garden.textContent=cur[1]; gardenName.textContent=cur[2];
+ 
+ let nxt=levels.find(x=>x[0]>state.health);
+ goal.textContent=nxt?("Reach "+nxt[2]+" "+nxt[1]):"🎉 Paradise Reached!";
+ achievements.innerHTML=state.achievements.map(a=>'<span class="badge">'+a+'</span>').join('');
+ 
+ let animals="";
+ if(state.health>=100)animals+="🐞 ";
+ if(state.health>=250)animals+="🦋 ";
+ if(state.health>=450)animals+="🐦 ";
+ if(state.health>=700)animals+="🦔 ";
+ if(state.health>=1000)animals+="🐿️ ";
+ if(Math.random()<0.002) animals+="🦉 ";
+ document.getElementById("animals").textContent=animals;
+ 
+ const seasons=["🌱 Spring","☀️ Summer","🍂 Autumn","❄️ Winter"];
+ season.textContent=seasons[Math.floor((new Date().getMonth())/3)];
 
-              // Even more focused range for voice frequencies
-              // Target the most prominent speech frequencies
-              for (let i = 5; i < 10; i++) {
-                // Apply weighted importance to voice frequencies
-                values += dataArray[i] * 1.5;
-              }
+ if (budget >= 80) {
+   document.body.style.background = "#fce8e6"; 
+ } else if (budget >= 40) {
+   document.body.style.background = "#fff9e6"; 
+ } else {
+   document.body.style.background = "#eef8ef"; 
+ }
+}
 
-              const offset = 25; // Adjusted offset
-              const average = 20 * Math.log10((values / 5) || 1) + offset;
+threshold.oninput=e=>tval.textContent=e.target.value;
+cfgSmoothing.oninput=e=>{
+  ENGINE.smoothing = e.target.value / 100;
+  sval.textContent = ENGINE.smoothing;
+};
+cfgDrain.oninput=e=>{
+  ENGINE.drainRate = e.target.value / 1000;
+  dval.textContent = e.target.value / 1000;
+};
 
-              // Smoothing to reduce sudden spikes. 0.9 is 90% of new value.
-              const smoothingFactor = 0.9;
-              const smoothedValue = average * smoothingFactor +
-                (localDbValues.length ? localDbValues[localDbValues.length - 1] * (1 - smoothingFactor) : average);
+async function initAudio(){
+ try {
+  const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+  ctx=new AudioContext();
+  ctx.onstatechange = () => {
+    if (ctx.state === 'suspended') {
+      ctx.resume();
+    }
+  };
+  analyser=ctx.createAnalyser();
+  analyser.fftSize=1024;
+  ctx.createMediaStreamSource(stream).connect(analyser);
+ } catch (err) {
+  msg("Microphone access denied or unavailable.");
+  console.error("Error initializing audio:", err);
+ }
+}
 
-              localDbValues.push(smoothedValue);
-            };
-            function updateVolume() {
-              const dB = Math.round(localDbValues.reduce((a, b) => a + b, 0) / localDbValues.length) || 0;
-              localDbValues = [];
+start.onclick=async()=>{
+ if(!ctx) {
+   await initAudio();
+ } else if (ctx.state === 'suspended') {
+   await ctx.resume();
+ }
+ running=!running;
+ start.textContent=running?"Stop Monitoring verso":"Start Monitoring";
+ if(running) {
+    lastTime = performance.now();
+    requestAnimationFrame(loop);
+ }
+};
 
-              const maxDb = 80;
-              const scaledVolume = Math.min((dB / maxDb) * 200, 200);
-              volumeElem.style.height = `${scaledVolume}px`;
+fullscreen.onclick=()=>document.documentElement.requestFullscreen();
 
-              const redThreshold = document.getElementById('redThreshold');
-              const orangeThreshold = document.getElementById('orangeThreshold');
+calibrate.onclick=async()=>{
+ if(!ctx) {
+   await initAudio();
+ } else if (ctx.state === 'suspended') {
+   await ctx.resume();
+ }
+ msg("🎯 Calibrating room floor for 5 seconds...");
+ let total=0,count=0;
+ const end=Date.now()+5000;
+ while(Date.now()<end){
+   const a=new Uint8Array(analyser.fftSize);
+   analyser.getByteTimeDomainData(a);
+   let s=0;
+   for(let i=0;i<a.length;i++){let x=(a[i]-128)/128;s+=x*x;}
+   let rms=Math.sqrt(s/a.length);
+   let db=(20*Math.log10(rms))+100;
+   if(isFinite(db)){total+=db;count++;}
+   await new Promise(r=>setTimeout(r,50));
+ }
+ let avg=total/Math.max(1,count);
+ let th=Math.min(90,Math.max(25,Math.round(avg+12))); 
+ threshold.value=th;tval.textContent=th;
+ msg("🎯 Auto-Calibrated to "+th+" dB");
+};
 
-              if (dB > redThreshold.value) {
-                volumeElem.style.backgroundColor = "#FF0000";
-                alarmAudio.play();
-              } else if (dB > orangeThreshold.value) {
-                volumeElem.style.backgroundColor = "#FFA500";
-                alarmAudio.pause();
-              } else {
-                volumeElem.style.backgroundColor = "#4CAF50";
-                alarmAudio.pause();
-              }
+// OVERHAULED RESET: Wipes the saved state clean so the kids can start from a complete seed again
+reset.onclick=()=>{
+ quiet=0;
+ alarms=0;
+ budget=0;
+ state={health:0,score:0,achievements:[]};
+ save();
+ msg("🌞 Garden cleared! Ready for a fresh loop.");
+ render();
+};
 
-              if (!isNaN(dB) && isFinite(dB)) {
-                dbElem.textContent = `Current dB: ${dB.toFixed(1)} dB`;
-              } else {
-                dbElem.textContent = "Current dB: Too low to calculate";
-              }
-            }
+function loop(timestamp){
+if(!running)return;
+const deltaTime = (timestamp - lastTime) / 1000;
+lastTime = timestamp;
+const a=new Uint8Array(analyser.fftSize);
+analyser.getByteTimeDomainData(a);
+let s=0;
+for(let i=0;i<a.length;i++){let x=(a[i]-128)/128;s+=x*x;}
+let rms=Math.sqrt(s/a.length);
+let db=(20*Math.log10(rms))+100;
+if(!isFinite(db))db=0;
+db=Math.max(0,Math.min(100,db));
 
-            updateInterval = setInterval(updateVolume, REFRESH_RATE);
-          })
-          .catch(function (err) {
-            console.error('Error accessing the microphone:', err);
-          });
-      }
+sm=sm*ENGINE.smoothing+db*(1 - ENGINE.smoothing);
 
-      redThreshold.addEventListener('input', function () {
-        document.getElementById('redValue').textContent = this.value + ' dB';
-      });
+// Update trend chart
+trend.push(sm);
+if(trend.length > 60) trend.shift();
+const canvas = document.getElementById("noiseChart");
+const ctx2 = canvas.getContext("2d");
+ctx2.clearRect(0,0,canvas.width,canvas.height);
+ctx2.beginPath();
+ctx2.strokeStyle = "#4caf50";
+ctx2.lineWidth = 2;
+for(let i=0; i<trend.length; i++) {
+    const x = (i / 60) * canvas.width;
+    const y = canvas.height - (trend[i] / 100) * canvas.height;
+    if(i===0) ctx2.moveTo(x, y);
+    else ctx2.lineTo(x, y);
+}
+ctx2.stroke();
 
-      orangeThreshold.addEventListener('input', function () {
-        document.getElementById('orangeValue').textContent = this.value + ' dB';
-      });
-    };
+noiseFill.style.width=sm+"%";
+document.getElementById("db").textContent=Math.round(sm) + " dB";
 
-    // Initialize iOS audio
-    audioCtx.resume();
-    alarmAudio.play().then(() => {
-      alarmAudio.pause();
-    });
+ const newMood = sm < threshold.value * 0.7 ? "😀" : (sm < threshold.value ? "😐" : "😡");
+ if (face.textContent !== newMood) {
+   face.textContent = newMood;
+   face.classList.remove('pulse-anim');
+   void face.offsetWidth; // Trigger reflow to restart animation
+   face.classList.add('pulse-anim');
+ }
 
+ if(sm<threshold.value*0.7){
+   budget=Math.max(0,budget-0.25);
+   quiet+=deltaTime;
+ }
+ else if(sm<threshold.value){
+   budget=Math.max(0,budget-0.15); // Faster recovery when quiet but not silent
+ }
+ else {
+   budget=Math.min(100,budget+(sm-threshold.value)*ENGINE.drainRate);
+ }
 
+ budgetFill.style.width=budget+"%";
+ 
+ let qm = Math.floor(quiet/60);
+ ACHIEVEMENT_REGISTRY.forEach(ach => {
+   if (qm >= ach.mins) {
+     award(ach.name, ach.pts);
+   }
+ });
 
-  </script>
+ if(budget>=100 && cool<=0){
+   alarms++;
+   state.health=Math.max(0,state.health-10); // Bigger penalty
+   state.score=Math.max(0,state.score-5);
+   cool=ENGINE.penaltyCooldown;
+   msg("🐿️ Startled Squirrel!");
+   playTone(180, 'sawtooth', 0.4); 
+   save();
+ }
+ if(cool>0){cool--; cooldown.textContent="Safe Zone Recovery: "+Math.ceil(cool/60)+"s";}
+ else cooldown.textContent="";
+
+ render();
+ if(running) requestAnimationFrame(loop);
+}
+render();
+</script>
 </body>
-
 </html>
+
+
