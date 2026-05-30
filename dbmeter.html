@@ -172,8 +172,8 @@ function render(){
  for(const l of levels){if(state.health>=l[0])cur=l;}
  garden.textContent=cur[1]; gardenName.textContent=cur[2];
  
- |let nxt=levels.find(x=>x[0]>state.health);
- |goal.textContent=nxt?("Reach "+nxt[2]+" "+nxt[1]):"🎉 Paradise Reached!";
+ let nxt=levels.find(x=>x[0]>state.health);
+ goal.textContent=nxt?("Reach "+nxt[2]+" "+nxt[1]):"🎉 Paradise Reached!";
  achievements.innerHTML=ACHIEVEMENT_REGISTRY.map(a=>{
    const isEarned = state.achievements.includes(a.name);
    const cssClass = isEarned ? 'badge active' : 'locked-badge';
