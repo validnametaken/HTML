@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Quiet Garden v1.3 - iPad Loop Edition</title>
+<title>Quiet Garden v1.4</title>
 <style>
 body{font-family:Segoe UI,sans-serif;background:#eef8ef;margin:0;color:#234;transition:background 0.5s ease}
 header{background:#68b85f;color:#fff;padding:16px;text-align:center}
@@ -31,13 +31,11 @@ input[type="range"]{width:200px;vertical-align:middle;min-height:44px}
 </head>
 <body>
 <header><h1>🌳 Quiet Garden (Short Loop Edition)</h1></header>
-<div class="container">
 
 <div class="card">
 <div id="garden">🌱</div>
 <h2 id="gardenName" style="text-align:center;margin:4px 0;">Seed</h2>
 <div id="message" style="text-align:center;font-weight:bold;color:#2c7a2c;font-size:18px">Let's grow the garden!</div>
-</div>
 
 <div class="grid">
 <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
@@ -52,12 +50,10 @@ input[type="range"]{width:200px;vertical-align:middle;min-height:44px}
 <div class="meter"><div id="budgetFill" class="fill"></div></div>
 <div id="cooldown" style="color:#e74c3c;font-weight:bold;margin-top:10px;text-align:center"></div>
 </div>
-</div>
 
 <div class="grid">
 <div class="card">
-<h3>Garden Stats</h3>
-<div>Health Points: <span id="health">0</span></div>
+
 <div>Score: <span id="score">0</span></div>
 <div>Quiet Minutes: <span id="quiet">0</span></div>
 <div>Alarms: <span id="alarms">0</span></div>
@@ -68,10 +64,12 @@ input[type="range"]{width:200px;vertical-align:middle;min-height:44px}
 <div id="goal"></div>
 <div>Season: <span id="season"></span></div>
 </div>
-</div>
 
 <div class="card"><h3>Animals & Visitors</h3><div id="animals" style="font-size:40px"></div></div>
-<div class="card"><h3>Achievements Earned</h3><div id="achievements"></div></div>
+<div class="card" style="background:#f9f9f9;border:2px dashed #ccc;margin-top:0">
+  <h3>Achievements</h3>
+  <div id="achievements" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+</div>
 
 <!-- CONFIGURATION PANEL FOR ON-THE-FLY TWEAKS -->
 <div class="card" style="background:#f9f9f9;border:2px dashed #ccc">
@@ -95,57 +93,25 @@ input[type="range"]{width:200px;vertical-align:middle;min-height:44px}
   <button id="fullscreen">Fullscreen Mode</button>
   <button id="reset">Clear & Start New Loop</button>
 </div>
-</div>
 
-</div>
 
 <script>
-const SAVE="quietGardenEnhanced";
-let state=JSON.parse(localStorage.getItem(SAVE)||'{"score":0,"achievements":[]}');
-let ctx,analyser,running=false,sm=0,budget=0,quiet=0,alarms=0,cool=0,lastTime=0;
-let lastFrameTime = 0;
+const SAVE = "quietGardenEnhanced";
 const frameDuration = 1000 / 30;
-let currentStreakSeconds = 0;
-let trend = [];
-
-// DOM update optimization cache
-let lastRenderData = { db: -1, streak: -1, score: -1, quiet: -1, alarms: -1, achievements: "", mood: "", gardenEmoji: "", gardenName: "", goal: "", animals: "", season: "", budget: -1 };
-
-function updateDOMIfChanged(id, value, cacheKey) {
-    if (lastRenderData[cacheKey] !== value) {
-        document.getElementById(id).textContent = value;
-        lastRenderData[cacheKey] = value;
-    }
-}
-
-// Visibility change handling
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) {
-    if (running) {
-      console.log("App moved to background, pausing processing.");
-      running = false;
-      start.textContent = "Start Monitoring";
-    }
-  }
-});
-
 const ENGINE = {
   smoothing: 0.85,
-  drainRate: 0.08, 
-  penaltyCooldown: 300 
+  drainRate: 0.08,
+  penaltyCooldown: 300
 };
-
 const ACHIEVEMENT_REGISTRY = [
-  { mins: 1,  id: "quiet_starter",     name: "🌟 Quiet Starter", pts: 10 },
-  { mins: 5,  id: "indoor_voices",     name: "🏆 Indoor Voices", pts: 25 },
-  { mins: 10, id: "teamwork_hero",     name: "🎯 Teamwork Hero", pts: 50 },
-  { mins: 20, id: "butterfly_friend",  name: "🦋 Butterfly Friend", pts: 75 },
-  { mins: 30, id: "tree_protector",    name: "🌳 Tree Protector", pts: 100 },
-  { mins: 45, id: "zen_masters",       name: "🧘 Zen Masters", pts: 150 },
-  { mins: 60, id: "silent_paradise",   name: "🌌 Silent Paradise", pts: 200 }
+  { mins: 1, id: "quiet_starter", name: "🌟 Quiet Starter", pts: 10 },
+  { mins: 5, id: "indoor_voices", name: "🏆 Indoor Voices", pts: 25 },
+  { mins: 10, id: "teamwork_hero", name: "🎯 Teamwork Hero", pts: 50 },
+  { mins: 20, id: "butterfly_friend", name: "🦋 Butterfly Friend", pts: 75 },
+  { mins: 30, id: "tree_protector", name: "🌳 Tree Protector", pts: 100 },
+  { mins: 60, id: "silent_paradise", name: "🌌 Silent Paradise", pts: 200 }
 ];
-
-const levels=[
+const levels = [
   [0, "🌱", "Seed"],
   [10, "🌿", "Sprout"],
   [35, "🌼", "Flower"],
@@ -155,14 +121,35 @@ const levels=[
   [410, "🦋", "Paradise"]
 ];
 
-function save(){localStorage.setItem(SAVE,JSON.stringify(state));}
-function msg(t){document.getElementById("message").textContent=t;}
+let state = JSON.parse(localStorage.getItem(SAVE) || '{"score":0,"achievements":[]}');
+let ctx;
+let analyser;
+let running = false;
+let sm = 0;
+let budget = 0;
+let quiet = 0;
+let alarms = 0;
+let cool = 0;
+let lastTime = 0;
+let lastFrameTime = 0;
+let currentStreakSeconds = 0;
+let trend = [];
+const lastRenderData = {};
+
+function msg(text) {
+  const messageEl = document.getElementById("message");
+  if (messageEl) messageEl.textContent = text;
+}
+
+function save() {
+  localStorage.setItem(SAVE, JSON.stringify(state));
+}
 
 function playTone(freq, type, duration) {
-  if(!ctx) return;
+  if (!ctx) return;
   try {
-    let osc = ctx.createOscillator();
-    let gainNode = ctx.createGain();
+    const osc = ctx.createOscillator();
+    const gainNode = ctx.createGain();
     osc.type = type;
     osc.frequency.value = freq;
     gainNode.gain.setValueAtTime(0.08, ctx.currentTime);
@@ -171,273 +158,348 @@ function playTone(freq, type, duration) {
     gainNode.connect(ctx.destination);
     osc.start();
     osc.stop(ctx.currentTime + duration);
-  } catch(e) { console.log("Audio contextual block", e); }
+  } catch (e) {
+    console.log("Audio contextual block", e);
+  }
 }
 
-function award(name,pts){
- if(state.achievements.includes(name)) return;
- state.achievements.push(name); state.score+=pts;
- msg("🏆 Unlock: " + name);
- playTone(523.25, 'sine', 0.15); 
- setTimeout(() => playTone(659.25, 'sine', 0.3), 100); 
- save(); render(true);
+function award(name, pts) {
+  if (state.achievements.includes(name)) return;
+  state.achievements.push(name);
+  state.score += pts;
+  msg("🏆 Unlock: " + name);
+  playTone(523.25, 'sine', 0.15);
+  setTimeout(() => playTone(659.25, 'sine', 0.3), 100);
+  save();
+  render(true);
 }
 
 function updateDOMIfChanged(id, value, cacheKey) {
-  if (value !== lastRenderData[cacheKey]) {
-      const el = document.getElementById(id);
-      if (el) el.textContent = value;
-      lastRenderData[cacheKey] = value;
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (lastRenderData[cacheKey] !== value) {
+    el.textContent = value;
+    lastRenderData[cacheKey] = value;
   }
 }
 
-function render(force=false){
+function render(force = false) {
   updateDOMIfChanged("score", Math.round(state.score), "score");
-  updateDOMIfChanged("quiet", Math.floor(quiet/60), "quiet");
-  updateDOMIfChanged("alarms", alarms, "alarms");
- 
-  let cur=levels[0];
-  for(const l of levels){if(state.score>=l[0])cur=l;}
-  
-  if (force || lastRenderData.gardenEmoji !== cur[1]) {
-      garden.textContent=cur[1];
-      lastRenderData.gardenEmoji = cur[1];
-  }
-  if (force || lastRenderData.gardenName !== cur[2]) {
-      gardenName.textContent=cur[2];
-      lastRenderData.gardenName = cur[2];
+  updateDOMIfChanged("quiet", Math.floor(quiet / 60), "quiet");
+
+  const garden = document.getElementById("garden");
+  const gardenName = document.getElementById("gardenName");
+  const goal = document.getElementById("goal");
+  const season = document.getElementById("season");
+  const animals = document.getElementById("animals");
+  const achievements = document.getElementById("achievements");
+
+  let currentLevel = levels[0];
+  for (let i = levels.length - 1; i >= 0; i--) {
+    if (state.score >= levels[i][0]) {
+      currentLevel = levels[i];
+      break;
+    }
   }
 
-  let nxt=levels.find(x=>x[0]>state.score);
-  let goalText = nxt?("Reach "+nxt[2]+" "+nxt[1]):"🎉 Paradise Reached!";
-  if (force || lastRenderData.goal !== goalText) {
-      goal.textContent = goalText;
-      lastRenderData.goal = goalText;
+  if (garden && (force || lastRenderData.gardenEmoji !== currentLevel[1])) {
+    garden.textContent = currentLevel[1];
+    lastRenderData.gardenEmoji = currentLevel[1];
   }
-  
+
+  if (gardenName && (force || lastRenderData.gardenName !== currentLevel[2])) {
+    gardenName.textContent = currentLevel[2];
+    lastRenderData.gardenName = currentLevel[2];
+  }
+
+  const nextLevel = levels.find(l => l[0] > state.score);
+  const goalText = nextLevel ? `Reach ${nextLevel[2]} ${nextLevel[1]}` : "🎉 Paradise Reached!";
+  if (goal && (force || lastRenderData.goal !== goalText)) {
+    goal.textContent = goalText;
+    lastRenderData.goal = goalText;
+  }
+
   const currentAchievements = JSON.stringify(state.achievements);
-  if (force || currentAchievements !== lastRenderData.achievements) {
-      achievements.innerHTML=ACHIEVEMENT_REGISTRY.map(a=>{
-        const isEarned = state.achievements.includes(a.name);
-        const cssClass = isEarned ? 'badge active' : 'badge locked-badge';
-        const hint = !isEarned ? `data-hint="Locked: ${a.name} - ${a.mins} mins of quiet time required."` : "";
-        return `<span class="${cssClass}" ${hint} style="cursor: pointer; pointer-events: auto;">${a.name}</span>`;
-      }).join('');
-      lastRenderData.achievements = currentAchievements;
+  if (achievements && (force || currentAchievements !== lastRenderData.achievements)) {
+    achievements.innerHTML = ACHIEVEMENT_REGISTRY.map(a => {
+      const isEarned = state.achievements.includes(a.name);
+      const cssClass = isEarned ? 'badge active' : 'badge locked-badge';
+      const hint = !isEarned ? `data-hint="Locked: ${a.name} - ${a.mins} mins of quiet time required."` : "";
+      return `<span class="${cssClass}" ${hint} style="cursor: pointer; pointer-events: auto;">${a.name}</span>`;
+    }).join('');
+    lastRenderData.achievements = currentAchievements;
   }
 
-  let animals="";
-  if(state.score>=100)animals+="🐞 ";
-  if(state.score>=250)animals+="🦋 ";
-  if(state.score>=450)animals+="🐦 ";
-  if(state.score>=700)animals+="🦔 ";
-  if(state.score>=1000)animals+="🐿️ ";
-  if(Math.random()<0.002) animals+="🦉 ";
-  if (force || animals !== lastRenderData.animals) {
-      document.getElementById("animals").textContent=animals;
-      lastRenderData.animals = animals;
+  let animalsText = "";
+  if (state.score >= 100) animalsText += "🐞 ";
+  if (state.score >= 250) animalsText += "🦋 ";
+  if (state.score >= 450) animalsText += "🐦 ";
+  if (state.score >= 700) animalsText += "🦔 ";
+  if (state.score >= 1000) animalsText += "🐿️ ";
+  if (Math.random() < 0.002) animalsText += "🦉 ";
+  if (animals && (force || animalsText !== lastRenderData.animals)) {
+    animals.textContent = animalsText;
+    lastRenderData.animals = animalsText;
   }
- 
-  const seasons=["🌱 Spring","☀️ Summer","🍂 Autumn","❄️ Winter"];
-  let seasonText = seasons[Math.floor((new Date().getMonth())/3)];
-  if (force || seasonText !== lastRenderData.season) {
-      season.textContent = seasonText;
-      lastRenderData.season = seasonText;
+
+  const seasons = ["🌱 Spring", "☀️ Summer", "🍂 Autumn", "❄️ Winter"];
+  const seasonText = seasons[Math.floor((new Date().getMonth()) / 3)];
+  if (season && (force || seasonText !== lastRenderData.season)) {
+    season.textContent = seasonText;
+    lastRenderData.season = seasonText;
   }
 
   if (force || Math.round(budget) !== lastRenderData.budget) {
-      if (budget >= 80) {
-        document.body.style.background = "#fce8e6"; 
-      } else if (budget >= 40) {
-        document.body.style.background = "#fff9e6"; 
-      } else {
-        document.body.style.background = "#eef8ef"; 
-      }
-      lastRenderData.budget = Math.round(budget);
+    document.body.style.background = budget >= 80 ? "#fce8e6" : budget >= 40 ? "#fff9e6" : "#eef8ef";
+    lastRenderData.budget = Math.round(budget);
   }
 }
 
-threshold.oninput=e=>tval.textContent=e.target.value;
-cfgSmoothing.oninput=e=>{
-  ENGINE.smoothing = e.target.value / 100;
-  sval.textContent = ENGINE.smoothing;
-};
-cfgDrain.oninput=e=>{
-  ENGINE.drainRate = e.target.value / 1000;
-  dval.textContent = e.target.value / 1000;
-};
-
-async function initAudio(){
- try {
-  const stream=await navigator.mediaDevices.getUserMedia({audio:true});
-  ctx=new AudioContext();
-  ctx.onstatechange = () => {
-    if (ctx.state === 'suspended') {
-      ctx.resume();
-    }
-  };
-  analyser=ctx.createAnalyser();
-  analyser.fftSize=1024;
-  ctx.createMediaStreamSource(stream).connect(analyser);
- } catch (err) {
-  msg("Microphone access denied or unavailable.");
-  console.error("Error initializing audio:", err);
- }
+async function initAudio() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    ctx = new AudioContext();
+    ctx.onstatechange = () => {
+      if (ctx.state === 'suspended') ctx.resume();
+    };
+    analyser = ctx.createAnalyser();
+    analyser.fftSize = 1024;
+    ctx.createMediaStreamSource(stream).connect(analyser);
+  } catch (err) {
+    msg("Microphone access denied or unavailable.");
+    console.error("Error initializing audio:", err);
+  }
 }
 
-start.onclick=async()=>{
- if(!ctx) {
-   await initAudio();
- } else if (ctx.state === 'suspended') {
-   await ctx.resume();
- }
- running=!running;
- start.textContent=running?"Stop Monitoring":"Start Monitoring";
- if(running) {
-    lastTime = performance.now();
-    lastFrameTime = performance.now();
-    requestAnimationFrame(loop);
- }
-};
+function resetGame() {
+  quiet = 0;
+  alarms = 0;
+  budget = 0;
+  currentStreakSeconds = 0;
+  cool = 0;
+  state = { score: 0, achievements: [] };
+  save();
+  msg("🌞 Garden cleared! Ready for a fresh loop.");
+  render(true);
+}
 
-fullscreen.onclick=()=>document.documentElement.requestFullscreen();
-
-calibrate.onclick=async()=>{
- if(!ctx) {
-   await initAudio();
- } else if (ctx.state === 'suspended') {
-   await ctx.resume();
- }
- msg("🎯 Calibrating room floor for 5 seconds...");
- let total=0,count=0;
- const end=Date.now()+5000;
- while(Date.now()<end){
-   const a=new Uint8Array(analyser.fftSize);
-   analyser.getByteTimeDomainData(a);
-   let sum=0;
-   for(let i=0;i<a.length;i++){let val=(a[i]-128)/128;sum+=val*val;}
-   let rms=Math.sqrt(sum/a.length);
-   let db=(20*Math.log10(rms))+100;
-   if(isFinite(db)){total+=db;count++;}
-   await new Promise(r=>setTimeout(r,50));
- }
- let avg=total/Math.max(1,count);
- let th=Math.min(90,Math.max(25,Math.round(avg+12))); 
- threshold.value=th;tval.textContent=th;
- msg("🎯 Auto-Calibrated to "+th+" dB");
-};
-
-reset.onclick=()=>{
- quiet=0;
- alarms=0;
- budget=0;
- currentStreakSeconds=0;
- state={health:0,score:0,achievements:[]};
- save();
- msg("🌞 Garden cleared! Ready for a fresh loop.");
- render(true);
-};
-
-function loop(timestamp){
-if(!running)return;
-if (timestamp - lastFrameTime < frameDuration) { requestAnimationFrame(loop); return; }
-lastFrameTime = timestamp;
-const deltaTime = (timestamp - lastTime) / 1000;
-lastTime = timestamp;
-const a=new Uint8Array(analyser.fftSize);
-analyser.getByteTimeDomainData(a);
-let sum=0;
-for(let i=0;i<a.length;i++){let val=(a[i]-128)/128;sum+=val*val;}
-let rms=Math.sqrt(sum/a.length);
-let db=(20*Math.log10(rms))+100;
-if(!isFinite(db))db=0;
-db=Math.max(0,Math.min(100,db));
-
-sm=sm*ENGINE.smoothing+db*(1 - ENGINE.smoothing);
-
-trend.push(sm);
-if(trend.length > 60) trend.shift();
-const canvas = document.getElementById("noiseChart");
-const ctx2 = canvas.getContext("2d");
-ctx2.clearRect(0,0,canvas.width,canvas.height);
-ctx2.beginPath();
-ctx2.strokeStyle = "#4caf50";
-ctx2.lineWidth = 2;
-for(let i=0; i<trend.length; i++) {
+function drawTrend() {
+  const canvas = document.getElementById("noiseChart");
+  if (!canvas) return;
+  const ctx2 = canvas.getContext("2d");
+  if (!ctx2) return;
+  ctx2.clearRect(0, 0, canvas.width, canvas.height);
+  ctx2.beginPath();
+  ctx2.strokeStyle = "#4caf50";
+  ctx2.lineWidth = 2;
+  for (let i = 0; i < trend.length; i++) {
     const x = (i / 60) * canvas.width;
     const y = canvas.height - (trend[i] / 100) * canvas.height;
-    if(i===0) ctx2.moveTo(x, y);
+    if (i === 0) ctx2.moveTo(x, y);
     else ctx2.lineTo(x, y);
-}
-ctx2.stroke();
-
-// Throttled DOM Updates
-const dbRound = Math.round(sm);
-if (dbRound !== lastRenderData.db) {
-    noiseFill.style.width=sm+"%";
-    document.getElementById("db").textContent=dbRound + " dB";
-    lastRenderData.db = dbRound;
-}
-
-const newMood = sm < threshold.value * 0.9 ? "😀" : (sm < threshold.value ? "😐" : "😡");
-if (newMood !== lastRenderData.mood) {
-   face.textContent = newMood;
-   face.classList.remove('pulse-anim');
-   void face.offsetWidth;
-   face.classList.add('pulse-anim');
-   lastRenderData.mood = newMood;
-}
-
-if(sm < threshold.value){
-    budget=Math.max(0, budget - 0.25);
-    quiet+=deltaTime;
-    currentStreakSeconds += deltaTime;
   }
-  else {
-    budget=Math.min(100, budget + (sm - threshold.value) * ENGINE.drainRate);
+  ctx2.stroke();
+}
+
+function updateSmoothedValue(db) {
+  if (sm === 0) sm = db;
+  else sm = ENGINE.smoothing * sm + (1 - ENGINE.smoothing) * db;
+  trend.push(sm);
+  if (trend.length > 60) trend.shift();
+}
+
+function getStoredElement(id) {
+  return document.getElementById(id);
+}
+
+function loop(timestamp) {
+  if (!running) return;
+  if (timestamp - lastFrameTime < frameDuration) {
+    requestAnimationFrame(loop);
+    return;
+  }
+
+  lastFrameTime = timestamp;
+  const deltaTime = (timestamp - lastTime) / 1000;
+  lastTime = timestamp;
+
+  const data = new Uint8Array(analyser.fftSize);
+  analyser.getByteTimeDomainData(data);
+  let sum = 0;
+  for (let i = 0; i < data.length; i++) {
+    const val = (data[i] - 128) / 128;
+    sum += val * val;
+  }
+  const rms = Math.sqrt(sum / data.length);
+  let db = (20 * Math.log10(rms)) + 100;
+  if (!isFinite(db)) db = 0;
+
+  updateSmoothedValue(db);
+  drawTrend();
+
+  const noiseFill = getStoredElement("noiseFill");
+  const dbEl = getStoredElement("db");
+  const face = getStoredElement("face");
+  const thresholdValue = Number(getStoredElement("threshold").value);
+
+  const dbRound = Math.round(sm);
+  if (dbEl && lastRenderData.db !== dbRound) {
+    if (noiseFill) noiseFill.style.width = `${Math.min(100, sm)}%`;
+    dbEl.textContent = dbRound + " dB";
+    lastRenderData.db = dbRound;
+  }
+
+  const newMood = sm < thresholdValue * 0.9 ? "😀" : sm < thresholdValue ? "😐" : "😡";
+  if (face && lastRenderData.mood !== newMood) {
+    face.textContent = newMood;
+    face.classList.remove('pulse-anim');
+    void face.offsetWidth;
+    face.classList.add('pulse-anim');
+    lastRenderData.mood = newMood;
+  }
+
+  if (sm < thresholdValue) {
+    budget = Math.max(0, budget - 0.25);
+    quiet += deltaTime;
+    currentStreakSeconds += deltaTime;
+  } else {
+    budget = Math.min(100, budget + (sm - thresholdValue) * ENGINE.drainRate);
     currentStreakSeconds = 0;
   }
 
- const streakRound = Math.round(currentStreakSeconds);
- if (streakRound !== lastRenderData.streak) {
-     document.getElementById("currentStreak").textContent = streakRound < 60 ? streakRound + "s" : Math.floor(streakRound/60) + "m " + (streakRound%60) + "s";
-     lastRenderData.streak = streakRound;
- }
+  const streakRound = Math.round(currentStreakSeconds);
+  const streakEl = getStoredElement("currentStreak");
+  if (streakEl && lastRenderData.streak !== streakRound) {
+    streakEl.textContent = streakRound < 60 ? `${streakRound}s` : `${Math.floor(streakRound / 60)}m ${streakRound % 60}s`;
+    lastRenderData.streak = streakRound;
+  }
 
- budgetFill.style.width=budget+"%";
- 
- ACHIEVEMENT_REGISTRY.forEach(ach => {
-   if (Math.floor(quiet/60) >= ach.mins) {
-     award(ach.name, ach.pts);
-   }
- });
+  ACHIEVEMENT_REGISTRY.forEach(ach => {
+    if (Math.floor(quiet / 60) >= ach.mins) {
+      award(ach.name, ach.pts);
+    }
+  });
 
- if(budget>=100 && cool<=0){
-   alarms++;
-   state.score=Math.max(0,state.score-5);
-   cool=ENGINE.penaltyCooldown;
-   msg("🐿️ Startled Squirrel!");
-   playTone(180, 'sawtooth', 0.4); 
-   save();
- }
- if(cool>0){cool--; cooldown.textContent="Safe Zone Recovery: "+Math.ceil(cool/60)+"s";}
- else if (cooldown.textContent !== "") cooldown.textContent="";
- 
- render();
- if(running) requestAnimationFrame(loop);
+  if (budget >= 100 && cool <= 0) {
+    alarms++;
+    state.score = Math.max(0, state.score - 5);
+    cool = ENGINE.penaltyCooldown;
+    msg("🐿️ Startled Squirrel!");
+    playTone(180, 'sawtooth', 0.4);
+    save();
+  }
+
+  if (cool > 0) {
+    const cooldownEl = getStoredElement("cooldown");
+    cool--;
+    if (cooldownEl) cooldownEl.textContent = "Safe Zone Recovery: " + Math.ceil(cool / 60) + "s";
+  }
+
+  render();
+  if (running) requestAnimationFrame(loop);
 }
-render(true);
 
-document.addEventListener('touchstart', (e) => {
-  if (e.target.matches('.locked-badge')) {
-    alert(e.target.getAttribute('data-hint'));
+function updateFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  } else {
+    document.exitFullscreen().catch(() => {});
   }
-});
+}
 
-document.addEventListener('click', (e) => {
-  if (e.target.matches('.locked-badge')) {
-    alert(e.target.getAttribute('data-hint'));
+window.addEventListener('DOMContentLoaded', () => {
+  const threshold = getStoredElement("threshold");
+  const tval = getStoredElement("tval");
+  const cfgSmoothing = getStoredElement("cfgSmoothing");
+  const sval = getStoredElement("sval");
+  const cfgDrain = getStoredElement("cfgDrain");
+  const dval = getStoredElement("dval");
+  const startButton = getStoredElement("start");
+  const calibrateButton = getStoredElement("calibrate");
+  const fullscreenButton = getStoredElement("fullscreen");
+  const resetButton = getStoredElement("reset");
+
+  if (threshold && tval) {
+    threshold.oninput = e => tval.textContent = e.target.value;
   }
+  if (cfgSmoothing && sval) {
+    cfgSmoothing.oninput = e => {
+      ENGINE.smoothing = e.target.value / 100;
+      sval.textContent = ENGINE.smoothing;
+    };
+  }
+  if (cfgDrain && dval) {
+    cfgDrain.oninput = e => {
+      ENGINE.drainRate = e.target.value / 1000;
+      dval.textContent = ENGINE.drainRate;
+    };
+  }
+
+  if (startButton) startButton.onclick = async () => {
+    if (!ctx) await initAudio();
+    else if (ctx.state === 'suspended') await ctx.resume();
+    running = !running;
+    startButton.textContent = running ? "Stop Monitoring" : "Start Monitoring";
+    if (running) {
+      lastTime = performance.now();
+      lastFrameTime = performance.now();
+      requestAnimationFrame(loop);
+    }
+  };
+
+  if (calibrateButton) calibrateButton.onclick = async () => {
+    if (!ctx) await initAudio();
+    else if (ctx.state === 'suspended') await ctx.resume();
+    msg("🎯 Calibrating room floor for 5 seconds...");
+    let total = 0;
+    let count = 0;
+    const end = Date.now() + 5000;
+    while (Date.now() < end) {
+      const a = new Uint8Array(analyser.fftSize);
+      analyser.getByteTimeDomainData(a);
+      let sum = 0;
+      for (let i = 0; i < a.length; i++) {
+        const val = (a[i] - 128) / 128;
+        sum += val * val;
+      }
+      const rms = Math.sqrt(sum / a.length);
+      let db = (20 * Math.log10(rms)) + 100;
+      if (isFinite(db)) {
+        total += db;
+        count++;
+      }
+      await new Promise(r => setTimeout(r, 50));
+    }
+    const avg = total / Math.max(1, count);
+    const th = Math.min(90, Math.max(25, Math.round(avg + 12)));
+    if (threshold) threshold.value = th;
+    if (tval) tval.textContent = th;
+    msg("🎯 Auto-Calibrated to " + th + " dB");
+  };
+
+  if (resetButton) resetButton.onclick = resetGame;
+  if (fullscreenButton) fullscreenButton.onclick = updateFullscreen;
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && running) {
+      running = false;
+      if (startButton) startButton.textContent = "Start Monitoring";
+    }
+  });
+
+  document.addEventListener('touchstart', e => {
+    if (e.target.matches && e.target.matches('.locked-badge')) {
+      alert(e.target.getAttribute('data-hint'));
+    }
+  });
+
+  document.addEventListener('click', e => {
+    if (e.target.matches && e.target.matches('.locked-badge')) {
+      alert(e.target.getAttribute('data-hint'));
+    }
+  });
+
+  render(true);
 });
 </script>
 </body>
