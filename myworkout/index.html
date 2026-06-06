@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Workout</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="audio-overlay">
+        <div id="audio-overlay-text">Tap to enable sound</div>
+    </div>
+    <div id="loading-overlay">Loading...</div>
+    <main id="workout">
+        <header>
+            <h1>My Workout</h1>
+            <div class="controls-top">
+                <button id="howToBtn">How To</button>
+            </div>
+        </header>
+
+        <section class="card exercise-card">
+            <div id="next-exercise"></div>
+            <img id="next-exercise-img" class="exercise-media" alt="Next Exercise Image" />
+            <video id="next-exercise-video" class="exercise-media" controls muted loop></video>
+
+            <div id="current-exercise"></div>
+            <img id="exercise-img" class="exercise-media" src="" alt="Current Exercise Image" />
+            <div id="exercise-text" class="exercise-media"></div>
+            <video id="exercise-video" class="exercise-media" src="" alt="Current Exercise Video" controls muted loop></video>
+            <div id="exercise-explanation"></div>
+        </section>
+
+        <section class="card timer-card">
+            <div id="workout-duration"></div>
+            <div id="timer"></div>
+            <div id="status"></div>
+            <div id="progress-bar-container">
+                <div id="progress-bar"></div>
+            </div>
+            <div class="button-container">
+                <button id="startBtn">Start</button>
+                <button id="pauseBtn" disabled>Pause</button>
+                <button id="resumeBtn" disabled>Resume</button>
+                <button id="resetBtn" disabled>Reset</button>
+                <button id="skipBtn" disabled>Skip</button>
+            </div>
+        </section>
+    </main>
+
+    <div id="howToModal" class="modal">
+        <div class="modal-content">
+            <span id="closeHowToBtn">&times;</span>
+            <h2>Exercise Guide</h2>
+            <div id="exerciseList"></div>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
