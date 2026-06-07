@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Typing Master - Progressive Training</title>
+  <style>
+    @font-face {
+        font-family: 'Alata';
+        src: local('Alata'),
+            url('selfintro/Alata-Regular.ttf') format('truetype');
+        font-display: swap;
+        font-weight: 400;
+    }
+
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        height: 100vh;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Alata", -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+        overflow: hidden;
+        position: fixed;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    #menuScreen {
+        width: 95%;
+        max-width: 1200px;
+        height: 90%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        background: transparent;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 20px 0;
+        box-sizing: border-box;
+    }
+
+    #stagesContainer {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 20px;
+        width: 100%;
+        padding: 0 20px;
+        box-sizing: border-box;
+    }
+
+    @media (max-width: 600px) {
+        #menuScreen {
+            width: 100%;
+            height: 100%;
+            padding: 10px 0;
+        }
+        #stagesContainer {
+            grid-template-columns: 1fr;
+            gap: 15px;
+            padding: 0 10px;
+        }
+        .stage {
+            padding: 15px;
+        }
+        .mission {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .mission button {
+            margin-top: 10px;
+            width: 100%;
+        }
+    }
+
+    h1 {
+        color: #1a237e;
+        margin-bottom: 5px;
+        font-size: 2rem;
+    }
+
+    h2 {
+        color: #42a5f5;
+        margin-bottom: 20px;
+        font-size: 1.2rem;
+    }
+
+    .stage {
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .stage-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #1a237e;
+        margin-bottom: 15px;
+    }
+
+    .mission {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px;
+        margin: 8px 0;
+        background: #f5f5f5;
+        border-radius: 8px;
+        border-left: 4px solid #ccc;
+    }
+
+    .mission.locked {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
+    .mission.completed {
+        border-left-color: #4caf50;
+        background: #e8f5e9;
+    }
+
+    .mission.current {
+        border-left-color: #ff9800;
+        background: #fff3e0;
+    }
+
+    .mission-info {
+        flex: 1;
+    }
+
+    .mission-type {
+        font-size: 12px;
+        color: #666;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    .mission-name {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .mission-status {
+        font-size: 14px;
+        color: #666;
+    }
+
+    .mission button {
+        padding: 8px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        background: linear-gradient(90deg, #42a5f5 0%, #1a237e 100%);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(66, 165, 245, 0.18);
+        transition: background 0.2s, transform 0.1s;
+    }
+
+    .mission button:hover {
+        background: linear-gradient(90deg, #1a237e 0%, #42a5f5 100%);
+        transform: scale(1.05);
+    }
+
+    .mission button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    /* Falling Letters Game Styles */
+    #gameArea {
+        width: 800px;
+        height: 600px;
+        border: 2px solid #333;
+        position: relative;
+        overflow: hidden;
+        background-color: #f0f0f0;
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(60, 60, 120, 0.18);
+        display: none;
+        will-change: transform;
+    }
+
+    @media (max-width: 850px) {
+        #gameArea {
+            width: 95vw;
+            height: 60vh;
+        }
+    }
+
+    .letter {
+        position: absolute;
+        font-size: 24px;
+        font-weight: bold;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        border: 2px solid #fff;
+        transition: transform 0.1s;
+        will-change: transform;
+        transform: translate3d(0, 0, 0);
+    }
+
+    .letter.hit {
+        animation: explode 0.3s ease-out;
+    }
+
+    @keyframes explode {
+        0% { transform: scale(1); opacity: 1; }
+        30% { transform: scale(1.3); opacity: 1; }
+        100% { transform: scale(0); opacity: 0; }
+    }
+
+    .right-index { background-color: #1a237e; }
+    .left-index { background-color: #42a5f5; }
+    .right-middle { background-color: #1d6114; }
+    .left-middle { background-color: #3beb7e; }
+    .right-ring { background-color: #cc0909; }
+    .left-ring { background-color: #ec7d7d; }
+    .right-pinkie { background-color: #9b9101; }
+    .left-pinkie { background-color: #f5e940; }
+
+    #goalLine {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 2px;
+        background-color: red;
+    }
+
+    #score {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 20px;
+    }
+
+    #timer {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        font-size: 20px;
+    }
+
+    #gameOver {
+        display: none;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 48px;
+        color: #fd0000;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.85);
+        padding: 32px 24px;
+        border-radius: 18px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    #gameOver button {
+        margin-top: 24px;
+        padding: 12px 32px;
+        font-size: 22px;
+        background: linear-gradient(90deg, #fd0000 0%, #f5e400 100%);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(253, 0, 0, 0.18);
+        transition: background 0.2s, transform 0.1s;
+    }
+
+    #gameOver button:hover {
+        background: linear-gradient(90deg, #f5e400 0%, #fd0000 100%);
+        transform: scale(1.05);
+    }
+
+    /* Word Challenge Styles */
+    #wordChallengeArea {
+        width: 800px;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(60, 60, 120, 0.18);
+        max-width: 95vw;
+    }
+
+    #wordChallengeHeading {
+        font-size: 24px;
+        color: #1a237e;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    #texttotype {
+        display: block;
+        border: 2px solid #1a237e;
+        background-color: #f5f5f5;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        width: 100%;
+        font-size: 28px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    #youtyped {
+        display: block;
+        border: 2px solid #1a237e;
+        background-color: white;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        width: 100%;
+        font-size: 28px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    #youtyped.correct {
+        background-color: #e8f5e9;
+        border-color: #4caf50;
+    }
+
+    #youtyped.incorrect {
+        background-color: #ffebee;
+        border-color: #f44336;
+    }
+
+    .word-stats {
+        display: flex;
+        justify-content: space-around;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .stat-box {
+        text-align: center;
+        padding: 15px;
+        background: #f5f5f5;
+        border-radius: 10px;
+        min-width: 120px;
+    }
+
+    .stat-label {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 5px;
+    }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #1a237e;
+    }
+
+    #wordGameOver {
+        display: none;
+        text-align: center;
+        padding: 30px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        margin-top: 20px;
+    }
+
+    #wordGameOver h2 {
+        margin-top: 0;
+    }
+
+    #wordGameOver button {
+        margin: 10px;
+        padding: 12px 24px;
+        font-size: 18px;
+        cursor: pointer;
+        background: linear-gradient(90deg, #42a5f5 0%, #1a237e 100%);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+    }
+
+    #wordGameOver button:hover {
+        background: linear-gradient(90deg, #1a237e 0%, #42a5f5 100%);
+    }
+
+    .stars {
+        text-align: center;
+        font-size: 48px;
+        color: gold;
+        margin-top: 16px;
+        letter-spacing: 6px;
+        text-shadow: 0 2px 8px #f5e400;
+    }
+  </style>
+</head>
+
+<body>
+    <div id="menuScreen">
+        <h1>Typing Master</h1>
+        <h2>Progressive Training Program</h2>
+        <div id="stagesContainer"></div>
+    </div>
+
+    <!-- Falling Letters Game -->
+    <div id="gameArea">
+        <div id="goalLine"></div>
+        <div id="score">Score: 0</div>
+        <div id="timer">Time: 120</div>
+        <div id="gameOver">GAME OVER</div>
+    </div>
+    <div class="stars"></div>
+
+    <!-- Word Challenge Game -->
+    <div id="wordChallengeArea">
+        <div id="wordChallengeHeading"></div>
+        <div id="texttotype"></div>
+        <textarea id="youtyped" rows="2"></textarea>
+        <div class="word-stats">
+            <div class="stat-box">
+                <div class="stat-label">Current WPM</div>
+                <div class="stat-value" id="speedCurrent">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Required WPM</div>
+                <div class="stat-value" id="speedMin">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Time Left</div>
+                <div class="stat-value" id="TimeLeft">0</div>
+            </div>
+        </div>
+        <div id="wordGameOver">
+            <h2 id="wordResultTitle"></h2>
+            <p id="wordResultMessage"></p>
+            <button onclick="retryWordChallenge()">Try Again</button>
+            <button onclick="returnToMenu()">Return to Menu</button>
+        </div>
+    </div>
+
+    <script>
+        // Progression structure: Training (falling letters) → Challenge (words) → Next Training
+        const progression = [
+            {
+                stage: 1,
+                training: {
+                    type: 'falling',
+                    name: 'F & J Training',
+                    letters: ['f', 'j'],
+                    duration: 30,
+                    initialSpeed: 3000,
+                    fallSpeed: 1,
+                    requiredStars: 3
+                },
+                challenge: {
+                    type: 'word',
+                    name: 'F & J Letter Combinations',
+                    words: ['fj', 'jf', 'ff', 'jj', 'fjf'],
+                    time: 15,
+                    requiredWPM: 20
+                }
+            },
+            {
+                stage: 2,
+                training: {
+                    type: 'falling',
+                    name: 'F J D K Training',
+                    letters: ['f', 'j', 'd', 'k'],
+                    duration: 40,
+                    initialSpeed: 2500,
+                    fallSpeed: 2,
+                    requiredStars: 3
+                },
+                challenge: {
+                    type: 'word',
+                    name: 'F J D K Letter Combinations',
+                    words: ['fj', 'jd', 'kf', 'dk', 'fjk', 'jdk', 'fdk'],
+                    time: 20,
+                    requiredWPM: 25
+                }
+            },
+            {
+                stage: 3,
+                training: {
+                    type: 'falling',
+                    name: 'F J D K S L Training',
+                    letters: ['f', 'j', 'd', 'k', 's', 'l'],
+                    duration: 50,
+                    initialSpeed: 2000,
+                    fallSpeed: 3,
+                    requiredStars: 3
+                },
+                challenge: {
+                    type: 'word',
+                    name: 'F J D K S L Letter Combinations',
+                    words: ['sl', 'jk', 'fd', 'ks', 'ls', 'fjd', 'ksl', 'jfd'],
+                    time: 25,
+                    requiredWPM: 30
+                }
+            },
+            {
+                stage: 4,
+                training: {
+                    type: 'falling',
+                    name: 'F J D K S L A ; Training',
+                    letters: ['f', 'j', 'd', 'k', 's', 'l', 'a', ';'],
+                    duration: 50,
+                    initialSpeed: 2000,
+                    fallSpeed: 3,
+                    requiredStars: 3
+                },
+                challenge: {
+                    type: 'word',
+                    name: 'F J D K S L A ; Words',
+                    words: ['asks', 'falls', 'jails', 'kills', 'lass'],
+                    time: 25,
+                    requiredWPM: 35
+                }
+            },
+            {
+                stage: 5,
+                training: {
+                    type: 'falling',
+                    name: 'Full Home Row Training',
+                    letters: ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';'],
+                    duration: 60,
+                    initialSpeed: 1500,
+                    fallSpeed: 4,
+                    requiredStars: 3
+                },
+                challenge: {
+                    type: 'word',
+                    name: 'Home Row Words',
+                    words: ['sad', 'lad', 'dad', 'had', 'gas', 'flag', 'shall', 'glass', 'shall'],
+                    time: 30,
+                    requiredWPM: 40
+                }
+            }
+        ];
+
+        // Game state
+        let gameState = {
+            currentStage: 0,
+            completedTraining: [],
+            completedChallenges: [],
+            stars: {}
+        };
+
+        // Load saved progress
+        function loadProgress() {
+            const saved = localStorage.getItem('typingMasterProgress');
+            if (saved) {
+                gameState = JSON.parse(saved);
+            }
+        }
+
+        // Save progress
+        function saveProgress() {
+            localStorage.setItem('typingMasterProgress', JSON.stringify(gameState));
+        }
+
+        // Falling letters game variables
+        let currentLevel = 0;
+        let score = 20;
+        let totalLettersSpawned = 0;
+        let timeLeft;
+        let gameSpeed;
+        let letters;
+        let fallSpeed;
+        let correctHits = 0;
+        let missedLetters = 0;
+        let wrongKeys = 0;
+        let activeLetters = [];
+        let gameActive = false;
+        let letterInterval = null;
+        let gameAnimationId = null;
+        let timerInterval = null;
+        let currentTrainingIndex = null;
+        let lastTime = 0;
+        let letterSpawnAccumulator = 0;
+        let keypressHandler = null;
+
+        // Word challenge variables
+        let wordTimer = null;
+        let wordGameActive = false;
+        let currentChallengeIndex = null;
+        let wordStartTime = null;
+
+        // Initialize menu
+        function initMenu() {
+            loadProgress();
+            const container = document.getElementById('stagesContainer');
+            container.innerHTML = '';
+
+            progression.forEach((stage, stageIndex) => {
+                const stageDiv = document.createElement('div');
+                stageDiv.className = 'stage';
+
+                const stageTitle = document.createElement('div');
+                stageTitle.className = 'stage-title';
+                stageTitle.textContent = `Stage ${stage.stage}: ${getStageName(stage)}`;
+                stageDiv.appendChild(stageTitle);
+
+                // Training mission
+                const trainingMission = createMissionElement(
+                    stage.training,
+                    stageIndex,
+                    'training',
+                    gameState.completedTraining.includes(stageIndex)
+                );
+                stageDiv.appendChild(trainingMission);
+
+                // Challenge mission
+                const challengeMission = createMissionElement(
+                    stage.challenge,
+                    stageIndex,
+                    'challenge',
+                    gameState.completedChallenges.includes(stageIndex)
+                );
+                stageDiv.appendChild(challengeMission);
+
+                container.appendChild(stageDiv);
+            });
+        }
+
+        function getStageName(stage) {
+            const letterStr = stage.training.letters.join(' ').toUpperCase();
+            return letterStr;
+        }
+
+        function createMissionElement(mission, stageIndex, type, isCompleted) {
+            const missionDiv = document.createElement('div');
+            missionDiv.className = 'mission';
+
+            // Check if unlocked
+            let isUnlocked = false;
+            if (type === 'training') {
+                isUnlocked = stageIndex === 0 || gameState.completedChallenges.includes(stageIndex - 1);
+            } else {
+                isUnlocked = gameState.completedTraining.includes(stageIndex);
+            }
+
+            if (!isUnlocked) {
+                missionDiv.classList.add('locked');
+            }
+            if (isCompleted) {
+                missionDiv.classList.add('completed');
+            } else if (isUnlocked && !isCompleted) {
+                missionDiv.classList.add('current');
+            }
+
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'mission-info';
+
+            const typeDiv = document.createElement('div');
+            typeDiv.className = 'mission-type';
+            typeDiv.textContent = type === 'training' ? 'Training Mission' : 'Word Challenge';
+            infoDiv.appendChild(typeDiv);
+
+            const nameDiv = document.createElement('div');
+            nameDiv.className = 'mission-name';
+            nameDiv.textContent = mission.name;
+            infoDiv.appendChild(nameDiv);
+
+            const statusDiv = document.createElement('div');
+            statusDiv.className = 'mission-status';
+            if (isCompleted) {
+                statusDiv.textContent = '✓ Completed';
+            } else if (isUnlocked) {
+                statusDiv.textContent = type === 'training' ? 
+                    `Type falling letters (${mission.letters.join(', ').toUpperCase()})` :
+                    `Type words at ${mission.requiredWPM}+ WPM`;
+            } else {
+                statusDiv.textContent = '🔒 Locked';
+            }
+            infoDiv.appendChild(statusDiv);
+
+            missionDiv.appendChild(infoDiv);
+
+            const button = document.createElement('button');
+            button.textContent = isCompleted ? 'Replay' : 'Start';
+            button.disabled = !isUnlocked;
+            button.onclick = () => startMission(stageIndex, type);
+            missionDiv.appendChild(button);
+
+            return missionDiv;
+        }
+
+        function startMission(stageIndex, type) {
+            document.getElementById('menuScreen').style.display = 'none';
+            document.querySelector('.stars').textContent = '';
+
+            if (type === 'training') {
+                startFallingLettersGame(stageIndex);
+            } else {
+                startWordChallenge(stageIndex);
+            }
+        }
+
+        // Falling Letters Game Functions
+        function startFallingLettersGame(stageIndex) {
+            currentTrainingIndex = stageIndex;
+            const training = progression[stageIndex].training;
+
+            document.getElementById('gameArea').style.display = 'block';
+            document.getElementById('wordChallengeArea').style.display = 'none';
+            document.getElementById('gameOver').style.display = 'none';
+
+            timeLeft = training.duration;
+            gameSpeed = training.initialSpeed;
+            letters = training.letters;
+            fallSpeed = training.fallSpeed;
+            activeLetters = [];
+            totalLettersSpawned = 0;
+            correctHits = 0;
+            missedLetters = 0;
+            wrongKeys = 0;
+            gameActive = true;
+
+            updateTimer();
+            updateScore();
+            updateGameSpeed();
+            lastTime = performance.now();
+            letterSpawnAccumulator = 0;
+            gameAnimationId = requestAnimationFrame(updateGame);
+            
+            // Add keypress listener
+            keypressHandler = (e) => {
+                if (!gameActive) return;
+                const key = e.key.toLowerCase();
+                const matchingLetter = activeLetters.find(letter => letter.textContent === key);
+                if (matchingLetter) {
+                    matchingLetter.classList.add('hit');
+                    activeLetters = activeLetters.filter(l => l !== matchingLetter);
+                    matchingLetter.addEventListener('animationend', () => {
+                        matchingLetter.remove();
+                    }, { once: true });
+                    correctHits++;
+                } else {
+                    wrongKeys++;
+                }
+                updateScore();
+            };
+            document.addEventListener('keypress', keypressHandler);
+            
+            timerInterval = setInterval(() => {
+                if (!gameActive) return;
+                timeLeft--;
+                updateTimer();
+                if (timeLeft <= 0) {
+                    endFallingLettersGame();
+                }
+            }, 1000);
+        }
+
+        function createLetter() {
+            if (!gameActive) return;
+            const letter = document.createElement('div');
+            letter.className = 'letter';
+            letter.textContent = letters[Math.floor(Math.random() * letters.length)];
+
+            // Color coding
+            const rightIndexLetters = ['j', 'h', 'y', 'u', 'n', 'm', '7', '8'];
+            const rightMiddleLetters = ['k', 'i', ',', '9'];
+            const rightRingLetters = ['l', 'o', '.', '0'];
+            const rightPinkieLetters = [';', '/', '\'', 'p'];
+            const leftIndexLetters = ['f', 'r', 't', 'g', 'v', 'b', '5', '6'];
+            const leftMiddleLetters = ['d', 'e', 'c', '4'];
+            const leftRingLetters = ['s', 'w', 'x', '3'];
+            const leftPinkieLetters = ['a', 'q', 'z', '2', '1'];
+
+            if (rightIndexLetters.includes(letter.textContent)) {
+                letter.classList.add('right-index');
+            } else if (leftIndexLetters.includes(letter.textContent)) {
+                letter.classList.add('left-index');
+            } else if (rightMiddleLetters.includes(letter.textContent)) {
+                letter.classList.add('right-middle');
+            } else if (leftMiddleLetters.includes(letter.textContent)) {
+                letter.classList.add('left-middle');
+            } else if (rightRingLetters.includes(letter.textContent)) {
+                letter.classList.add('right-ring');
+            } else if (leftRingLetters.includes(letter.textContent)) {
+                letter.classList.add('left-ring');
+            } else if (rightPinkieLetters.includes(letter.textContent)) {
+                letter.classList.add('right-pinkie');
+            } else if (leftPinkieLetters.includes(letter.textContent)) {
+                letter.classList.add('left-pinkie');
+            }
+
+            letter.dataset.x = Math.random() * 760;
+            letter.dataset.y = 0;
+            letter.style.transform = `translate3d(${letter.dataset.x}px, ${letter.dataset.y}px, 0)`;
+            gameArea.appendChild(letter);
+            activeLetters.push(letter);
+            totalLettersSpawned++;
+        }
+
+        function updateGame(timestamp) {
+            if (!gameActive) return;
+            
+            const deltaTime = timestamp - lastTime;
+            lastTime = timestamp;
+            
+            // Spawn letters based on accumulated time
+            letterSpawnAccumulator += deltaTime;
+            if (letterSpawnAccumulator >= gameSpeed) {
+                createLetter();
+                letterSpawnAccumulator = 0;
+            }
+            
+            // Update letter positions
+            const lettersToRemove = [];
+            activeLetters.forEach(letter => {
+                let y = parseFloat(letter.dataset.y) + fallSpeed;
+                letter.dataset.y = y;
+                letter.style.transform = `translate3d(${letter.dataset.x}px, ${y}px, 0)`;
+                
+                if (y > 550) {
+                    lettersToRemove.push(letter);
+                }
+            });
+            
+            // Remove missed letters in batch
+            if (lettersToRemove.length > 0) {
+                lettersToRemove.forEach(letter => letter.remove());
+                activeLetters = activeLetters.filter(l => !lettersToRemove.includes(l));
+                missedLetters += lettersToRemove.length;
+                updateScore();
+            }
+            
+            gameAnimationId = requestAnimationFrame(updateGame);
+        }
+
+        function updateTimer() {
+            document.getElementById('timer').textContent = `Time: ${timeLeft}`;
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent =
+                `Hits: ${correctHits} | Mistakes: ${wrongKeys} | Missed: ${missedLetters}`;
+            if (missedLetters >= 20) {
+                endFallingLettersGame();
+            }
+        }
+
+        function endFallingLettersGame() {
+            gameActive = false;
+            cancelAnimationFrame(gameAnimationId);
+            clearInterval(letterInterval);
+            clearInterval(timerInterval);
+            if (keypressHandler) {
+                document.removeEventListener('keypress', keypressHandler);
+                keypressHandler = null;
+            }
+
+            activeLetters.forEach(letter => letter.remove());
+            activeLetters = [];
+
+            const training = progression[currentTrainingIndex].training;
+            const percent = totalLettersSpawned > 0 ? correctHits / (totalLettersSpawned + wrongKeys) : 0;
+            let stars = Math.round(percent * 5);
+            stars = Math.max(0, Math.min(5, stars));
+            document.querySelector('.stars').textContent = '⭐'.repeat(stars);
+
+            const gameOverDiv = document.getElementById('gameOver');
+            gameOverDiv.innerHTML = '';
+
+            const title = document.createElement('div');
+            title.textContent = stars >= training.requiredStars ? 'TRAINING COMPLETE!' : 'TRAINING FAILED';
+            title.style.fontSize = '36px';
+            title.style.marginBottom = '20px';
+            gameOverDiv.appendChild(title);
+
+            const message = document.createElement('div');
+            message.textContent = `You earned ${stars} stars (need ${training.requiredStars} to unlock challenge)`;
+            message.style.fontSize = '18px';
+            gameOverDiv.appendChild(message);
+
+            if (stars >= training.requiredStars) {
+                gameState.completedTraining.push(currentTrainingIndex);
+                gameState.stars[currentTrainingIndex] = stars;
+                saveProgress();
+            }
+
+            const menuButton = document.createElement('button');
+            menuButton.textContent = 'Return to Menu';
+            menuButton.onclick = returnToMenu;
+            gameOverDiv.appendChild(menuButton);
+
+            gameOverDiv.style.display = 'block';
+        }
+
+
+        function updateGameSpeed() {
+            // Speed is now handled in updateGame via requestAnimationFrame
+        }
+
+        // Word Challenge Functions
+        function startWordChallenge(stageIndex) {
+            currentChallengeIndex = stageIndex;
+            const challenge = progression[stageIndex].challenge;
+
+            document.getElementById('gameArea').style.display = 'none';
+            document.getElementById('wordChallengeArea').style.display = 'flex';
+            document.getElementById('wordGameOver').style.display = 'none';
+
+            const wordsText = challenge.words.join(' ');
+            document.getElementById('texttotype').textContent = wordsText;
+            document.getElementById('youtyped').value = '';
+            document.getElementById('youtyped').className = '';
+            document.getElementById('wordChallengeHeading').textContent = 
+                `Type these words using ${progression[stageIndex].training.letters.join(', ').toUpperCase()}`;
+            document.getElementById('speedMin').textContent = challenge.requiredWPM;
+            document.getElementById('TimeLeft').textContent = challenge.time;
+            document.getElementById('speedCurrent').textContent = '0';
+
+            wordGameActive = true;
+            wordStartTime = null;
+
+            document.getElementById('youtyped').addEventListener('input', checkWordProgress);
+            document.getElementById('youtyped').addEventListener('keydown', startWordTimer);
+            document.getElementById('youtyped').focus();
+        }
+
+        function startWordTimer(e) {
+            if (wordStartTime === null && wordGameActive) {
+                wordStartTime = Date.now();
+                const challenge = progression[currentChallengeIndex].challenge;
+                wordTimer = setInterval(() => {
+                    if (!wordGameActive) return;
+                    const elapsed = (Date.now() - wordStartTime) / 1000;
+                    const remaining = challenge.time - elapsed;
+                    document.getElementById('TimeLeft').textContent = Math.max(0, remaining).toFixed(1);
+
+                    // Calculate WPM
+                    const typed = document.getElementById('youtyped').value;
+                    const wpm = (typed.length / 5) / (elapsed / 60);
+                    document.getElementById('speedCurrent').textContent = Math.round(wpm);
+
+                    if (remaining <= 0) {
+                        endWordChallenge(false);
+                    }
+                }, 100);
+            }
+        }
+
+        function checkWordProgress() {
+            const targetText = document.getElementById('texttotype').textContent;
+            const typedText = document.getElementById('youtyped').value;
+            const youtyped = document.getElementById('youtyped');
+
+            if (typedText === targetText) {
+                endWordChallenge(true);
+            } else if (targetText.startsWith(typedText)) {
+                youtyped.className = 'correct';
+            } else {
+                youtyped.className = 'incorrect';
+            }
+        }
+
+        function endWordChallenge(success) {
+            wordGameActive = false;
+            clearInterval(wordTimer);
+            document.getElementById('youtyped').removeEventListener('input', checkWordProgress);
+            document.getElementById('youtyped').removeEventListener('keydown', startWordTimer);
+            document.getElementById('youtyped').disabled = true;
+
+            const challenge = progression[currentChallengeIndex].challenge;
+            const elapsed = (Date.now() - wordStartTime) / 1000;
+            const typed = document.getElementById('youtyped').value;
+            const wpm = (typed.length / 5) / (elapsed / 60);
+
+            const gameOverDiv = document.getElementById('wordGameOver');
+            const title = document.getElementById('wordResultTitle');
+            const message = document.getElementById('wordResultMessage');
+
+            if (success && wpm >= challenge.requiredWPM) {
+                title.textContent = 'CHALLENGE COMPLETE!';
+                title.style.color = '#4caf50';
+                message.textContent = `You typed at ${Math.round(wpm)} WPM (required: ${challenge.requiredWPM} WPM)`;
+                gameState.completedChallenges.push(currentChallengeIndex);
+                saveProgress();
+            } else {
+                title.textContent = 'CHALLENGE FAILED';
+                title.style.color = '#f44336';
+                if (success) {
+                    message.textContent = `Too slow! You typed at ${Math.round(wpm)} WPM (required: ${challenge.requiredWPM} WPM)`;
+                } else {
+                    message.textContent = 'Time ran out!';
+                }
+            }
+
+            gameOverDiv.style.display = 'block';
+        }
+
+        function retryWordChallenge() {
+            document.getElementById('youtyped').disabled = false;
+            startWordChallenge(currentChallengeIndex);
+        }
+
+        function returnToMenu() {
+            document.getElementById('gameArea').style.display = 'none';
+            document.getElementById('wordChallengeArea').style.display = 'none';
+            document.getElementById('menuScreen').style.display = 'flex';
+            document.getElementById('gameOver').style.display = 'none';
+            document.getElementById('wordGameOver').style.display = 'none';
+            document.querySelector('.stars').textContent = '';
+
+            cancelAnimationFrame(gameAnimationId);
+            clearInterval(letterInterval);
+            clearInterval(timerInterval);
+            clearInterval(wordTimer);
+            if (keypressHandler) {
+                document.removeEventListener('keypress', keypressHandler);
+                keypressHandler = null;
+            }
+
+            activeLetters.forEach(letter => letter.remove());
+            activeLetters = [];
+
+            initMenu();
+        }
+
+        // Initialize on load
+        initMenu();
+    </script>
+</body>
+</html>
