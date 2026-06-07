@@ -1,0 +1,9 @@
+{
+  "name": "Cosmic Grid Math",
+  "short_name": "Cosmic Grid",
+  "description": "Math puzzle game on a cosmic grid.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0e14",
+  "theme_color": "#4a90e2"
+}

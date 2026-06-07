@@ -3,6 +3,7 @@ import { setExercises, initializeWorkout, getRandomExercise, generateWorkoutPlan
 import { updateUI, updateBreakUI, formatTime, updateProgress, setButtonState } from './ui.js';
 import { loadAllSounds, playSound, unlockAudioContext } from './audio.js';
 import { nextStep, startBreak, pauseWorkout, resumeWorkout, resetWorkout, skipExercise, setWorkoutPlan, setProgressTotal, getWorkoutPlan, getCurrentExercise, setCurrentExercise, getCurrentRep, setCurrentRep, getIsBreak, setIsBreak, getPaused, setPaused, getTimeLeft, setTimeLeft, getProgressCount, setProgressCount, startTimer, clearTimer } from './workoutController.js';
+import { getSettings, saveSettings } from './settings.js';
 
 const currentExerciseEl = document.getElementById('current-exercise');
 const exerciseImgEl = document.getElementById('exercise-img');
@@ -23,6 +24,11 @@ const howToModal = document.getElementById('howToModal');
 const closeHowToBtn = document.getElementById('closeHowToBtn');
 const exerciseListEl = document.getElementById('exerciseList');
 
+const settingsBtn = document.getElementById('settingsBtn');
+const settingsModal = document.getElementById('settingsModal');
+const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+
 howToBtn.addEventListener('click', () => {
     populateExercises();
     howToModal.classList.add('visible');
@@ -30,6 +36,20 @@ howToBtn.addEventListener('click', () => {
 
 closeHowToBtn.addEventListener('click', () => {
     howToModal.classList.remove('visible');
+});
+
+settingsBtn.addEventListener('click', () => {
+    populateSettings();
+    settingsModal.classList.add('visible');
+});
+
+closeSettingsBtn.addEventListener('click', () => {
+    settingsModal.classList.remove('visible');
+});
+
+saveSettingsBtn.addEventListener('click', () => {
+    saveCurrentSettings();
+    settingsModal.classList.remove('visible');
 });
 
 function populateExercises() {
@@ -66,6 +86,117 @@ function populateExercises() {
         });
         exerciseListEl.appendChild(groupEl);
     });
+}
+
+function populateSettings() {
+    const settings = getSettings();
+    
+    // Set difficulty radio
+    const difficultyRadios = document.querySelectorAll('input[name="difficulty"]');
+    difficultyRadios.forEach(radio => {
+        if (radio.value === settings.difficulty) {
+            radio.checked = true;
+        }
+    });
+    
+    // Set flow checkbox
+    document.getElementById('includeFlow').checked = settings.includeFlow;
+    
+    // Set max rounds
+    document.getElementById('maxRounds').value = settings.maxRounds;
+    
+    // Populate favorite and excluded exercise checkboxes
+    populateExerciseCheckboxes(settings.favoriteExercises, settings.excludedExercises);
+}
+
+function populateExerciseCheckboxes(favoriteExercises, excludedExercises) {
+    const favoriteContainer = document.getElementById('favoriteExercises');
+    const excludedContainer = document.getElementById('excludedExercises');
+    
+    favoriteContainer.innerHTML = '';
+    excludedContainer.innerHTML = '';
+    
+    const allGroups = [
+        { name: "Arms", list: exerciseGroups.find(g => g.name === "Arms").exercises },
+        { name: "Core", list: exerciseGroups.find(g => g.name === "Core").exercises },
+        { name: "Legs", list: exerciseGroups.find(g => g.name === "Legs").exercises },
+        { name: "Flow", list: exerciseGroups.find(g => g.name === "Flow").exercises }
+    ];
+    
+    allGroups.forEach(group => {
+        group.list.forEach(ex => {
+            // Favorite checkbox
+            const favLabel = document.createElement('label');
+            favLabel.innerHTML = `
+                <input type="checkbox" class="fav-checkbox" value="${ex.name}" data-group="${group.name}" ${favoriteExercises.includes(ex.name) ? 'checked' : ''}>
+                ${ex.name} (${group.name})
+            `;
+            favoriteContainer.appendChild(favLabel);
+            
+            // Excluded checkbox
+            const exclLabel = document.createElement('label');
+            exclLabel.innerHTML = `
+                <input type="checkbox" class="excl-checkbox" value="${ex.name}" data-group="${group.name}" ${excludedExercises.includes(ex.name) ? 'checked' : ''}>
+                ${ex.name} (${group.name})
+            `;
+            excludedContainer.appendChild(exclLabel);
+        });
+    });
+}
+
+function saveCurrentSettings() {
+    const maxRounds = parseInt(document.getElementById('maxRounds').value) || 5;
+    
+    // Get excluded exercises by group
+    const excludedByGroup = {
+        Arms: [],
+        Core: [],
+        Legs: [],
+        Flow: []
+    };
+    
+    document.querySelectorAll('.excl-checkbox:checked').forEach(cb => {
+        const group = cb.dataset.group;
+        if (excludedByGroup[group]) {
+            excludedByGroup[group].push(cb.value);
+        }
+    });
+    
+    // Validate: if rounds > 0, ensure at least one exercise is not excluded from each required group
+    if (maxRounds > 0) {
+        const requiredGroups = ['Arms', 'Core', 'Legs'];
+        if (document.getElementById('includeFlow').checked) {
+            requiredGroups.push('Flow');
+        }
+        
+        for (const group of requiredGroups) {
+            const groupData = exerciseGroups.find(g => g.name === group);
+            if (groupData && excludedByGroup[group].length >= groupData.exercises.length) {
+                alert(`You cannot exclude all ${group} exercises when rounds > 0. Please select at least one ${group} exercise.`);
+                return;
+            }
+        }
+    }
+    
+    const settings = {
+        difficulty: document.querySelector('input[name="difficulty"]:checked')?.value || 'normal',
+        includeFlow: document.getElementById('includeFlow').checked,
+        maxRounds: maxRounds,
+        favoriteExercises: [],
+        excludedExercises: []
+    };
+    
+    // Get favorite exercises
+    document.querySelectorAll('.fav-checkbox:checked').forEach(cb => {
+        settings.favoriteExercises.push(cb.value);
+    });
+    
+    // Get excluded exercises
+    document.querySelectorAll('.excl-checkbox:checked').forEach(cb => {
+        settings.excludedExercises.push(cb.value);
+    });
+    
+    saveSettings(settings);
 }
 
 // Initialize UI state
@@ -118,8 +249,9 @@ startBtn.addEventListener('click', () => {
     skipBtn.disabled = false;
     resetBtn.disabled = false;
     
-    // Initialize workout plan on start
-    const mainPlan = generateWorkoutPlan(); 
+    // Get settings and initialize workout plan on start
+    const settings = getSettings();
+    const mainPlan = generateWorkoutPlan(settings); 
     const fullWorkoutPlan = [...warmupExercises, ...lieDownExercises, ...mainPlan]; 
     setWorkoutPlan(fullWorkoutPlan);
     

@@ -57,29 +57,71 @@ export function resetWorkoutState() {
     progressCount = 0;
 }
 
-export function getRandomExercise(group) {
+export function getRandomExercise(group, excludedExercises = []) {
     if (group.used.length === group.exercises.length) {
         group.used = [];
     }
-    let availableExercises = group.exercises.filter(ex => !group.used.includes(ex));
+    let availableExercises = group.exercises.filter(ex => 
+        !group.used.includes(ex) && 
+        !excludedExercises.includes(ex.name)
+    );
     const randomIndex = Math.floor(Math.random() * availableExercises.length);
     const chosenExercise = availableExercises[randomIndex];
     group.used.push(chosenExercise);
     return chosenExercise;
 }
 
-export function generateWorkoutPlan() {
+export function generateWorkoutPlan(settings = null) {
     let generatedPlan = [];
-    const minExercisesInGroup = Math.min(...exerciseGroups.map(g => g.exercises.length));
-    const numCycles = minExercisesInGroup;
+    
+    // Use settings if provided, otherwise use defaults
+    const maxRounds = settings?.maxRounds || 5;
+    const includeFlow = settings?.includeFlow !== undefined ? settings.includeFlow : true;
+    const favoriteExercises = settings?.favoriteExercises || [];
+    const excludedExercises = settings?.excludedExercises || [];
+    const difficulty = settings?.difficulty || 'normal';
+
+    // Get difficulty multiplier
+    const difficultyMultipliers = {
+        easy: 0.5,
+        normal: 1.0,
+        hard: 2.0
+    };
+    const repMultiplier = difficultyMultipliers[difficulty] || 1.0;
 
     exerciseGroups.forEach(group => { group.used = []; });
 
-    for (let cycle = 0; cycle < numCycles; cycle++) {
-        exerciseGroups.forEach(group => {
-            generatedPlan.push(getRandomExercise(group));
+    // First, add favorite exercises
+    favoriteExercises.forEach(favName => {
+        for (const group of exerciseGroups) {
+            const exercise = group.exercises.find(ex => ex.name === favName);
+            if (exercise && !excludedExercises.includes(favName)) {
+                // Create a copy of the exercise with adjusted reps
+                const adjustedExercise = { ...exercise, reps: Math.max(1, Math.round(exercise.reps * repMultiplier)) };
+                generatedPlan.push(adjustedExercise);
+                group.used.push(exercise);
+                break;
+            }
+        }
+    });
+
+    // Determine which groups to include
+    const activeGroups = exerciseGroups.filter(group => {
+        if (group.name === "Flow" && !includeFlow) return false;
+        return true;
+    });
+
+    // Generate workout plan with specified number of rounds
+    // Each round includes one exercise from each active group
+    for (let cycle = 0; cycle < maxRounds; cycle++) {
+        activeGroups.forEach(group => {
+            const exercise = getRandomExercise(group, excludedExercises);
+            // Create a copy of the exercise with adjusted reps
+            const adjustedExercise = { ...exercise, reps: Math.max(1, Math.round(exercise.reps * repMultiplier)) };
+            generatedPlan.push(adjustedExercise);
         });
     }
+
     return generatedPlan;
 }
 

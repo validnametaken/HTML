@@ -15,6 +15,7 @@
         <header>
             <h1>My Workout</h1>
             <div class="controls-top">
+                <button id="settingsBtn">Settings</button>
                 <button id="howToBtn">How To</button>
             </div>
         </header>
@@ -24,10 +25,12 @@
             <img id="next-exercise-img" class="exercise-media" alt="Next Exercise Image" />
             <video id="next-exercise-video" class="exercise-media" controls muted loop></video>
 
-            <div id="current-exercise"></div>
-            <img id="exercise-img" class="exercise-media" src="" alt="Current Exercise Image" />
-            <div id="exercise-text" class="exercise-media"></div>
-            <video id="exercise-video" class="exercise-media" src="" alt="Current Exercise Video" controls muted loop></video>
+            <div class="exercise-display">
+                <div id="current-exercise" class="exercise-name"></div>
+                <img id="exercise-img" class="exercise-media" src="" alt="Current Exercise Image" />
+                <div id="exercise-text" class="exercise-media"></div>
+                <video id="exercise-video" class="exercise-media" src="" alt="Current Exercise Video" controls muted loop></video>
+            </div>
             <div id="exercise-explanation"></div>
         </section>
 
@@ -53,6 +56,54 @@
             <span id="closeHowToBtn">&times;</span>
             <h2>Exercise Guide</h2>
             <div id="exerciseList"></div>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <span id="closeSettingsBtn">&times;</span>
+            <h2>Workout Settings</h2>
+            <div id="settingsContent">
+                <div class="setting-group">
+                    <h3>Difficulty</h3>
+                    <label>
+                        <input type="radio" name="difficulty" value="easy">
+                        Easy (50% reps)
+                    </label>
+                    <label>
+                        <input type="radio" name="difficulty" value="normal" checked>
+                        Normal (100% reps)
+                    </label>
+                    <label>
+                        <input type="radio" name="difficulty" value="hard">
+                        Hard (200% reps)
+                    </label>
+                </div>
+                <div class="setting-group">
+                    <h3>Exercise Groups</h3>
+                    <label>
+                        <input type="checkbox" id="includeFlow" checked>
+                        Include Flow exercises
+                    </label>
+                </div>
+                <div class="setting-group">
+                    <h3>Rounds</h3>
+                    <div>
+                        <label for="maxRounds">Number of rounds:</label>
+                        <input type="number" id="maxRounds" min="0" max="10" value="5">
+                    </div>
+                    <small>Each round includes Arms, Core, Legs, and optionally Flow</small>
+                </div>
+                <div class="setting-group">
+                    <h3>Favorite Exercises (Always Include)</h3>
+                    <div id="favoriteExercises"></div>
+                </div>
+                <div class="setting-group">
+                    <h3>Excluded Exercises (Never Include)</h3>
+                    <div id="excludedExercises"></div>
+                </div>
+                <button id="saveSettingsBtn">Save Settings</button>
+            </div>
         </div>
     </div>
 

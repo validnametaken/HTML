@@ -56,6 +56,6 @@ export async function fetchExercises() {
         return data;
     } catch (error) {
         console.error('Failed to fetch exercises:', error);
-        throw new Error('Failed to load exercise data. Please check your internet connection.');
+        throw new Error('Failed to load exercise data. Please check your internet connection.', { cause: error });
     }
 }

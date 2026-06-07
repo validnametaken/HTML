@@ -140,6 +140,7 @@ export function nextStep() {
     nextExerciseImgEl.style.display = 'none';
 
     const ex = workoutPlan[currentExercise];
+    currentExerciseEl.textContent = ex.name;
     exerciseImgEl.style.display = 'none';
     exerciseVideoEl.style.display = 'none';
     exerciseVideoEl.pause();

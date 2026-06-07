@@ -1,0 +1,222 @@
+:root {
+    --bg-color: #0b0e14;
+    --text-color: #e0e6ed;
+    --accent-color: #4a90e2;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+button, .cell {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#game-container {
+    width: 100%;
+    max-width: 500px;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s ease;
+}
+
+.screen.active {
+    display: flex;
+}
+
+button {
+    min-width: 200px;
+    min-height: 44px;
+    margin: 10px;
+    padding: 10px 20px;
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.1s ease, background-color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+@media (min-width: 768px) {
+    button {
+        min-width: 250px;
+        min-height: 60px;
+        font-size: 1.5rem;
+        padding: 15px 30px;
+    }
+}
+
+button:active {
+    transform: scale(0.95);
+    background-color: #357abd;
+}
+
+#sound-toggle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 5px;
+    font-size: 1.5rem;
+    z-index: 100;
+}
+
+#star-count-display {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 1.2rem;
+    z-index: 100;
+}
+
+#shop-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#math-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(11, 14, 20, 0.95);
+    border: 2px solid var(--accent-color);
+    border-radius: 12px;
+    padding: 20px;
+    z-index: 1000;
+    min-width: 300px;
+}
+
+#equation-display {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#answer-display {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 20px;
+    min-height: 3rem;
+    border-bottom: 2px solid var(--accent-color);
+    padding: 10px;
+}
+
+#keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+#keypad button {
+    min-width: 60px;
+    min-height: 60px;
+    font-size: 1.5rem;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+    20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+
+.shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+.incorrect {
+    color: #ff6b6b;
+    border-color: #ff6b6b;
+}
+
+.cell {
+    transition: all 0.2s ease;
+}
+
+.cell:hover {
+    transform: scale(1.05);
+    background-color: rgba(74, 144, 226, 0.2);
+}
+
+@media (min-width: 768px) {
+    .cell {
+        width: 60px !important;
+        height: 60px !important;
+        font-size: 32px !important;
+    }
+    
+    #game-container {
+        max-width: 768px;
+    }
+    
+    h1 {
+        font-size: 2.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .cell {
+        width: 70px !important;
+        height: 70px !important;
+        font-size: 36px !important;
+    }
+    
+    #game-container {
+        max-width: 1024px;
+    }
+}
+
+.cell[data-type="player"] {
+    background-color: rgba(74, 144, 226, 0.4);
+    border: 2px solid #4a90e2;
+}
+
+.cell[data-type="star"] {
+    background-color: rgba(255, 215, 0, 0.3);
+    border: 2px solid gold;
+}
+
+.cell[data-type="asteroid"] {
+    background-color: rgba(128, 128, 128, 0.4);
+    border: 2px solid gray;
+}
+
+.cell[data-type="portal"] {
+    background-color: rgba(138, 43, 226, 0.4);
+    border: 2px solid purple;
+}
