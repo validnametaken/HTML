@@ -1,0 +1,127 @@
+{
+  "easy": {
+    "Push-ups": {
+      "reps": 3,
+      "repDuration": 4,
+      "breakBetweenReps": 3,
+      "breakBetweenExercises": 15
+    },
+    "Pike Push-ups": {
+      "reps": 3,
+      "repDuration": 5,
+      "breakBetweenReps": 3,
+      "breakBetweenExercises": 15
+    },
+    "Down Under": {
+      "reps": 3,
+      "repDuration": 6,
+      "breakBetweenReps": 3,
+      "breakBetweenExercises": 15
+    },
+    "Self-arm wrestling": {
+      "reps": 3,
+      "repDuration": 6,
+      "breakBetweenReps": 3,
+      "breakBetweenExercises": 15
+    },
+    "Tricep Dips": {
+      "reps": 3,
+      "repDuration": 6,
+      "breakBetweenReps": 3,
+      "breakBetweenExercises": 15
+    },
+    "Rotating Plank": {
+      "reps": 6,
+      "repDuration": 5,
+      "breakBetweenReps": 3,
+      "breakBetweenExercises": 15
+    },
+    "Inchworms": {
+      "reps": 6,
+      "repDuration": 6,
+      "breakBetweenReps": 3,
+      "breakBetweenExercises": 15
+    },
+    "Standing bicycle crunch (Alternating)": {
+      "reps": 6,
+      "repDuration": 5,
+      "breakBetweenReps": 3,
+      "breakBetweenExercises": 15
+    },
+    "Ab-Rolls": {
+      "reps": 3,
+      "repDuration": 6,
+      "breakBetweenReps": 2,
+      "breakBetweenExercises": 15
+    },
+    "Dog-bird": {
+      "reps": 4,
+      "repDuration": 5,
+      "breakBetweenReps": 3,
+      "breakBetweenExercises": 15
+    },
+    "Push-up to Plank": {
+      "reps": 4,
+      "repDuration": 5,
+      "breakBetweenReps": 3,
+      "breakBetweenExercises": 15
+    },
+    "Squats": {
+      "reps": 10,
+      "repDuration": 5,
+      "breakBetweenReps": 3,
+      "breakBetweenExercises": 15
+    },
+    "Stationary Lunges": {
+      "reps": 2,
+      "repDuration": 15,
+      "breakBetweenReps": 3,
+      "breakBetweenExercises": 15
+    },
+    "Calf Raises": {
+      "reps": 5,
+      "repDuration": 5,
+      "breakBetweenReps": 3,
+      "breakBetweenExercises": 15
+    },
+    "Single Leg Deadlift": {
+      "reps": 6,
+      "repDuration": 5,
+      "breakBetweenReps": 4,
+      "breakBetweenExercises": 15
+    },
+    "Crab Crawl": {
+      "reps": 2,
+      "repDuration": 10,
+      "breakBetweenReps": 2,
+      "breakBetweenExercises": 15
+    },
+    "Bear Crawl": {
+      "reps": 2,
+      "repDuration": 10,
+      "breakBetweenReps": 2,
+      "breakBetweenExercises": 15
+    },
+    "Side Kick Through": {
+      "reps": 4,
+      "repDuration": 5,
+      "breakBetweenReps": 3,
+      "breakBetweenExercises": 15
+    },
+    "Front Kick Through": {
+      "reps": 4,
+      "repDuration": 5,
+      "breakBetweenReps": 3,
+      "breakBetweenExercises": 15
+    }
+  },
+  "normal": {},
+  "hard": {
+    "Push-ups": {
+      "reps": 10,
+      "repDuration": 6,
+      "breakBetweenReps": 2,
+      "breakBetweenExercises": 10
+    }
+  }
+}

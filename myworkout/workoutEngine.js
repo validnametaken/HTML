@@ -14,6 +14,7 @@ export let progressCount = 0;
 
 export const soundBuffers = {};
 let audioContext = null;
+let difficultySettings = null;
 
 export function initAudio() {
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -25,6 +26,11 @@ export async function loadSound(name, url) {
     const response = await fetch(url);
     const arrayBuffer = await response.arrayBuffer();
     soundBuffers[name] = await audioContext.decodeAudioData(arrayBuffer);
+}
+
+export async function loadDifficultySettings() {
+    const response = await fetch('difficultySettings.json');
+    difficultySettings = await response.json();
 }
 
 export function playSound(name) {
@@ -81,13 +87,8 @@ export function generateWorkoutPlan(settings = null) {
     const excludedExercises = settings?.excludedExercises || [];
     const difficulty = settings?.difficulty || 'normal';
 
-    // Get difficulty multiplier
-    const difficultyMultipliers = {
-        easy: 0.5,
-        normal: 1.0,
-        hard: 2.0
-    };
-    const repMultiplier = difficultyMultipliers[difficulty] || 1.0;
+    // Get difficulty-specific exercise overrides
+    const difficultyOverrides = difficultySettings?.[difficulty] || {};
 
     exerciseGroups.forEach(group => { group.used = []; });
 
@@ -96,8 +97,17 @@ export function generateWorkoutPlan(settings = null) {
         for (const group of exerciseGroups) {
             const exercise = group.exercises.find(ex => ex.name === favName);
             if (exercise && !excludedExercises.includes(favName)) {
-                // Create a copy of the exercise with adjusted reps
-                const adjustedExercise = { ...exercise, reps: Math.max(1, Math.round(exercise.reps * repMultiplier)) };
+                // Check if there's an override for this exercise in difficulty settings
+                const override = difficultyOverrides[exercise.name];
+                
+                // Create a copy of the exercise with exact values from override or defaults
+                const adjustedExercise = {
+                    ...exercise,
+                    reps: override?.reps !== undefined ? override.reps : exercise.reps,
+                    repDuration: override?.repDuration !== undefined ? override.repDuration : exercise.repDuration,
+                    breakBetweenReps: override?.breakBetweenReps !== undefined ? override.breakBetweenReps : exercise.breakBetweenReps,
+                    breakBetweenExercises: override?.breakBetweenExercises !== undefined ? override.breakBetweenExercises : exercise.breakBetweenExercises
+                };
                 generatedPlan.push(adjustedExercise);
                 group.used.push(exercise);
                 break;
@@ -116,8 +126,17 @@ export function generateWorkoutPlan(settings = null) {
     for (let cycle = 0; cycle < maxRounds; cycle++) {
         activeGroups.forEach(group => {
             const exercise = getRandomExercise(group, excludedExercises);
-            // Create a copy of the exercise with adjusted reps
-            const adjustedExercise = { ...exercise, reps: Math.max(1, Math.round(exercise.reps * repMultiplier)) };
+            // Check if there's an override for this exercise in difficulty settings
+            const override = difficultyOverrides[exercise.name];
+            
+            // Create a copy of the exercise with exact values from override or defaults
+            const adjustedExercise = {
+                ...exercise,
+                reps: override?.reps !== undefined ? override.reps : exercise.reps,
+                repDuration: override?.repDuration !== undefined ? override.repDuration : exercise.repDuration,
+                breakBetweenReps: override?.breakBetweenReps !== undefined ? override.breakBetweenReps : exercise.breakBetweenReps,
+                breakBetweenExercises: override?.breakBetweenExercises !== undefined ? override.breakBetweenExercises : exercise.breakBetweenExercises
+            };
             generatedPlan.push(adjustedExercise);
         });
     }

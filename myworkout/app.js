@@ -1,5 +1,5 @@
 import { fetchExercises } from './data.js';
-import { setExercises, initializeWorkout, getRandomExercise, generateWorkoutPlan, resetWorkoutState, warmupExercises, lieDownExercises, exerciseGroups } from './workoutEngine.js';
+import { setExercises, initializeWorkout, getRandomExercise, generateWorkoutPlan, resetWorkoutState, warmupExercises, lieDownExercises, exerciseGroups, loadDifficultySettings } from './workoutEngine.js';
 import { updateUI, updateBreakUI, formatTime, updateProgress, setButtonState } from './ui.js';
 import { loadAllSounds, playSound, unlockAudioContext } from './audio.js';
 import { nextStep, startBreak, pauseWorkout, resumeWorkout, resetWorkout, skipExercise, setWorkoutPlan, setProgressTotal, getWorkoutPlan, getCurrentExercise, setCurrentExercise, getCurrentRep, setCurrentRep, getIsBreak, setIsBreak, getPaused, setPaused, getTimeLeft, setTimeLeft, getProgressCount, setProgressCount, startTimer, clearTimer } from './workoutController.js';
@@ -226,6 +226,15 @@ window.addEventListener('DOMContentLoaded', async () => {
         console.error("Failed to load exercises:", err);
         alert("Failed to load exercise data. Please refresh the page.");
         return;
+    }
+
+    // Load difficulty settings
+    try {
+        await loadDifficultySettings();
+        console.log("Difficulty settings loaded successfully.");
+    } catch (err) {
+        console.error("Failed to load difficulty settings:", err);
+        // Continue with default values if settings fail to load
     }
     
     // Check if sounds need to be loaded
